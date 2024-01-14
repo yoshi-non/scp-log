@@ -1,15 +1,15 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import Header from "@/components/features/Header";
-import Footer from "@/components/features/Footer";
+import type { Metadata } from 'next';
+import { Noto_Sans_JP } from 'next/font/google';
+import './globals.css';
+import Header from '@/components/features/Header';
+import Footer from '@/components/features/Footer';
 
-const inter = Inter({ subsets: ["latin"] });
+const notoSansJP = Noto_Sans_JP({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "SCP Log",
+  title: 'SCP Log',
   description:
-    "SCP Log はオンライン・オフライン環境でそれぞれ自分だけで楽しむプレイリストを作成するアプリです。",
+    'SCP Log はオンライン・オフライン環境でそれぞれ自分だけで楽しむプレイリストを作成するアプリです。',
 };
 
 export default function RootLayout({
@@ -19,7 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body className={inter.className}>
+      <body className={notoSansJP.className}>
         <Header />
         {children}
         <Footer />
