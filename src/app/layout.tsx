@@ -3,7 +3,7 @@ import { Noto_Sans_JP } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/features/Header';
 import Footer from '@/components/features/Footer';
-
+import { ThemeProvider } from '@/components/functions/theme-provider';
 const notoSansJP = Noto_Sans_JP({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
@@ -20,10 +20,17 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className={notoSansJP.className}>
-        <Header />
-        {children}
-        <Footer />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Header />
+          {children}
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );
-}
+}　
