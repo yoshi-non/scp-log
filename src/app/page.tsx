@@ -12,6 +12,11 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs';
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from '@/components/ui/resizable';
 
 export default function Home() {
   // localstarageに保存されているデータを取得
@@ -32,8 +37,8 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="px-24">
-      <Tabs defaultValue="playlist" className="w-[400px]">
+    <main className="px-10">
+      <Tabs defaultValue="playlist" className="w-full">
         <TabsList>
           <TabsTrigger value="playlist">
             Playlist
@@ -42,7 +47,28 @@ export default function Home() {
             Add Movie
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="playlist">playlist</TabsContent>
+        <TabsContent value="playlist">
+          <ResizablePanelGroup
+            direction="horizontal"
+            className="min-h-[200px] rounded-lg border"
+          >
+            <ResizablePanel defaultSize={25}>
+              <div className="flex h-full items-center justify-center p-6">
+                <span className="font-semibold">
+                  Sidebar
+                </span>
+              </div>
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={75}>
+              <div className="flex h-full items-center justify-center p-6">
+                <span className="font-semibold">
+                  Content
+                </span>
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </TabsContent>
         <TabsContent value="addMovie">addMovie</TabsContent>
       </Tabs>
     </main>
