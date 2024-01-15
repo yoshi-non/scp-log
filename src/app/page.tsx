@@ -1,10 +1,17 @@
 'use client';
+
 import { useEffect, useState } from 'react';
 import { LocalStorageObjects } from '@/types/localstrageObjects';
 import {
   getFromLocalStorage,
   saveToLocalStorage,
 } from '@/utils/storage';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs';
 
 export default function Home() {
   // localstarageに保存されているデータを取得
@@ -24,5 +31,20 @@ export default function Home() {
     }
   }, []);
 
-  return <main></main>;
+  return (
+    <main className="px-24">
+      <Tabs defaultValue="playlist" className="w-[400px]">
+        <TabsList>
+          <TabsTrigger value="playlist">
+            Playlist
+          </TabsTrigger>
+          <TabsTrigger value="addMovie">
+            Add Movie
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="playlist">playlist</TabsContent>
+        <TabsContent value="addMovie">addMovie</TabsContent>
+      </Tabs>
+    </main>
+  );
 }
