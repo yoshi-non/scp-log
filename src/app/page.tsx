@@ -17,6 +17,8 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
+import { Button } from '@/components/ui/button';
+import { CardStackPlusIcon } from '@radix-ui/react-icons';
 
 export default function Home() {
   // localstarageに保存されているデータを取得
@@ -53,10 +55,11 @@ export default function Home() {
             className="min-h-[200px] rounded-lg border"
           >
             <ResizablePanel defaultSize={25}>
-              <div className="flex h-full items-center justify-center p-6">
-                <span className="font-semibold">
-                  Sidebar
-                </span>
+              <div className="flex h-full p-2">
+                <Button variant="ghost" className="w-full">
+                  <CardStackPlusIcon />
+                  <span>&nbsp;&nbsp;Add Folder</span>
+                </Button>
               </div>
             </ResizablePanel>
             <ResizableHandle withHandle />
