@@ -18,6 +18,7 @@ import {
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
 import PlayListSideBar from '@/components/features/PlayListSideBar';
+import AddMovie from '@/components/features/AddMovie';
 
 export default function Home() {
   // localstarageに保存されているデータを取得
@@ -75,7 +76,9 @@ export default function Home() {
             </ResizablePanel>
           </ResizablePanelGroup>
         </TabsContent>
-        <TabsContent value="addMovie">addMovie</TabsContent>
+        <TabsContent value="addMovie">
+          <AddMovie />
+        </TabsContent>
       </Tabs>
     </main>
   );
