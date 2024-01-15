@@ -1,17 +1,15 @@
 'use client';
 
 import { LocalStorageObjects } from '@/types/localstrageObjects';
+import { saveToLocalStorage } from '@/utils/storage';
 
-export const updateFolderName = (
+export const renameFolder = (
   index: number,
   newName: string,
   localStorageObjects: LocalStorageObjects
 ) => {
   const newLocalStorageObjects = localStorageObjects;
-  newLocalStorageObjects[index].name = newName;
-  localStorage.setItem(
-    'localStorageObjects',
-    JSON.stringify(newLocalStorageObjects)
-  );
+  newLocalStorageObjects[index + 1].name = newName;
+  saveToLocalStorage('myData', newLocalStorageObjects);
   return newLocalStorageObjects;
 };

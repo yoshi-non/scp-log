@@ -11,10 +11,22 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Menubar,
   MenubarContent,
-  MenubarItem,
   MenubarMenu,
   MenubarTrigger,
 } from '@/components/ui/menubar';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { renameFolder } from './logics/renameFolder';
+import { deleteFolder } from './logics/deleteFolder';
 
 type Props = {
   localStorageObjects: LocalStorageObjects | null;
@@ -42,6 +54,26 @@ const PlayListSideBar = ({
       : [newFolder];
     saveToLocalStorage('myData', newLocalStorageObjects);
     setLocalStorageObjects(newLocalStorageObjects);
+  };
+
+  const renameFolderHandler =
+    (index: number, newName: string) => () => {
+      if (!localStorageObjects) return;
+      const newObjects = renameFolder(
+        index,
+        newName,
+        localStorageObjects
+      );
+      setLocalStorageObjects(newObjects);
+    };
+
+  const deleteFolderHandler = (index: number) => () => {
+    if (!localStorageObjects) return;
+    const newObject = deleteFolder(
+      index,
+      localStorageObjects
+    );
+    setLocalStorageObjects(newObject);
   };
 
   return (
@@ -83,14 +115,78 @@ const PlayListSideBar = ({
                     <DotsVerticalIcon className="text-primary" />
                   </MenubarTrigger>
                   <MenubarContent>
-                    <MenubarItem>
-                      <Pencil1Icon />
-                      &nbsp; 名前変更
-                    </MenubarItem>
-                    <MenubarItem className="text-primary focus:text-primary">
-                      <TrashIcon />
-                      &nbsp; フォルダ削除
-                    </MenubarItem>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start px-2 py-1.5"
+                        >
+                          <Pencil1Icon />
+                          &nbsp; 名前変更
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>
+                            Rename {folder.name}
+                          </DialogTitle>
+                          <DialogDescription>
+                            フォルダー名を変更します。
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label
+                              htmlFor="name"
+                              className="text-right"
+                            >
+                              Name
+                            </Label>
+                            <Input
+                              id="name"
+                              defaultValue={folder.name}
+                              className="col-span-3"
+                            />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button type="submit">
+                            変更
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start px-2 py-1.5 text-primary hover:text-primary"
+                        >
+                          <TrashIcon />
+                          &nbsp; フォルダ削除
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>
+                            Delete {folder.name}
+                          </DialogTitle>
+                          <DialogDescription>
+                            ファルダー内の動画も全て削除されます。
+                          </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                          <Button
+                            onClick={deleteFolderHandler(
+                              index
+                            )}
+                            type="submit"
+                          >
+                            削除
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
                   </MenubarContent>
                 </MenubarMenu>
               </Menubar>
