@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ja">
+    <html lang="ja" suppressHydrationWarning={true}>
       <body className={notoSansJP.className}>
         <ThemeProvider
           attribute="class"
@@ -33,4 +33,4 @@ export default function RootLayout({
       </body>
     </html>
   );
-}　
+}
