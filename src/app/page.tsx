@@ -55,7 +55,7 @@ export default function Home() {
             direction="horizontal"
             className="min-h-[620px] border-y-2"
           >
-            <ResizablePanel defaultSize={25} maxSize={50}>
+            <ResizablePanel defaultSize={20} maxSize={50}>
               <PlayListSideBar
                 localStorageObjects={localStorageObjects}
                 setLocalStorageObjects={
@@ -66,7 +66,7 @@ export default function Home() {
               />
             </ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={75}>
+            <ResizablePanel defaultSize={80}>
               <div className="flex h-full items-center justify-center p-6">
                 <span className="font-semibold">
                   Content
