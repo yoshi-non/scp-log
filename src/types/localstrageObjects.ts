@@ -4,6 +4,6 @@ export type LocalStorageObjects = {
   tags?: string[];
   movies?: {
     id: string;
-    favarite: boolean;
+    favorite: boolean;
   }[];
 }[];
