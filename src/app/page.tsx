@@ -17,8 +17,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
-import { Button } from '@/components/ui/button';
-import { CardStackPlusIcon } from '@radix-ui/react-icons';
+import PlayListSideBar from '@/components/features/PlayListSideBar';
 
 export default function Home() {
   // localstarageに保存されているデータを取得
@@ -38,20 +37,6 @@ export default function Home() {
     }
   }, []);
 
-  const addFolderHandler = () => {
-    const newFolder = {
-      id: localStorageObjects?.length || 0,
-      name: 'New Folder',
-    };
-
-    const newLocalStorageObjects = localStorageObjects
-      ? [...localStorageObjects, newFolder]
-      : [newFolder];
-
-    saveToLocalStorage('myData', newLocalStorageObjects);
-    setLocalStorageObjects(newLocalStorageObjects);
-  };
-
   return (
     <main className="px-10">
       <Tabs defaultValue="playlist" className="w-full">
@@ -66,19 +51,15 @@ export default function Home() {
         <TabsContent value="playlist">
           <ResizablePanelGroup
             direction="horizontal"
-            className="min-h-[200px] rounded-lg border"
+            className="min-h-[500px] rounded-lg border"
           >
             <ResizablePanel defaultSize={25}>
-              <div className="flex h-full p-2">
-                <Button
-                  onClick={addFolderHandler}
-                  variant="ghost"
-                  className="w-full"
-                >
-                  <CardStackPlusIcon />
-                  <span>&nbsp;&nbsp;Add Folder</span>
-                </Button>
-              </div>
+              <PlayListSideBar
+                localStorageObjects={localStorageObjects}
+                setLocalStorageObjects={
+                  setLocalStorageObjects
+                }
+              />
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={75}>
