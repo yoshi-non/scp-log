@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/menubar';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -190,13 +191,15 @@ const PlayListSideBar = ({
                           </DialogDescription>
                         </DialogHeader>
                         <DialogFooter>
-                          <Button
-                            onClick={() =>
-                              deleteFolderHandler(index)
-                            }
-                          >
-                            削除
-                          </Button>
+                          <DialogClose asChild>
+                            <Button
+                              onClick={() =>
+                                deleteFolderHandler(index)
+                              }
+                            >
+                              削除
+                            </Button>
+                          </DialogClose>
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>
