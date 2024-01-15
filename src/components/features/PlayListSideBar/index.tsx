@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { saveToLocalStorage } from '@/utils/storage';
@@ -45,6 +46,8 @@ const PlayListSideBar = ({
   selectedFolder,
   setSelectedFolder,
 }: Props) => {
+  const inputRenameRef = useRef<HTMLInputElement>(null);
+
   const addFolderHandler = () => {
     const newFolder = {
       name: 'New Folder',
@@ -56,18 +59,20 @@ const PlayListSideBar = ({
     setLocalStorageObjects(newLocalStorageObjects);
   };
 
-  const renameFolderHandler =
-    (index: number, newName: string) => () => {
-      if (!localStorageObjects) return;
-      const newObjects = renameFolder(
-        index,
-        newName,
-        localStorageObjects
-      );
-      setLocalStorageObjects(newObjects);
-    };
+  const renameFolderHandler = (
+    index: number,
+    newName: string
+  ) => {
+    if (!localStorageObjects) return;
+    const newObjects = renameFolder(
+      index,
+      newName,
+      localStorageObjects
+    );
+    setLocalStorageObjects(newObjects);
+  };
 
-  const deleteFolderHandler = (index: number) => () => {
+  const deleteFolderHandler = (index: number) => {
     if (!localStorageObjects) return;
     const newObject = deleteFolder(
       index,
@@ -146,11 +151,20 @@ const PlayListSideBar = ({
                               id="name"
                               defaultValue={folder.name}
                               className="col-span-3"
+                              ref={inputRenameRef}
                             />
                           </div>
                         </div>
                         <DialogFooter>
-                          <Button type="submit">
+                          <Button
+                            onClick={() =>
+                              renameFolderHandler(
+                                index,
+                                inputRenameRef.current
+                                  ?.value ?? folder.name
+                              )
+                            }
+                          >
                             変更
                           </Button>
                         </DialogFooter>
@@ -177,10 +191,9 @@ const PlayListSideBar = ({
                         </DialogHeader>
                         <DialogFooter>
                           <Button
-                            onClick={deleteFolderHandler(
-                              index
-                            )}
-                            type="submit"
+                            onClick={() =>
+                              deleteFolderHandler(index)
+                            }
                           >
                             削除
                           </Button>

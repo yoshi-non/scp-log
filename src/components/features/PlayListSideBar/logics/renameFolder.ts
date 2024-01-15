@@ -8,8 +8,8 @@ export const renameFolder = (
   newName: string,
   localStorageObjects: LocalStorageObjects
 ) => {
-  const newLocalStorageObjects = localStorageObjects;
-  newLocalStorageObjects[index + 1].name = newName;
+  const newLocalStorageObjects = [...localStorageObjects];
+  newLocalStorageObjects[index].name = newName;
   saveToLocalStorage('myData', newLocalStorageObjects);
   return newLocalStorageObjects;
 };
