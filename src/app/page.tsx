@@ -24,6 +24,8 @@ export default function Home() {
   // dev環境ではkeyをmyDataにしている
   const [localStorageObjects, setLocalStorageObjects] =
     useState<LocalStorageObjects | null>(null);
+  const [selectedFolder, setSelectedFolder] =
+    useState<number>(0);
 
   useEffect(() => {
     const storedData = getFromLocalStorage('myData');
@@ -38,9 +40,9 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="px-10">
+    <main>
       <Tabs defaultValue="playlist" className="w-full">
-        <TabsList>
+        <TabsList className="mx-5">
           <TabsTrigger value="playlist">
             Playlist
           </TabsTrigger>
@@ -51,14 +53,16 @@ export default function Home() {
         <TabsContent value="playlist">
           <ResizablePanelGroup
             direction="horizontal"
-            className="min-h-[500px] rounded-lg border"
+            className="min-h-[620px] border-y-2"
           >
-            <ResizablePanel defaultSize={25}>
+            <ResizablePanel defaultSize={25} maxSize={50}>
               <PlayListSideBar
                 localStorageObjects={localStorageObjects}
                 setLocalStorageObjects={
                   setLocalStorageObjects
                 }
+                selectedFolder={selectedFolder}
+                setSelectedFolder={setSelectedFolder}
               />
             </ResizablePanel>
             <ResizableHandle withHandle />

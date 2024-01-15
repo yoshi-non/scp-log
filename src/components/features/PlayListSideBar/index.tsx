@@ -9,11 +9,17 @@ type Props = {
   setLocalStorageObjects: React.Dispatch<
     React.SetStateAction<LocalStorageObjects | null>
   >;
+  selectedFolder: number;
+  setSelectedFolder: React.Dispatch<
+    React.SetStateAction<number>
+  >;
 };
 
 const PlayListSideBar = ({
   localStorageObjects,
   setLocalStorageObjects,
+  selectedFolder,
+  setSelectedFolder,
 }: Props) => {
   const addFolderHandler = () => {
     const newFolder = {
@@ -29,27 +35,32 @@ const PlayListSideBar = ({
     setLocalStorageObjects(newLocalStorageObjects);
   };
   return (
-    <div className="p-2">
+    <div className="p-1">
       <Button
         onClick={addFolderHandler}
         variant="ghost"
-        className="w-full"
+        className="w-full bg-primary-foreground text-primary justify-start"
       >
         <CardStackPlusIcon />
         <span>&nbsp;&nbsp;Add Folder</span>
       </Button>
-      <ScrollArea className="mt-2 h-full w-full rounded-md">
-        <div className="flex flex-col gap-2">
-          {localStorageObjects?.map((folder) => (
+      <ScrollArea className="mt-1 h-full w-full">
+        <div className="flex flex-col gap-1">
+          {localStorageObjects?.map((folder, index) => (
             <Button
               key={folder.id}
+              onClick={() => setSelectedFolder(index)}
               variant="ghost"
-              className="w-full border-b-2 border-gray-300 rounded-none"
+              className={`w-full rounded-none justify-start ${
+                selectedFolder === index &&
+                'bg-muted-foreground text-primary-foreground hover:bg-muted-foreground'
+              }`}
             >
               {folder.name}
             </Button>
           ))}
-          {localStorageObjects?.length === 0 && (
+          {(localStorageObjects?.length === 0 ||
+            localStorageObjects === null) && (
             <p className="text-center">
               You don&apos;t have any folder yet.
             </p>
