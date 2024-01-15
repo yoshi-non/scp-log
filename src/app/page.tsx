@@ -38,6 +38,20 @@ export default function Home() {
     }
   }, []);
 
+  const addFolderHandler = () => {
+    const newFolder = {
+      id: localStorageObjects?.length || 0,
+      name: 'New Folder',
+    };
+
+    const newLocalStorageObjects = localStorageObjects
+      ? [...localStorageObjects, newFolder]
+      : [newFolder];
+
+    saveToLocalStorage('myData', newLocalStorageObjects);
+    setLocalStorageObjects(newLocalStorageObjects);
+  };
+
   return (
     <main className="px-10">
       <Tabs defaultValue="playlist" className="w-full">
@@ -56,7 +70,11 @@ export default function Home() {
           >
             <ResizablePanel defaultSize={25}>
               <div className="flex h-full p-2">
-                <Button variant="ghost" className="w-full">
+                <Button
+                  onClick={addFolderHandler}
+                  variant="ghost"
+                  className="w-full"
+                >
                   <CardStackPlusIcon />
                   <span>&nbsp;&nbsp;Add Folder</span>
                 </Button>
