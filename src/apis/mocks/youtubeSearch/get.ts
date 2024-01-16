@@ -816,7 +816,8 @@ export const mockYoutubeSearchGet = () => {
             height: 180,
           },
           high: {
-            url: 'https://i.ytimg.com/vi/K-3D-7TViCI/hqdefault_live.jpg',
+            url: 'https://i.ytimg.com/vi/K-3D-7TViCI/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLC4lfJAsedFK1c0KhleyftMTMbQnA',
+            // url: 'https://i.ytimg.com/vi/K-3D-7TViCI/hqdefault_live.jpg',
             width: 480,
             height: 360,
           },

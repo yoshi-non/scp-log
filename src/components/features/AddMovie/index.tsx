@@ -47,7 +47,7 @@ const AddMovie = () => {
         </form>
       </div>
       <div className="w-full flex flex-wrap justify-center">
-        {searchResult.length > 0 ? (
+        {searchResult.length > 0 &&
           searchResult.map((item, index) => (
             <div
               key={index}
@@ -64,10 +64,7 @@ const AddMovie = () => {
                 }
               />
             </div>
-          ))
-        ) : (
-          <div>検索結果がありません</div>
-        )}
+          ))}
       </div>
     </div>
   );
