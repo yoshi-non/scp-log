@@ -1,7 +1,8 @@
+import { mockYoutubeSearchGet } from '@/apis/mocks/youtubeSearch/get';
 import { Input } from '@/components/ui/input';
 import { youtubeSearch } from '@/utils/youtubeSearch';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const AddMovie = () => {
   const [keyword, setKeyword] = useState<string>('');
@@ -14,18 +15,21 @@ const AddMovie = () => {
     event.preventDefault();
     event.stopPropagation();
     if (!checkValidate()) return;
-    const data = await youtubeSearch(keyword);
-    if (!data) return;
-    setSearchResult(data);
+    // localhostの場合は、APIを叩かない
+    const domain = window.location.origin;
+    if (domain === 'http://localhost:3000') {
+      const data = mockYoutubeSearchGet();
+      setSearchResult(data);
+    } else {
+      const data = await youtubeSearch(keyword);
+      if (!data) return;
+      setSearchResult(data);
+    }
   };
 
   const checkValidate = () => {
     return !!keyword.trim();
   };
-
-  useEffect(() => {
-    console.log(searchResult);
-  }, [searchResult]);
 
   return (
     <div>
