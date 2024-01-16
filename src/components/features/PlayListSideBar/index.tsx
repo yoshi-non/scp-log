@@ -31,9 +31,9 @@ import { renameFolder } from './logics/renameFolder';
 import { deleteFolder } from './logics/deleteFolder';
 
 type Props = {
-  localStorageObjects: LocalStorageObjects | null;
+  localStorageObjects: LocalStorageObjects;
   setLocalStorageObjects: React.Dispatch<
-    React.SetStateAction<LocalStorageObjects | null>
+    React.SetStateAction<LocalStorageObjects>
   >;
   selectedFolder: number;
   setSelectedFolder: React.Dispatch<
@@ -94,7 +94,7 @@ const PlayListSideBar = ({
       </Button>
       <ScrollArea className="mt-1 h-full w-full">
         <div className="flex flex-col gap-1">
-          {localStorageObjects?.map((folder, index) => (
+          {localStorageObjects.map((folder, index) => (
             <div
               key={index}
               className="flex justify-between"
@@ -208,8 +208,7 @@ const PlayListSideBar = ({
               </Menubar>
             </div>
           ))}
-          {(localStorageObjects?.length === 0 ||
-            localStorageObjects === null) && (
+          {localStorageObjects.length === 0 && (
             <p className="text-center">
               You don&apos;t have any folder yet.
             </p>

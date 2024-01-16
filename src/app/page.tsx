@@ -24,7 +24,7 @@ export default function Home() {
   // localstarageに保存されているデータを取得
   // dev環境ではkeyをmyDataにしている
   const [localStorageObjects, setLocalStorageObjects] =
-    useState<LocalStorageObjects | null>(null);
+    useState<LocalStorageObjects>([]);
   const [selectedFolder, setSelectedFolder] =
     useState<number>(0);
 
@@ -33,10 +33,7 @@ export default function Home() {
     if (storedData) {
       setLocalStorageObjects(storedData);
     } else {
-      const initialData: LocalStorageObjects = [];
-
-      saveToLocalStorage('myData', initialData);
-      setLocalStorageObjects(initialData);
+      saveToLocalStorage('myData', localStorageObjects);
     }
   }, []);
 
@@ -77,7 +74,9 @@ export default function Home() {
           </ResizablePanelGroup>
         </TabsContent>
         <TabsContent value="addMovie">
-          <AddMovie />
+          <AddMovie
+            localStorageObjects={localStorageObjects}
+          />
         </TabsContent>
       </Tabs>
     </main>

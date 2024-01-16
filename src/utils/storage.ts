@@ -50,7 +50,7 @@ export const updateLocalStorage = (
 
 export const getFromLocalStorage = (
   key: string
-): LocalStorageObjects | null => {
+): LocalStorageObjects | false => {
   try {
     const storedData = localStorage.getItem(key);
 
@@ -58,12 +58,12 @@ export const getFromLocalStorage = (
       return JSON.parse(storedData) as LocalStorageObjects;
     }
 
-    return null;
+    return false;
   } catch (error) {
     console.error(
       'Error getting data from localStorage:',
       error
     );
-    return null;
+    return false;
   }
 };
