@@ -76,6 +76,7 @@ export default function Home() {
         <TabsContent value="addMovie">
           <AddMovie
             localStorageObjects={localStorageObjects}
+            setLocalStorageObjects={setLocalStorageObjects}
           />
         </TabsContent>
       </Tabs>

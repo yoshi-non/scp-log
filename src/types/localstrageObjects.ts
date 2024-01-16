@@ -1,6 +1,6 @@
 export type LocalStorageObjects = {
   name: string;
-  movies?: {
+  movies: {
     id: string;
     favorite: boolean;
   }[];

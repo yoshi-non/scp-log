@@ -52,6 +52,7 @@ const PlayListSideBar = ({
   const addFolderHandler = () => {
     const newFolder = {
       name: 'New Folder',
+      movies: [],
     };
     const newLocalStorageObjects = localStorageObjects
       ? [...localStorageObjects, newFolder]
