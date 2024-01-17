@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/resizable';
 import PlayListSideBar from '@/components/features/PlayListSideBar';
 import AddMovie from '@/components/features/AddMovie';
+import PlayList from '@/components/features/PlayList';
 
 export default function Home() {
   // localstarageに保存されているデータを取得
@@ -65,11 +66,14 @@ export default function Home() {
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={80}>
-              <div className="flex h-full items-center justify-center p-6">
-                <span className="font-semibold">
-                  Content
-                </span>
-              </div>
+              <PlayList
+                localStorageObjects={localStorageObjects}
+                setLocalStorageObjects={
+                  setLocalStorageObjects
+                }
+                selectedFolder={selectedFolder}
+                setSelectedFolder={setSelectedFolder}
+              />
             </ResizablePanel>
           </ResizablePanelGroup>
         </TabsContent>
