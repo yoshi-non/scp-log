@@ -1,4 +1,5 @@
 import { LocalStorageObjects } from '@/types/localstrageObjects';
+import { TriangleRightIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
 import { useState } from 'react';
 
@@ -23,36 +24,60 @@ const PlayList = ({
     useState<number>(0);
   const [isPlaying, setIsPlaying] =
     useState<boolean>(false);
+
   return (
     <div className="flex w-full">
       {localStorageObjects[selectedFolder]?.movies.length >
       0 ? (
         <div className="min-h-[620px] w-[300px] bg-primary-foreground flex direction-normal items-start justify-center">
-          <div className="">
-            <div className="overflow-hidden flex justify-center items-center w-[240px] h-[130px]">
-              <Image
-                src={
-                  localStorageObjects[selectedFolder]
-                    .movies[0].thumbnail
-                }
-                width={240}
-                height={130}
-                alt="thumbnail"
-              />
-            </div>
+          {isPlaying ? (
+            // youtubeを再生するプレイヤー
             <div>
-              <p className="font-bold">
-                {localStorageObjects[selectedFolder].name}
-              </p>
-              <p>
-                {
-                  localStorageObjects[selectedFolder].movies
-                    .length
-                }
-                本の動画
-              </p>
+              <div className="w-[300px] h-[170px]">
+                <iframe
+                  className="w-full h-full"
+                  src={`https://www.youtube.com/embed/${localStorageObjects[selectedFolder].movies[selectedMovieIndex].id}`}
+                  title="YouTube video player"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+              <div>
+                <p className="text-xl p-2">
+                  {
+                    localStorageObjects[selectedFolder]
+                      .movies[selectedMovieIndex].title
+                  }
+                </p>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="w-[300px] flex flex-col">
+              <div className="overflow-hidden flex justify-center items-center w-[300px] h-[170px]">
+                <Image
+                  src={
+                    localStorageObjects[selectedFolder]
+                      .movies[0].thumbnail
+                  }
+                  width={300}
+                  height={170}
+                  alt="thumbnail"
+                />
+              </div>
+              <div className="text-left">
+                <p className="font-bold">
+                  {localStorageObjects[selectedFolder].name}
+                </p>
+                <p>
+                  {
+                    localStorageObjects[selectedFolder]
+                      .movies.length
+                  }
+                  本の動画
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <div className="flex justify-between items-center border-b-2 border-primary-background">
@@ -60,31 +85,41 @@ const PlayList = ({
         </div>
       )}
       <div className="w-full">
-        <div>
-          {localStorageObjects[selectedFolder]?.movies.map(
-            (movie, index) => (
-              <button
-                key={movie.id}
-                onClick={() => {
-                  setSelectedMovieIndex(index);
-                }}
-                className="h-[130px] w-full flex border-b-2 border-primary-background overflow-hidden"
-              >
-                <div className="min-w-[240px] w-[240px] h-[130px] overflow-hidden flex justify-center items-center bg-black">
-                  <Image
-                    src={movie.thumbnail}
-                    width={240}
-                    height={130}
-                    alt="thumbnail"
+        {localStorageObjects[selectedFolder]?.movies.map(
+          (movie, index) => (
+            <button
+              key={movie.id}
+              onClick={() => {
+                setSelectedMovieIndex(index);
+                setIsPlaying(true);
+              }}
+              className="h-[100px] w-full flex border-b-2 border-primary-background overflow-hidden"
+            >
+              <div className="h-full min-w-10 flex justify-center items-center">
+                {index === selectedMovieIndex &&
+                isPlaying ? (
+                  <TriangleRightIcon
+                    width={30}
+                    height={30}
                   />
-                </div>
-                <p className="p-2 text-left flex-auto">
-                  {movie.title}
-                </p>
-              </button>
-            )
-          )}
-        </div>
+                ) : (
+                  index + 1
+                )}
+              </div>
+              <div className="min-w-[200px] w-[180px] h-[100px] overflow-hidden flex justify-center items-center bg-black">
+                <Image
+                  src={movie.thumbnail}
+                  width={240}
+                  height={130}
+                  alt="thumbnail"
+                />
+              </div>
+              <p className="p-2 text-left flex-auto">
+                {movie.title}
+              </p>
+            </button>
+          )
+        )}
       </div>
     </div>
   );
