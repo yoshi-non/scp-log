@@ -28,6 +28,7 @@ import {
 import { cn } from '@/libs/utils';
 import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { preserveToFolder } from './logics/preserveToFolder';
+import { mockYoutubeSearchGetDomain } from '@/apis/mocks/common';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -54,7 +55,7 @@ const AddMovie = ({
     if (!checkValidate()) return;
     // localhostの場合は、APIを叩かない
     const domain = window.location.origin;
-    if (domain === 'http://localhost:3000') {
+    if (domain === mockYoutubeSearchGetDomain) {
       const data = mockYoutubeSearchGet();
       setSearchResult(data);
     } else {
@@ -68,11 +69,17 @@ const AddMovie = ({
     return !!keyword.trim();
   };
 
-  const preserveToFolderHandler = (movieId: string) => {
+  const preserveToFolderHandler = (
+    movieId: string,
+    movieTitle: string,
+    thumbnailUrl: string
+  ) => {
     if (!value) return;
     const newObjects = preserveToFolder(
       value,
       movieId,
+      movieTitle,
+      thumbnailUrl,
       localStorageObjects
     );
     setLocalStorageObjects(newObjects);
@@ -203,7 +210,9 @@ const AddMovie = ({
                         disabled={!value}
                         onClick={() =>
                           preserveToFolderHandler(
-                            item.id.videoId
+                            item.id.videoId,
+                            item.snippet.title,
+                            item.snippet.thumbnails.high.url
                           )
                         }
                       >

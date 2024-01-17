@@ -4,6 +4,8 @@ import { saveToLocalStorage } from '@/utils/storage';
 export const preserveToFolder = (
   value: number,
   movieId: string,
+  movieTitle: string,
+  thumbnailUrl: string,
   localStorageObjects: LocalStorageObjects
 ) => {
   const newLocalStorageObjects = [...localStorageObjects];
@@ -11,6 +13,8 @@ export const preserveToFolder = (
   if (targetFolder) {
     targetFolder.movies.push({
       id: movieId,
+      title: movieTitle,
+      thumbnail: thumbnailUrl,
       favorite: false,
     });
   }
