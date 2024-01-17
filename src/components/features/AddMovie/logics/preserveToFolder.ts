@@ -9,15 +9,13 @@ export const preserveToFolder = (
   localStorageObjects: LocalStorageObjects
 ) => {
   const newLocalStorageObjects = [...localStorageObjects];
-  const targetFolder = newLocalStorageObjects[value];
-  if (targetFolder) {
-    targetFolder.movies.push({
-      id: movieId,
-      title: movieTitle,
-      thumbnail: thumbnailUrl,
-      favorite: false,
-    });
-  }
+  const currentFolder = localStorageObjects[value].movies;
+  currentFolder.push({
+    id: movieId,
+    title: movieTitle,
+    thumbnail: thumbnailUrl,
+    favorite: false,
+  });
   saveToLocalStorage('myData', newLocalStorageObjects);
   return newLocalStorageObjects;
 };

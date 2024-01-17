@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -83,7 +84,6 @@ const AddMovie = ({
       localStorageObjects
     );
     setLocalStorageObjects(newObjects);
-    setOpen(false);
   };
 
   return (
@@ -113,9 +113,6 @@ const AddMovie = ({
               className="w-[240px] h-[130px] object-cover rounded-md"
               src={item.snippet.thumbnails.high.url}
               alt={item.snippet.title}
-              onError={(e) =>
-                console.error('Image failed to load', e)
-              }
             />
             <div>
               <div className="mt-2 flex justify-between">
@@ -205,19 +202,22 @@ const AddMovie = ({
                       </Popover>
                     </div>
                     <DialogFooter>
-                      <Button
-                        type="submit"
-                        disabled={value === null}
-                        onClick={() =>
-                          preserveToFolderHandler(
-                            item.id.videoId,
-                            item.snippet.title,
-                            item.snippet.thumbnails.high.url
-                          )
-                        }
-                      >
-                        保存
-                      </Button>
+                      <DialogClose asChild>
+                        <Button
+                          type="submit"
+                          disabled={value === null}
+                          onClick={() =>
+                            preserveToFolderHandler(
+                              item.id.videoId,
+                              item.snippet.title,
+                              item.snippet.thumbnails.high
+                                .url
+                            )
+                          }
+                        >
+                          保存
+                        </Button>
+                      </DialogClose>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>

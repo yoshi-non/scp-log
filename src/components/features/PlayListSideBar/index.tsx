@@ -158,17 +158,19 @@ const PlayListSideBar = ({
                           </div>
                         </div>
                         <DialogFooter>
-                          <Button
-                            onClick={() =>
-                              renameFolderHandler(
-                                index,
-                                inputRenameRef.current
-                                  ?.value ?? folder.name
-                              )
-                            }
-                          >
-                            変更
-                          </Button>
+                          <DialogClose asChild>
+                            <Button
+                              onClick={() =>
+                                renameFolderHandler(
+                                  index,
+                                  inputRenameRef.current
+                                    ?.value ?? folder.name
+                                )
+                              }
+                            >
+                              変更
+                            </Button>
+                          </DialogClose>
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>
