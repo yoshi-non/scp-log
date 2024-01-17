@@ -207,7 +207,7 @@ const AddMovie = ({
                     <DialogFooter>
                       <Button
                         type="submit"
-                        disabled={!value}
+                        disabled={value === null}
                         onClick={() =>
                           preserveToFolderHandler(
                             item.id.videoId,
