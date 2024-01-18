@@ -3,6 +3,7 @@ export type LocalStorageObjects = {
   movies: {
     id: string;
     title: string;
+    // channel: string;
     thumbnail: string;
     favorite: boolean;
   }[];
