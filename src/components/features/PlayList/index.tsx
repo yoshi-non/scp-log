@@ -2,6 +2,8 @@ import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { TriangleRightIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
 import { useState } from 'react';
+import { getOnVideoEndIndex } from './logics/getOnVideoEndIndex';
+import YoutubePlayer from '@/components/ui/youtubePlayer';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -25,6 +27,14 @@ const PlayList = ({
   const [isPlaying, setIsPlaying] =
     useState<boolean>(false);
 
+  const onVideoEndHandler = () => {
+    const index = getOnVideoEndIndex(
+      selectedMovieIndex,
+      localStorageObjects[selectedFolder].movies.length
+    );
+    setSelectedMovieIndex(index);
+  };
+
   return (
     <div className="flex w-full">
       {localStorageObjects[selectedFolder]?.movies.length >
@@ -34,13 +44,21 @@ const PlayList = ({
             // youtubeを再生するプレイヤー
             <div>
               <div className="w-[300px] h-[170px]">
-                <iframe
+                {/* <iframe
                   className="w-full h-full"
                   src={`https://www.youtube.com/embed/${localStorageObjects[selectedFolder].movies[selectedMovieIndex].id}`}
                   title="YouTube video player"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                ></iframe>
+                  onEnded={onVideoEndHandler}
+                ></iframe> */}
+                <YoutubePlayer
+                  videoId={
+                    localStorageObjects[selectedFolder]
+                      .movies[selectedMovieIndex].id
+                  }
+                  onVideoEnd={onVideoEndHandler}
+                />
               </div>
               <div>
                 <p className="text-xl p-2">
