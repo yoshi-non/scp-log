@@ -253,42 +253,6 @@ export const mockYoutubeSearchGet = () => {
     },
     {
       kind: 'youtube#searchResult',
-      etag: 'iXBSVeVvaKHgINBknIi4iW-JOK8',
-      id: {
-        kind: 'youtube#video',
-        videoId: 'pd1kRy2QTOA',
-      },
-      snippet: {
-        publishedAt: '2024-01-15T10:08:57Z',
-        channelId: 'UCQVr6XWvWIY2PgFg_YdQLMg',
-        title:
-          '睡眠用bgm 疲労回复🎵 睡眠用超熟睡音楽 寝る前に聴くと疲れが取れる音楽 ひどい睡眠不足から熟睡でき朝の目覚めがスッキリ！ 睡眠用bgm,眠れる 曲,寝れる音楽,睡眠導入,寝る時に聞く音楽',
-        description:
-          'こんにちは、みんな！ これらの音符ピアノを心を込めて作曲しました！ それもあなたの心に触れることを願っています！',
-        thumbnails: {
-          default: {
-            url: 'https://i.ytimg.com/vi/pd1kRy2QTOA/default_live.jpg',
-            width: 120,
-            height: 90,
-          },
-          medium: {
-            url: 'https://i.ytimg.com/vi/pd1kRy2QTOA/mqdefault_live.jpg',
-            width: 320,
-            height: 180,
-          },
-          high: {
-            url: 'https://i.ytimg.com/vi/pd1kRy2QTOA/hqdefault_live.jpg',
-            width: 480,
-            height: 360,
-          },
-        },
-        channelTitle: 'Minan - 睡眠用bgm 疲労回復',
-        liveBroadcastContent: 'live',
-        publishTime: '2024-01-15T10:08:57Z',
-      },
-    },
-    {
-      kind: 'youtube#searchResult',
       etag: 'tCODr4dtu3Bdfgsq1YJbCZgJ1iI',
       id: {
         kind: 'youtube#video',
@@ -1323,42 +1287,6 @@ export const mockYoutubeSearchGet = () => {
         channelTitle: 'Relax Music BGM CHANNEL',
         liveBroadcastContent: 'live',
         publishTime: '2024-01-14T13:26:41Z',
-      },
-    },
-    {
-      kind: 'youtube#searchResult',
-      etag: '7PXYGHfTM4Q3dOaSwQoqlilId1g',
-      id: {
-        kind: 'youtube#video',
-        videoId: '13NZtJM7xBs',
-      },
-      snippet: {
-        publishedAt: '2022-10-04T21:30:00Z',
-        channelId: 'UC1FwWgUty6DaQZVhJzY_Lfg',
-        title:
-          '【広告なし】有名曲J-POPメドレー- 邦楽 ランキング 曲🎶日本最高の歌メドレー || 優里、 YOASOBI、あいみょん、米津玄師 、宇多田ヒカル、ヨルシカ',
-        description:
-          'milet #曲 #JPOP 私があなたに勧める他の歌手！ それらのいずれかが気に入った場合は、以下のリンクをクリックしてください。',
-        thumbnails: {
-          default: {
-            url: 'https://i.ytimg.com/vi/13NZtJM7xBs/default.jpg',
-            width: 120,
-            height: 90,
-          },
-          medium: {
-            url: 'https://i.ytimg.com/vi/13NZtJM7xBs/mqdefault.jpg',
-            width: 320,
-            height: 180,
-          },
-          high: {
-            url: 'https://i.ytimg.com/vi/13NZtJM7xBs/hqdefault.jpg',
-            width: 480,
-            height: 360,
-          },
-        },
-        channelTitle: 'Best Of Me',
-        liveBroadcastContent: 'none',
-        publishTime: '2022-10-04T21:30:00Z',
       },
     },
     {
