@@ -102,11 +102,8 @@ const AddMovie = ({
         </form>
       </div>
       <div className="w-full flex flex-wrap justify-center">
-        {searchResult.map((item) => (
-          <div
-            key={item.id.videoId}
-            className="w-[240px] mx-5 my-2"
-          >
+        {searchResult.map((item, i) => (
+          <div key={i} className="w-[240px] mx-5 my-2">
             <Image
               width={240}
               height={130}
