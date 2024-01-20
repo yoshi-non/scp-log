@@ -80,7 +80,7 @@ const AddMovie = ({
     movieTitle: string,
     thumbnailUrl: string
   ) => {
-    if (!value) return;
+    if (value === null) return;
     const newObjects = preserveToFolder(
       value,
       movieId,
