@@ -1,5 +1,6 @@
 import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { saveToLocalStorage } from '@/utils/storage';
+import { toast } from 'sonner';
 
 export const preserveToFolder = (
   value: number,
@@ -9,6 +10,7 @@ export const preserveToFolder = (
   localStorageObjects: LocalStorageObjects
 ) => {
   const newLocalStorageObjects = [...localStorageObjects];
+  toast(`${movieTitle}を保存しました。`);
   const currentFolder = localStorageObjects[value].movies;
   currentFolder.push({
     id: movieId,

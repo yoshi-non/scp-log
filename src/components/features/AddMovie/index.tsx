@@ -31,7 +31,7 @@ import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { preserveToFolder } from './logics/preserveToFolder';
 import { mockYoutubeSearchGetDomain } from '@/apis/mocks/common';
 import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
-import { toast } from 'sonner';
+
 type Props = {
   localStorageObjects: LocalStorageObjects;
   setLocalStorageObjects: React.Dispatch<
@@ -88,8 +88,8 @@ const AddMovie = ({
       thumbnailUrl,
       localStorageObjects
     );
+
     setLocalStorageObjects(newObjects);
-    toast(`${movieTitle}を保存しました。`);
   };
 
   return (

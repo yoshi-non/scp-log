@@ -29,15 +29,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { renameFolder } from './logics/renameFolder';
 import { deleteFolder } from './logics/deleteFolder';
-import { toast } from 'sonner';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
   setLocalStorageObjects: React.Dispatch<
     React.SetStateAction<LocalStorageObjects>
   >;
-  selectedFolder: number;
-  setSelectedFolder: React.Dispatch<
+  selectedFolderIndex: number;
+  setSelectedFolderIndex: React.Dispatch<
     React.SetStateAction<number>
   >;
 };
@@ -45,8 +44,8 @@ type Props = {
 const PlayListSideBar = ({
   localStorageObjects,
   setLocalStorageObjects,
-  selectedFolder,
-  setSelectedFolder,
+  selectedFolderIndex,
+  setSelectedFolderIndex,
 }: Props) => {
   const inputRenameRef = useRef<HTMLInputElement>(null);
 
@@ -82,15 +81,6 @@ const PlayListSideBar = ({
       localStorageObjects
     );
     setLocalStorageObjects(newObject);
-    toast(
-      `${localStorageObjects[index].name}を削除しました。`,
-      {
-        style: {
-          background: '#f44336',
-          color: '#fff',
-        },
-      }
-    );
   };
 
   return (
@@ -111,10 +101,12 @@ const PlayListSideBar = ({
               className="flex justify-between"
             >
               <Button
-                onClick={() => setSelectedFolder(index)}
+                onClick={() =>
+                  setSelectedFolderIndex(index)
+                }
                 variant="ghost"
                 className={`w-full rounded-none justify-start ${
-                  selectedFolder === index &&
+                  selectedFolderIndex === index &&
                   'bg-muted-foreground text-primary-foreground hover:bg-muted-foreground hover:text-primary-foreground'
                 }`}
               >
@@ -125,7 +117,7 @@ const PlayListSideBar = ({
                   <MenubarTrigger
                     className={`h-full border-none hover:bg-primary-foreground 
                 rounded-none ${
-                  selectedFolder === index &&
+                  selectedFolderIndex === index &&
                   'bg-muted-foreground'
                 }`}
                   >

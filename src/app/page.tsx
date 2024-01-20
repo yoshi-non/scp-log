@@ -26,7 +26,7 @@ export default function Home() {
   // dev環境ではkeyをmyDataにしている
   const [localStorageObjects, setLocalStorageObjects] =
     useState<LocalStorageObjects>([]);
-  const [selectedFolder, setSelectedFolder] =
+  const [selectedFolderIndex, setSelectedFolderIndex] =
     useState<number>(0);
 
   useEffect(() => {
@@ -60,8 +60,10 @@ export default function Home() {
                 setLocalStorageObjects={
                   setLocalStorageObjects
                 }
-                selectedFolder={selectedFolder}
-                setSelectedFolder={setSelectedFolder}
+                selectedFolderIndex={selectedFolderIndex}
+                setSelectedFolderIndex={
+                  setSelectedFolderIndex
+                }
               />
             </ResizablePanel>
             <ResizableHandle withHandle />
@@ -71,8 +73,7 @@ export default function Home() {
                 setLocalStorageObjects={
                   setLocalStorageObjects
                 }
-                selectedFolder={selectedFolder}
-                setSelectedFolder={setSelectedFolder}
+                selectedFolderIndex={selectedFolderIndex}
               />
             </ResizablePanel>
           </ResizablePanelGroup>
