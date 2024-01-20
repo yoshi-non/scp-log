@@ -1,6 +1,9 @@
 import { LocalStorageObjects } from '@/types/localstrageObjects';
 import {
+  DotsVerticalIcon,
   Pencil1Icon,
+  RocketIcon,
+  TrashIcon,
   TriangleRightIcon,
 } from '@radix-ui/react-icons';
 import Image from 'next/image';
@@ -9,6 +12,12 @@ import { getOnVideoEndIndex } from './logics/getOnVideoEndIndex';
 import YoutubePlayer from '@/components/ui/youtubePlayer';
 import { renameFolder } from '../PlayListSideBar/logics/renameFolder';
 import { Button } from '@/components/ui/button';
+import {
+  Menubar,
+  MenubarContent,
+  MenubarMenu,
+  MenubarTrigger,
+} from '@/components/ui/menubar';
 import {
   Dialog,
   DialogClose,
@@ -21,6 +30,8 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { deleteFile } from './logics/deleteFile';
+import { toast } from 'sonner';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -69,6 +80,31 @@ const PlayList = ({
       localStorageObjects
     );
     setLocalStorageObjects(newObjects);
+  };
+
+  const transferFileHandler = (
+    movieIndex: number,
+    crrFolderIndex: number,
+    newFoldlerIndex: number
+  ) => {};
+
+  const deleteFileHandler = (movieIndex: number) => {
+    if (!localStorageObjects) return;
+    const newObject = deleteFile(
+      movieIndex,
+      selectedFolder,
+      localStorageObjects
+    );
+    setLocalStorageObjects(newObject);
+    toast(
+      `${localStorageObjects[selectedFolder].movies[movieIndex].title}を削除しました。`,
+      {
+        style: {
+          background: '#f44336',
+          color: '#fff',
+        },
+      }
+    );
   };
 
   return (
@@ -202,37 +238,119 @@ const PlayList = ({
       <div>
         {localStorageObjects[selectedFolder]?.movies.map(
           (movie, index) => (
-            <button
+            <div
               key={movie.id}
-              onClick={() => {
-                setSelectedMovieIndex(index);
-                setIsPlaying(true);
-              }}
-              className="h-[100px] w-full flex border-b-2 border-primary-background overflow-hidden"
+              className="h-[100px] flex justify-between items-center border-b-2 border-primary-background"
             >
-              <div className="h-full min-w-10 flex justify-center items-center">
-                {index === selectedMovieIndex &&
-                isPlaying ? (
-                  <TriangleRightIcon
-                    width={30}
-                    height={30}
+              <button
+                onClick={() => {
+                  setSelectedMovieIndex(index);
+                  setIsPlaying(true);
+                }}
+                className="h-full w-full flex overflow-hidden"
+              >
+                <div className="h-full min-w-10 flex justify-center items-center">
+                  {index === selectedMovieIndex &&
+                  isPlaying ? (
+                    <TriangleRightIcon
+                      width={30}
+                      height={30}
+                    />
+                  ) : (
+                    index + 1
+                  )}
+                </div>
+                <div className="min-w-[200px] w-[180px] h-[100px] overflow-hidden flex justify-center items-center bg-black">
+                  <Image
+                    src={movie.thumbnail}
+                    width={240}
+                    height={130}
+                    alt="thumbnail"
                   />
-                ) : (
-                  index + 1
-                )}
-              </div>
-              <div className="min-w-[200px] w-[180px] h-[100px] overflow-hidden flex justify-center items-center bg-black">
-                <Image
-                  src={movie.thumbnail}
-                  width={240}
-                  height={130}
-                  alt="thumbnail"
-                />
-              </div>
-              <p className="p-2 text-left flex-auto">
-                {movie.title}
-              </p>
-            </button>
+                </div>
+                <p className="p-2 text-left flex-auto">
+                  {movie.title}
+                </p>
+              </button>
+              <Menubar className="h-full p-0 border-none">
+                <MenubarMenu>
+                  <MenubarTrigger className="h-full border-none hover:bg-primary-foreground rounded-none">
+                    <DotsVerticalIcon className="text-primary" />
+                  </MenubarTrigger>
+                  <MenubarContent>
+                    {/* <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start px-2 py-1.5"
+                          >
+                            <RocketIcon />
+                            &nbsp; ファイル転送
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                          <DialogHeader>
+                            <DialogTitle>
+                              Transfer {}
+                            </DialogTitle>
+                            <DialogDescription>
+                              ファイルを別のフォルダーに移動します。
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="grid gap-4 py-4">
+                            
+                          </div>
+                          <DialogFooter>
+                            <DialogClose asChild>
+                              <Button
+                                onClick={() =>
+                                  transferFileHandler(index)
+                                }
+                              >
+                                転送
+                              </Button>
+                            </DialogClose>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog> */}
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start px-2 py-1.5 text-primary hover:text-primary"
+                        >
+                          <TrashIcon />
+                          &nbsp; ファイル削除
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>
+                            <p className="sm:max-w-[350px] whitespace-nowrap text-ellipsis overflow-hidden">
+                              Delete {movie.title}
+                            </p>
+                          </DialogTitle>
+                          <DialogDescription>
+                            動画を削除します。
+                          </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                          <DialogClose asChild>
+                            <Button
+                              onClick={() =>
+                                deleteFileHandler(index)
+                              }
+                            >
+                              削除
+                            </Button>
+                          </DialogClose>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </MenubarContent>
+                </MenubarMenu>
+              </Menubar>
+            </div>
           )
         )}
       </div>
