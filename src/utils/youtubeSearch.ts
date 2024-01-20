@@ -12,9 +12,6 @@ export const youtubeSearch = async (
       method: 'GET',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        'Access-Control-Allow-Origin': '*', // 任意のオリジンからのリクエストを許可
-        'Access-Control-Allow-Methods': 'GET,OPTIONS', // GETおよびOPTIONSリクエストを許可
-        'Access-Control-Allow-Headers': 'Content-Type', // Content-Typeヘッダーを許可
       },
       params: {
         part: 'snippet',
