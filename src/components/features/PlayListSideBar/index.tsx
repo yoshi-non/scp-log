@@ -29,6 +29,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { renameFolder } from './logics/renameFolder';
 import { deleteFolder } from './logics/deleteFolder';
+import { toast } from 'sonner';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -81,6 +82,15 @@ const PlayListSideBar = ({
       localStorageObjects
     );
     setLocalStorageObjects(newObject);
+    toast(
+      `${localStorageObjects[index].name}を削除しました。`,
+      {
+        style: {
+          background: '#f44336',
+          color: '#fff',
+        },
+      }
+    );
   };
 
   return (
