@@ -21,12 +21,11 @@ export const youtubeSearch = async (
       },
     };
     const res = await axios(config);
-    const videoIds = res.data.items.filter(
-      (item: YouTubeSearchResult) => {
-        return item.id.kind === 'youtube#video';
-      }
-    );
-    return videoIds;
+    const result = res.data.items as YouTubeSearchResult[];
+    const videos = result.filter((item) => {
+      return item.id.kind === 'youtube#video';
+    });
+    return videos;
   } catch (error) {
     throw error;
   }
