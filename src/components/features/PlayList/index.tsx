@@ -72,7 +72,7 @@ const PlayList = ({
   };
 
   return (
-    <div className="flex w-full">
+    <div className="flex w-full h-full">
       {localStorageObjects[selectedFolder]?.movies.length >
       0 ? (
         <div className="min-h-[620px] w-[300px] bg-muted  flex direction-normal items-start justify-center">
@@ -195,11 +195,11 @@ const PlayList = ({
           )}
         </div>
       ) : (
-        <div className="flex justify-between items-center border-b-2 border-primary-background">
-          <div>動画がありません</div>
+        <div className="h-full w-full flex justify-center items-center">
+          <div>動画を追加してください。</div>
         </div>
       )}
-      <div className="w-full">
+      <div>
         {localStorageObjects[selectedFolder]?.movies.map(
           (movie, index) => (
             <button
