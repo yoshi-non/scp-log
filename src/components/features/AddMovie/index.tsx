@@ -30,6 +30,7 @@ import { cn } from '@/libs/utils';
 import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { preserveToFolder } from './logics/preserveToFolder';
 import { mockYoutubeSearchGetDomain } from '@/apis/mocks/common';
+import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -43,9 +44,9 @@ const AddMovie = ({
   setLocalStorageObjects,
 }: Props) => {
   const [keyword, setKeyword] = useState<string>('');
-  const [searchResult, setSearchResult] = useState<any[]>(
-    []
-  );
+  const [searchResult, setSearchResult] = useState<
+    YouTubeSearchResult[]
+  >([]);
   const [open, setOpen] = useState<boolean>(false);
   const [value, setValue] = useState<number | null>(null);
   const youtubeSearchHandler = async (
@@ -57,8 +58,12 @@ const AddMovie = ({
     // localhostの場合は、APIを叩かない
     const domain = window.location.origin;
     if (domain === mockYoutubeSearchGetDomain) {
-      const data = mockYoutubeSearchGet();
-      setSearchResult(data);
+      const data =
+        mockYoutubeSearchGet() as YouTubeSearchResult[];
+      const filterData = data.filter((item) => {
+        return item.id.kind === 'youtube#video';
+      });
+      setSearchResult(filterData);
     } else {
       const data = await youtubeSearch(keyword);
       if (!data) return;

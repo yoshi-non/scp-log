@@ -1,13 +1,12 @@
 'use server';
 
+import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
 import axios, { AxiosRequestConfig } from 'axios';
 
-export const youtubeSearch: any = async (
+export const youtubeSearch = async (
   keyword: string
-) => {
+): Promise<YouTubeSearchResult[]> => {
   try {
-    // console.log(keyword);
-
     const config: AxiosRequestConfig = {
       url: 'https://www.googleapis.com/youtube/v3/search',
       method: 'GET',
@@ -18,14 +17,16 @@ export const youtubeSearch: any = async (
         part: 'snippet',
         q: keyword,
         maxResults: 50,
-        key: process.env.YOUTUBE_DATA_API_KEY, // 取得したAPIキーを設定
+        key: process.env.YOUTUBE_DATA_API_KEY,
       },
     };
     const res = await axios(config);
-
-    // console.log(res.data.items);
-
-    return res.data.items;
+    const videoIds = res.data.items.filter(
+      (item: YouTubeSearchResult) => {
+        return item.id.kind === 'youtube#video';
+      }
+    );
+    return videoIds;
   } catch (error) {
     throw error;
   }
