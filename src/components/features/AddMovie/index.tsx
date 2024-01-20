@@ -89,10 +89,7 @@ const AddMovie = ({
       localStorageObjects
     );
     setLocalStorageObjects(newObjects);
-    // 赤色のトーストを表示
-    toast(`${movieTitle}を保存しました`, {
-      
-    });
+    toast(`${movieTitle}を保存しました。`);
   };
 
   return (
