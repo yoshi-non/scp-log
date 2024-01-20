@@ -1,7 +1,7 @@
 import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { TriangleRightIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { getOnVideoEndIndex } from './logics/getOnVideoEndIndex';
 import YoutubePlayer from '@/components/ui/youtubePlayer';
 
