@@ -12,7 +12,7 @@ const notoSansJP = Noto_Sans_JP({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'SCP Log',
   description:
-    'SCP Log はオンライン・オフライン環境でそれぞれ自分だけで楽しむプレイリストを作成するアプリです。',
+    'SCP Log はプレイリストを作成するアプリです。',
 };
 
 export default function RootLayout({

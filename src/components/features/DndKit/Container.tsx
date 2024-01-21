@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   DndContext,
   closestCorners,
@@ -9,16 +9,19 @@ import {
   UniqueIdentifier,
   DragOverEvent,
   DragEndEvent,
-} from "@dnd-kit/core";
-import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import SortableContainer from "./SortableContainer";
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  sortableKeyboardCoordinates,
+} from '@dnd-kit/sortable';
+import SortableContainer from './SortableContainer';
 
 const Contaienr = () => {
   // ドラッグ&ドロップでソート可能なリスト
   const [items, setItems] = useState<{
     [key: string]: string[];
   }>({
-    container1: ["A", "B", "C"],
+    container1: ['A', 'B', 'C'],
   });
 
   // ドラッグの開始、移動、終了などにどのような入力を許可するかを決めるprops
@@ -70,28 +73,39 @@ const Contaienr = () => {
 
       // 配列のインデックス取得
       const activeIndex = activeItems.indexOf(id);
-      const overIndex = overItems.indexOf(overId.toString());
+      const overIndex = overItems.indexOf(
+        overId.toString()
+      );
 
       let newIndex;
       if (overId in prev) {
         newIndex = overItems.length + 1;
       } else {
-        const isBelowLastItem = over && overIndex === overItems.length - 1;
+        const isBelowLastItem =
+          over && overIndex === overItems.length - 1;
 
         const modifier = isBelowLastItem ? 1 : 0;
 
-        newIndex = overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
+        newIndex =
+          overIndex >= 0
+            ? overIndex + modifier
+            : overItems.length + 1;
       }
 
       return {
         ...prev,
         [activeContainer]: [
-          ...prev[activeContainer].filter((item) => item !== active.id),
+          ...prev[activeContainer].filter(
+            (item) => item !== active.id
+          ),
         ],
         [overContainer]: [
           ...prev[overContainer].slice(0, newIndex),
           items[activeContainer][activeIndex],
-          ...prev[overContainer].slice(newIndex, prev[overContainer].length),
+          ...prev[overContainer].slice(
+            newIndex,
+            prev[overContainer].length
+          ),
         ],
       };
     });
@@ -122,7 +136,9 @@ const Contaienr = () => {
 
     // 配列のインデックス取得
     const activeIndex = items[activeContainer].indexOf(id);
-    const overIndex = items[overContainer].indexOf(overId.toString());
+    const overIndex = items[overContainer].indexOf(
+      overId.toString()
+    );
 
     if (activeIndex !== overIndex) {
       setItems((items) => ({
@@ -144,11 +160,7 @@ const Contaienr = () => {
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
-        <SortableContainer
-          id="container1"
-          items={items.container1}
-          label="container1"
-        />
+        <SortableContainer items={items.container1} />
       </DndContext>
     </div>
   );

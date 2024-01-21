@@ -1,4 +1,6 @@
-import { LocalStorageObjects } from '@/types/localstrageObjects';
+import {
+  LocalStorageObjects,
+} from '@/types/localstrageObjects';
 import {
   DotsVerticalIcon,
   Pencil1Icon,
@@ -44,6 +46,26 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { deleteFile } from './logics/deleteFile';
 import { transferFile } from './logics/transferFile';
+import {
+  DndContext,
+  closestCorners,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  UniqueIdentifier,
+  DragOverEvent,
+  DragEndEvent,
+  useDroppable,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  sortableKeyboardCoordinates,
+  rectSortingStrategy,
+  SortableContext,
+} from '@dnd-kit/sortable';
+import SortableItemWrapper from '../DndKit/SortableItemWrapper';
+import { saveToLocalStorage } from '@/utils/storage';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -120,6 +142,171 @@ const PlayList = ({
     );
     setLocalStorageObjects(newObject);
   };
+
+  // ドラッグ&ドロップでソート可能なリスト
+  const [items, setItems] = useState<{
+    [key: string]: string[];
+  }>({
+    container1: [],
+  });
+
+  // ドラッグの開始、移動、終了などにどのような入力を許可するかを決めるprops
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  //各コンテナ取得関数
+  const findContainer = (id: UniqueIdentifier) => {
+    if (id in items) {
+      return id;
+    }
+    return Object.keys(items).find((key: string) =>
+      items[key].includes(id.toString())
+    );
+  };
+
+  //ドラッグ可能なアイテムがドロップ可能なコンテナの上に移動時に発火する関数
+  const handleDragOver = (event: DragOverEvent) => {
+    const { active, over } = event;
+    //ドラッグしたリソースのid
+    const id = active.id.toString();
+    //ドロップした場所にあったリソースのid
+    const overId = over?.id;
+
+    if (!overId) return;
+
+    // ドラッグ、ドロップ時のコンテナ取得
+    // container1,container2,container3,container4のいずれかを持つ
+    const activeContainer = findContainer(id);
+    const overContainer = findContainer(over?.id);
+
+    if (
+      !activeContainer ||
+      !overContainer ||
+      activeContainer === overContainer
+    ) {
+      return;
+    }
+
+    setItems((prev) => {
+      // 移動元のコンテナの要素配列を取得
+      const activeItems = prev[activeContainer];
+      // 移動先のコンテナの要素配列を取得
+      const overItems = prev[overContainer];
+
+      // 配列のインデックス取得
+      const activeIndex = activeItems.indexOf(id);
+      const overIndex = overItems.indexOf(
+        overId.toString()
+      );
+
+      let newIndex;
+      if (overId in prev) {
+        newIndex = overItems.length + 1;
+      } else {
+        const isBelowLastItem =
+          over && overIndex === overItems.length - 1;
+
+        const modifier = isBelowLastItem ? 1 : 0;
+
+        newIndex =
+          overIndex >= 0
+            ? overIndex + modifier
+            : overItems.length + 1;
+      }
+
+      return {
+        ...prev,
+        [activeContainer]: [
+          ...prev[activeContainer].filter(
+            (item) => item !== active.id
+          ),
+        ],
+        [overContainer]: [
+          ...prev[overContainer].slice(0, newIndex),
+          items[activeContainer][activeIndex],
+          ...prev[overContainer].slice(
+            newIndex,
+            prev[overContainer].length
+          ),
+        ],
+      };
+    });
+  };
+
+  // ドラッグ終了時に発火する関数
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    //ドラッグしたリソースのid
+    const id = active.id.toString();
+    //ドロップした場所にあったリソースのid
+    const overId = over?.id;
+
+    if (!overId) return;
+
+    // ドラッグ、ドロップ時のコンテナ取得
+    const activeContainer = findContainer(id);
+    const overContainer = findContainer(over?.id);
+
+    if (
+      !activeContainer ||
+      !overContainer ||
+      activeContainer !== overContainer
+    ) {
+      return;
+    }
+
+    // 配列のインデックス取得
+    const activeIndex = items[activeContainer].indexOf(id);
+    const overIndex = items[overContainer].indexOf(
+      overId.toString()
+    );
+
+    if (activeIndex !== overIndex) {
+      // ローカルストレージの更新
+      const newLocalStorageObjects = [
+        ...localStorageObjects,
+      ];
+      // newLocalStorageObjects[selectedFolderIndex].moviesのindex値でactiveIndexとoverIndexを入れ替える
+      const newObjects = newLocalStorageObjects.map(
+        (localStorageObject, folderIndex) => {
+          if (folderIndex === selectedFolderIndex) {
+            return {
+              ...localStorageObject,
+              movies: arrayMove(
+                localStorageObject.movies,
+                activeIndex,
+                overIndex
+              ),
+            };
+          } else {
+            return localStorageObject;
+          }
+        }
+      );
+      setLocalStorageObjects(newObjects);
+      saveToLocalStorage('myData', newObjects);
+    } else {
+      // 動画を再生する
+      setSelectedMovieIndex(activeIndex);
+      setIsPlaying(true);
+    }
+  };
+
+  const { setNodeRef } = useDroppable({
+    id: 'container1',
+  });
+
+  useEffect(() => {
+    setItems({
+      container1: localStorageObjects[
+        selectedFolderIndex
+      ]?.movies.map((_, index) => String(index)),
+    });
+  }, [localStorageObjects]);
 
   return (
     <div className="flex w-full h-full">
@@ -250,190 +437,219 @@ const PlayList = ({
           <div>動画を追加してください。</div>
         </div>
       )}
-      <div className="flex-auto">
-        {localStorageObjects[
-          selectedFolderIndex
-        ]?.movies.map((movie, index) => (
-          <div
-            key={movie.id}
-            className="h-[100px] flex justify-between items-center border-b-2 border-primary-background"
+      {items.container1?.length > 0 && (
+        <div className="flex-auto">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCorners}
+            onDragOver={handleDragOver}
+            onDragEnd={handleDragEnd}
           >
-            <button
-              onClick={() => {
-                setSelectedMovieIndex(index);
-                setIsPlaying(true);
-              }}
-              className="h-full w-full flex overflow-hidden"
+            <SortableContext
+              id="container1"
+              items={items.container1}
+              strategy={rectSortingStrategy}
             >
-              <div className="h-full min-w-10 flex justify-center items-center">
-                {index === selectedMovieIndex &&
-                isPlaying ? (
-                  <TriangleRightIcon
-                    width={30}
-                    height={30}
-                  />
-                ) : (
-                  index + 1
-                )}
-              </div>
-              <div className="min-w-[200px] w-[180px] h-[100px] overflow-hidden flex justify-center items-center bg-black">
-                <Image
-                  src={movie.thumbnail}
-                  width={240}
-                  height={130}
-                  alt="thumbnail"
-                />
-              </div>
-              <p className="p-2 text-left flex-auto">
-                {movie.title}
-              </p>
-            </button>
-            <Menubar className="h-full p-0 border-none">
-              <MenubarMenu>
-                <MenubarTrigger className="h-full border-none hover:bg-primary-foreground rounded-none">
-                  <DotsVerticalIcon className="text-primary" />
-                </MenubarTrigger>
-                <MenubarContent>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start px-2 py-1.5"
+              <div ref={setNodeRef}>
+                {localStorageObjects[
+                  selectedFolderIndex
+                ]?.movies.map((movie, index) => (
+                  <SortableItemWrapper
+                    key={index}
+                    id={String(index)}
+                  >
+                    <div className="h-[100px] flex justify-between items-center border-b-2 border-primary-background">
+                      <button
+                        onClick={() => {
+                          setSelectedMovieIndex(index);
+                          setIsPlaying(true);
+                        }}
+                        className="h-full w-full flex overflow-hidden"
                       >
-                        <RocketIcon />
-                        &nbsp; ファイル転送
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>
-                          Transfer {}
-                        </DialogTitle>
-                        <DialogDescription>
-                          ファイルを別のフォルダーに移動します。
-                          転送先のフォルダーを選択してください。
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="py-4">
-                        <Popover
-                          open={open}
-                          onOpenChange={setOpen}
-                        >
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              aria-expanded={open}
-                              className="w-full justify-between"
-                            >
-                              {newFolderIndex !== null
-                                ? localStorageObjects[
-                                    newFolderIndex
-                                  ].name
-                                : 'Select folder...'}
-                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="p-0">
-                            <Command>
-                              <CommandGroup>
-                                {localStorageObjects.map(
-                                  (
-                                    localStorageObject,
-                                    folderIndex
-                                  ) => (
-                                    <CommandItem
-                                      key={folderIndex}
-                                      value={String(
-                                        folderIndex
-                                      )}
-                                      onSelect={() => {
-                                        setNewFolderIndex(
-                                          Number(
-                                            folderIndex
-                                          )
-                                        );
-                                        setOpen(false);
-                                      }}
-                                    >
-                                      <Check
-                                        className={cn(
-                                          'mr-2 h-4 w-4',
-                                          newFolderIndex ===
-                                            folderIndex
-                                            ? 'opacity-100'
-                                            : 'opacity-0'
-                                        )}
-                                      />
-                                      {
-                                        localStorageObject.name
+                        <div className="h-full min-w-10 flex justify-center items-center">
+                          {index === selectedMovieIndex &&
+                          isPlaying ? (
+                            <TriangleRightIcon
+                              width={30}
+                              height={30}
+                            />
+                          ) : (
+                            index + 1
+                          )}
+                        </div>
+                        <div className="min-w-[200px] w-[180px] h-[100px] overflow-hidden flex justify-center items-center bg-black">
+                          <Image
+                            src={movie.thumbnail}
+                            width={240}
+                            height={130}
+                            alt="thumbnail"
+                          />
+                        </div>
+                        <p className="p-2 text-left flex-auto">
+                          {movie.title}
+                        </p>
+                      </button>
+                      <Menubar className="h-full p-0 border-none">
+                        <MenubarMenu>
+                          <MenubarTrigger className="h-full border-none hover:bg-primary-foreground rounded-none">
+                            <DotsVerticalIcon className="text-primary" />
+                          </MenubarTrigger>
+                          <MenubarContent>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  className="w-full justify-start px-2 py-1.5"
+                                >
+                                  <RocketIcon />
+                                  &nbsp; ファイル転送
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="sm:max-w-[425px]">
+                                <DialogHeader>
+                                  <DialogTitle>
+                                    Transfer {}
+                                  </DialogTitle>
+                                  <DialogDescription>
+                                    ファイルを別のフォルダーに移動します。
+                                    転送先のフォルダーを選択してください。
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="py-4">
+                                  <Popover
+                                    open={open}
+                                    onOpenChange={setOpen}
+                                  >
+                                    <PopoverTrigger asChild>
+                                      <Button
+                                        variant="outline"
+                                        role="combobox"
+                                        aria-expanded={open}
+                                        className="w-full justify-between"
+                                      >
+                                        {newFolderIndex !==
+                                        null
+                                          ? localStorageObjects[
+                                              newFolderIndex
+                                            ].name
+                                          : 'Select folder...'}
+                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                      </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="p-0">
+                                      <Command>
+                                        <CommandGroup>
+                                          {localStorageObjects.map(
+                                            (
+                                              localStorageObject,
+                                              folderIndex
+                                            ) => (
+                                              <CommandItem
+                                                key={
+                                                  folderIndex
+                                                }
+                                                value={String(
+                                                  folderIndex
+                                                )}
+                                                onSelect={() => {
+                                                  setNewFolderIndex(
+                                                    Number(
+                                                      folderIndex
+                                                    )
+                                                  );
+                                                  setOpen(
+                                                    false
+                                                  );
+                                                }}
+                                              >
+                                                <Check
+                                                  className={cn(
+                                                    'mr-2 h-4 w-4',
+                                                    newFolderIndex ===
+                                                      folderIndex
+                                                      ? 'opacity-100'
+                                                      : 'opacity-0'
+                                                  )}
+                                                />
+                                                {
+                                                  localStorageObject.name
+                                                }
+                                              </CommandItem>
+                                            )
+                                          )}
+                                        </CommandGroup>
+                                      </Command>
+                                    </PopoverContent>
+                                  </Popover>
+                                </div>
+                                <DialogFooter>
+                                  <DialogClose asChild>
+                                    <Button
+                                      disabled={
+                                        newFolderIndex ===
+                                          null ||
+                                        newFolderIndex ===
+                                          selectedFolderIndex
                                       }
-                                    </CommandItem>
-                                  )
-                                )}
-                              </CommandGroup>
-                            </Command>
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-                      <DialogFooter>
-                        <DialogClose asChild>
-                          <Button
-                            disabled={
-                              newFolderIndex === null ||
-                              newFolderIndex ===
-                                selectedFolderIndex
-                            }
-                            onClick={() =>
-                              transferFileHandler(index)
-                            }
-                          >
-                            転送
-                          </Button>
-                        </DialogClose>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start px-2 py-1.5 text-primary hover:text-primary"
-                      >
-                        <TrashIcon />
-                        &nbsp; ファイル削除
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>
-                          <p className="sm:max-w-[350px] whitespace-nowrap text-ellipsis overflow-hidden">
-                            Delete {movie.title}
-                          </p>
-                        </DialogTitle>
-                        <DialogDescription>
-                          動画を削除します。
-                        </DialogDescription>
-                      </DialogHeader>
-                      <DialogFooter>
-                        <DialogClose asChild>
-                          <Button
-                            onClick={() =>
-                              deleteFileHandler(index)
-                            }
-                          >
-                            削除
-                          </Button>
-                        </DialogClose>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                </MenubarContent>
-              </MenubarMenu>
-            </Menubar>
-          </div>
-        ))}
-      </div>
+                                      onClick={() =>
+                                        transferFileHandler(
+                                          index
+                                        )
+                                      }
+                                    >
+                                      転送
+                                    </Button>
+                                  </DialogClose>
+                                </DialogFooter>
+                              </DialogContent>
+                            </Dialog>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  className="w-full justify-start px-2 py-1.5 text-primary hover:text-primary"
+                                >
+                                  <TrashIcon />
+                                  &nbsp; ファイル削除
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="sm:max-w-[425px]">
+                                <DialogHeader>
+                                  <DialogTitle>
+                                    <p className="sm:max-w-[350px] whitespace-nowrap text-ellipsis overflow-hidden">
+                                      Delete {movie.title}
+                                    </p>
+                                  </DialogTitle>
+                                  <DialogDescription>
+                                    動画を削除します。
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter>
+                                  <DialogClose asChild>
+                                    <Button
+                                      onClick={() =>
+                                        deleteFileHandler(
+                                          index
+                                        )
+                                      }
+                                    >
+                                      削除
+                                    </Button>
+                                  </DialogClose>
+                                </DialogFooter>
+                              </DialogContent>
+                            </Dialog>
+                          </MenubarContent>
+                        </MenubarMenu>
+                      </Menubar>
+                    </div>
+                  </SortableItemWrapper>
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+        </div>
+      )}
     </div>
   );
 };
