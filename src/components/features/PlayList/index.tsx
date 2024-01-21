@@ -64,6 +64,7 @@ import {
 } from '@dnd-kit/sortable';
 import SortableItemWrapper from '../DndKit/SortableItemWrapper';
 import { saveToLocalStorage } from '@/utils/storage';
+import Timer from '@/components/ui/timer';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -655,6 +656,10 @@ const PlayList = ({
           </DndContext>
         </div>
       )}
+      {/* <Timer
+        isPlaying={isPlaying}
+        setIsPlaying={setIsPlaying}
+      /> */}
     </div>
   );
 };
