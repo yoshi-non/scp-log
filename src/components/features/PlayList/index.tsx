@@ -327,7 +327,7 @@ const PlayList = ({
               <p className="text-xl p-2">
                 {
                   localStorageObjects[selectedFolderIndex]
-                    .movies[selectedMovieIndex].title
+                    .movies[selectedMovieIndex]?.title
                 }
               </p>
             </div>
