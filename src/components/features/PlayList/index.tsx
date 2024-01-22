@@ -54,7 +54,6 @@ import {
   UniqueIdentifier,
   DragOverEvent,
   DragEndEvent,
-  useDroppable,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -180,7 +179,6 @@ const PlayList = ({
     if (!overId) return;
 
     // ドラッグ、ドロップ時のコンテナ取得
-    // container1,container2,container3,container4のいずれかを持つ
     const activeContainer = findContainer(id);
     const overContainer = findContainer(over?.id);
 
@@ -296,10 +294,6 @@ const PlayList = ({
       setIsPlaying(true);
     }
   };
-
-  const { setNodeRef } = useDroppable({
-    id: 'container1',
-  });
 
   useEffect(() => {
     setItems({
@@ -452,7 +446,7 @@ const PlayList = ({
               items={items.container1}
               strategy={rectSortingStrategy}
             >
-              <div ref={setNodeRef} className="flex-auto">
+              <div className="flex-auto">
                 {localStorageObjects[
                   selectedFolderIndex
                 ]?.movies.map((movie, index) => (
