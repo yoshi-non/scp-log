@@ -13,3 +13,9 @@ npm run build
 # ビルドサーバ起動
 npm start
 ```
+
+## shadcn/ui
+https://ui.shadcn.com/docs
+
+## icon
+https://www.radix-ui.com/icons
