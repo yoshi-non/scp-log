@@ -61,7 +61,6 @@ import {
   SortableContext,
 } from '@dnd-kit/sortable';
 import SortableItemWrapper from '../DndKit/SortableItemWrapper';
-import Timer from '@/components/ui/timer';
 import { dndExchangeMovie } from './logics/dndExchangeMovie';
 
 type Props = {
@@ -159,28 +158,20 @@ const PlayList = ({
 
   //各コンテナ取得関数
   const findContainer = (id: UniqueIdentifier) => {
-    if (id in items) {
-      return id;
-    }
-    return Object.keys(items).find((key: string) =>
+    const containerKey = Object.keys(items).find((key) =>
       items[key].includes(id.toString())
     );
+    return containerKey || id;
   };
 
   //ドラッグ可能なアイテムがドロップ可能なコンテナの上に移動時に発火する関数
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
-    //ドラッグしたリソースのid
     const id = active.id.toString();
-    //ドロップした場所にあったリソースのid
     const overId = over?.id;
-
     if (!overId) return;
-
-    // ドラッグ、ドロップ時のコンテナ取得
     const activeContainer = findContainer(id);
-    const overContainer = findContainer(over?.id);
-
+    const overContainer = findContainer(overId);
     if (
       !activeContainer ||
       !overContainer ||
@@ -190,43 +181,28 @@ const PlayList = ({
     }
 
     setItems((prev) => {
-      // 移動元のコンテナの要素配列を取得
       const activeItems = prev[activeContainer];
-      // 移動先のコンテナの要素配列を取得
       const overItems = prev[overContainer];
-
-      // 配列のインデックス取得
       const activeIndex = activeItems.indexOf(id);
       const overIndex = overItems.indexOf(
         overId.toString()
       );
-
-      let newIndex;
-      if (overId in prev) {
-        newIndex = overItems.length + 1;
-      } else {
-        const isBelowLastItem =
-          over && overIndex === overItems.length - 1;
-
-        const modifier = isBelowLastItem ? 1 : 0;
-
-        newIndex =
-          overIndex >= 0
-            ? overIndex + modifier
-            : overItems.length + 1;
-      }
-
+      const newIndex =
+        overId in prev
+          ? overItems.length + 1
+          : overIndex >= 0
+          ? overIndex +
+            (overIndex === overItems.length - 1 ? 1 : 0)
+          : overItems.length + 1;
       return {
         ...prev,
-        [activeContainer]: [
-          ...prev[activeContainer].filter(
-            (item) => item !== active.id
-          ),
-        ],
+        [activeContainer]: prev[activeContainer].filter(
+          (item) => item !== id
+        ),
         [overContainer]: [
-          ...prev[overContainer].slice(0, newIndex),
+          ...overItems.slice(0, newIndex),
           items[activeContainer][activeIndex],
-          ...prev[overContainer].slice(
+          ...overItems.slice(
             newIndex,
             prev[overContainer].length
           ),
@@ -238,17 +214,11 @@ const PlayList = ({
   // ドラッグ終了時に発火する関数
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    //ドラッグしたリソースのid
     const id = active.id.toString();
-    //ドロップした場所にあったリソースのid
     const overId = over?.id;
-
     if (!overId) return;
-
-    // ドラッグ、ドロップ時のコンテナ取得
     const activeContainer = findContainer(id);
-    const overContainer = findContainer(over?.id);
-
+    const overContainer = findContainer(overId);
     if (
       !activeContainer ||
       !overContainer ||
@@ -256,13 +226,10 @@ const PlayList = ({
     ) {
       return;
     }
-
-    // 配列のインデックス取得
     const activeIndex = items[activeContainer].indexOf(id);
     const overIndex = items[overContainer].indexOf(
       overId.toString()
     );
-
     if (activeIndex !== overIndex) {
       const newObjects = dndExchangeMovie(
         activeIndex,
@@ -272,7 +239,6 @@ const PlayList = ({
       );
       setLocalStorageObjects(newObjects);
     } else {
-      // 動画を再生する
       setSelectedMovieIndex(activeIndex);
       setIsPlaying(true);
     }
