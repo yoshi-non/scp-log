@@ -56,14 +56,13 @@ import {
   DragEndEvent,
 } from '@dnd-kit/core';
 import {
-  arrayMove,
   sortableKeyboardCoordinates,
   rectSortingStrategy,
   SortableContext,
 } from '@dnd-kit/sortable';
 import SortableItemWrapper from '../DndKit/SortableItemWrapper';
-import { saveToLocalStorage } from '@/utils/storage';
 import Timer from '@/components/ui/timer';
+import { dndExchangeMovie } from './logics/dndExchangeMovie';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -265,29 +264,13 @@ const PlayList = ({
     );
 
     if (activeIndex !== overIndex) {
-      // ローカルストレージの更新
-      const newLocalStorageObjects = [
-        ...localStorageObjects,
-      ];
-      // newLocalStorageObjects[selectedFolderIndex].moviesのindex値でactiveIndexとoverIndexを入れ替える
-      const newObjects = newLocalStorageObjects.map(
-        (localStorageObject, folderIndex) => {
-          if (folderIndex === selectedFolderIndex) {
-            return {
-              ...localStorageObject,
-              movies: arrayMove(
-                localStorageObject.movies,
-                activeIndex,
-                overIndex
-              ),
-            };
-          } else {
-            return localStorageObject;
-          }
-        }
+      const newObjects = dndExchangeMovie(
+        activeIndex,
+        overIndex,
+        selectedFolderIndex,
+        localStorageObjects
       );
       setLocalStorageObjects(newObjects);
-      saveToLocalStorage('myData', newObjects);
     } else {
       // 動画を再生する
       setSelectedMovieIndex(activeIndex);
