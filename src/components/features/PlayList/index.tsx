@@ -128,7 +128,9 @@ const PlayList = ({
       newFolderIndex,
       localStorageObjects
     );
-    console.log(newObjects);
+    if (movieIndex === selectedMovieIndex) {
+      setIsPlaying(false);
+    }
     setLocalStorageObjects(newObjects);
   };
 
