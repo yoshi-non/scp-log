@@ -260,7 +260,7 @@ const PlayList = ({
           {isPlaying ? (
             // youtubeを再生するプレイヤー
             <div>
-              <div className="w-[300px] h-[170px]">
+              <div className="w-[300px]">
                 <YoutubePlayer
                   videoId={
                     localStorageObjects[selectedFolderIndex]
