@@ -238,6 +238,28 @@ const PlayList = ({
         localStorageObjects
       );
       setLocalStorageObjects(newObjects);
+      if (activeIndex === selectedMovieIndex) {
+        setSelectedMovieIndex(overIndex);
+      }
+      if (overIndex === selectedMovieIndex) {
+        setSelectedMovieIndex(activeIndex);
+      }
+      if (
+        overIndex !== selectedMovieIndex &&
+        activeIndex !== selectedMovieIndex &&
+        overIndex < selectedMovieIndex &&
+        activeIndex > selectedMovieIndex
+      ) {
+        setSelectedMovieIndex(selectedMovieIndex + 1);
+      }
+      if (
+        activeIndex !== selectedMovieIndex &&
+        overIndex !== selectedMovieIndex &&
+        activeIndex < selectedMovieIndex &&
+        overIndex > selectedMovieIndex
+      ) {
+        setSelectedMovieIndex(selectedMovieIndex - 1);
+      }
     } else {
       setSelectedMovieIndex(activeIndex);
       setIsPlaying(true);
