@@ -1,3 +1,4 @@
+import { localStorageKey } from '@/constants/localStorageKey';
 import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { saveToLocalStorage } from '@/utils/storage';
 import { toast } from 'sonner';
@@ -18,6 +19,9 @@ export const preserveToFolder = (
     thumbnail: thumbnailUrl,
     favorite: false,
   });
-  saveToLocalStorage('myData', newLocalStorageObjects);
+  saveToLocalStorage(
+    localStorageKey,
+    newLocalStorageObjects
+  );
   return newLocalStorageObjects;
 };

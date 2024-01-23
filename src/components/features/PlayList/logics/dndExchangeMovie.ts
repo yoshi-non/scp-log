@@ -1,3 +1,4 @@
+import { localStorageKey } from '@/constants/localStorageKey';
 import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { saveToLocalStorage } from '@/utils/storage';
 import { arrayMove } from '@dnd-kit/sortable';
@@ -26,6 +27,9 @@ export const dndExchangeMovie = (
         }
       }
     );
-  saveToLocalStorage('myData', updatedLocalStorageObjects);
+  saveToLocalStorage(
+    localStorageKey,
+    updatedLocalStorageObjects
+  );
   return updatedLocalStorageObjects;
 };

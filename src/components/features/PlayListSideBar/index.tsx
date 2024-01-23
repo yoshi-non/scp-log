@@ -29,6 +29,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { renameFolder } from './logics/renameFolder';
 import { deleteFolder } from './logics/deleteFolder';
+import { localStorageKey } from '@/constants/localStorageKey';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -57,7 +58,10 @@ const PlayListSideBar = ({
     const newLocalStorageObjects = localStorageObjects
       ? [...localStorageObjects, newFolder]
       : [newFolder];
-    saveToLocalStorage('myData', newLocalStorageObjects);
+    saveToLocalStorage(
+      localStorageKey,
+      newLocalStorageObjects
+    );
     setLocalStorageObjects(newLocalStorageObjects);
   };
 

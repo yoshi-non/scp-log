@@ -17,6 +17,9 @@ export const deleteFolder = (
     }
   );
   newLocalStorageObjects.splice(index, 1);
-  saveToLocalStorage('myData', newLocalStorageObjects);
+  saveToLocalStorage(
+    localStorageKey,
+    newLocalStorageObjects
+  );
   return newLocalStorageObjects;
 };

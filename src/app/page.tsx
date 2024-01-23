@@ -20,21 +20,23 @@ import {
 import PlayListSideBar from '@/components/features/PlayListSideBar';
 import AddMovie from '@/components/features/AddMovie';
 import PlayList from '@/components/features/PlayList';
+import { localStorageKey } from '@/constants/localStorageKey';
 
 export default function Home() {
-  // localstarageに保存されているデータを取得
-  // dev環境ではkeyをmyDataにしている
   const [localStorageObjects, setLocalStorageObjects] =
     useState<LocalStorageObjects>([]);
   const [selectedFolderIndex, setSelectedFolderIndex] =
     useState<number>(0);
 
   useEffect(() => {
-    const storedData = getFromLocalStorage('myData');
+    const storedData = getFromLocalStorage(localStorageKey);
     if (storedData) {
       setLocalStorageObjects(storedData);
     } else {
-      saveToLocalStorage('myData', localStorageObjects);
+      saveToLocalStorage(
+        localStorageKey,
+        localStorageObjects
+      );
     }
   }, []);
 

@@ -1,3 +1,4 @@
+import { localStorageKey } from '@/constants/localStorageKey';
 import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { saveToLocalStorage } from '@/utils/storage';
 import { toast } from 'sonner';
@@ -21,6 +22,9 @@ export const deleteFile = (
     movieIndex,
     1
   );
-  saveToLocalStorage('myData', newLocalStorageObjects);
+  saveToLocalStorage(
+    localStorageKey,
+    newLocalStorageObjects
+  );
   return newLocalStorageObjects;
 };
