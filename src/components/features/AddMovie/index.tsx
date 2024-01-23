@@ -37,16 +37,22 @@ type Props = {
   setLocalStorageObjects: React.Dispatch<
     React.SetStateAction<LocalStorageObjects>
   >;
+  keyword: string;
+  setKeyword: React.Dispatch<React.SetStateAction<string>>;
+  searchResult: YouTubeSearchResult[];
+  setSearchResult: React.Dispatch<
+    React.SetStateAction<YouTubeSearchResult[]>
+  >;
 };
 
 const AddMovie = ({
   localStorageObjects,
   setLocalStorageObjects,
+  keyword,
+  setKeyword,
+  searchResult,
+  setSearchResult,
 }: Props) => {
-  const [keyword, setKeyword] = useState<string>('');
-  const [searchResult, setSearchResult] = useState<
-    YouTubeSearchResult[]
-  >([]);
   const [open, setOpen] = useState<boolean>(false);
   const [value, setValue] = useState<number | null>(null);
   const youtubeSearchHandler = async (

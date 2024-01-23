@@ -21,12 +21,18 @@ import PlayListSideBar from '@/components/features/PlayListSideBar';
 import AddMovie from '@/components/features/AddMovie';
 import PlayList from '@/components/features/PlayList';
 import { localStorageKey } from '@/constants/localStorageKey';
+import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
 
 export default function Home() {
   const [localStorageObjects, setLocalStorageObjects] =
     useState<LocalStorageObjects>([]);
   const [selectedFolderIndex, setSelectedFolderIndex] =
     useState<number>(0);
+
+  const [keyword, setKeyword] = useState<string>('');
+  const [searchResult, setSearchResult] = useState<
+    YouTubeSearchResult[]
+  >([]);
 
   useEffect(() => {
     const storedData = getFromLocalStorage(localStorageKey);
@@ -84,6 +90,10 @@ export default function Home() {
           <AddMovie
             localStorageObjects={localStorageObjects}
             setLocalStorageObjects={setLocalStorageObjects}
+            keyword={keyword}
+            setKeyword={setKeyword}
+            searchResult={searchResult}
+            setSearchResult={setSearchResult}
           />
         </TabsContent>
       </Tabs>
