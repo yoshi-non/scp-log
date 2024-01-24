@@ -1,0 +1,9 @@
+appId: 'app.vercel.scp-log'
+productName: 'SCP Log'
+copyright: 'Copyright (c) 2024 Kagari'
+win:
+  target: ['dir', 'portable', 'zip']
+linux:
+  target: ['dir', 'appimage', 'zip']
+mac:
+  target: ['dir', 'dmg', 'zip']

@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
   images: {
-    domains: ['i.ytimg.com', 'yt3.ggpht.com'], // i.ytimg.com の代わりに実際のドメインを使用してください
+    unoptimized: true,
+    domains: ['i.ytimg.com', 'yt3.ggpht.com'],
   },
 };
 

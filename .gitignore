@@ -36,6 +36,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# electron
+/dist
+
 # VSCode
 .vscode/*
 
