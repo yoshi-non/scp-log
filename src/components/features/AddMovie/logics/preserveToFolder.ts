@@ -10,7 +10,16 @@ export const preserveToFolder = (
   thumbnailUrl: string,
   localStorageObjects: LocalStorageObjects
 ) => {
-  const newLocalStorageObjects = [...localStorageObjects];
+  if (localStorageObjects.length === 0) {
+    const newFolder = {
+      name: 'New Folder',
+      movies: [],
+    };
+    localStorageObjects = [
+      ...localStorageObjects,
+      newFolder,
+    ];
+  }
   toast(`${movieTitle}を保存しました。`);
   const currentFolder = localStorageObjects[value].movies;
   currentFolder.push({
@@ -19,9 +28,6 @@ export const preserveToFolder = (
     thumbnail: thumbnailUrl,
     favorite: false,
   });
-  saveToLocalStorage(
-    localStorageKey,
-    newLocalStorageObjects
-  );
-  return newLocalStorageObjects;
+  saveToLocalStorage(localStorageKey, localStorageObjects);
+  return localStorageObjects;
 };

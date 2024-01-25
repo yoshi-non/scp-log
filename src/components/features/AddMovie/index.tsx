@@ -31,8 +31,12 @@ import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { preserveToFolder } from './logics/preserveToFolder';
 import { mockYoutubeSearchGetDomain } from '@/apis/mocks/common';
 import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
-import { localStorageInputKey } from '@/constants/localStorageKey';
-import { getFromLocalStorageInputKey } from '@/utils/storage';
+import {
+  localStorageInputKey,
+} from '@/constants/localStorageKey';
+import {
+  getFromLocalStorageInputKey,
+} from '@/utils/storage';
 import { toast } from 'sonner';
 
 type Props = {
@@ -100,9 +104,8 @@ const AddMovie = ({
     movieTitle: string,
     thumbnailUrl: string
   ) => {
-    if (value === null) return;
     const newObjects = preserveToFolder(
-      value,
+      value !== null ? value : 0,
       movieId,
       movieTitle,
       thumbnailUrl,
@@ -168,67 +171,76 @@ const AddMovie = ({
                         ※フォルダがない場合は新規作成されます。
                       </DialogDescription>
                     </DialogHeader>
-                    <div className="py-4">
-                      <Popover
-                        open={open}
-                        onOpenChange={setOpen}
-                      >
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            aria-expanded={open}
-                            className="w-full justify-between"
-                          >
-                            {value !== null
-                              ? localStorageObjects[value]
-                                  .name
-                              : 'Select folder...'}
-                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="p-0">
-                          <Command>
-                            <CommandGroup>
-                              {localStorageObjects.map(
-                                (
-                                  localStorageObject,
-                                  index
-                                ) => (
-                                  <CommandItem
-                                    key={index}
-                                    value={String(index)}
-                                    onSelect={() => {
-                                      setValue(
-                                        Number(index)
-                                      );
-                                      setOpen(false);
-                                    }}
-                                  >
-                                    <Check
-                                      className={cn(
-                                        'mr-2 h-4 w-4',
-                                        value === index
-                                          ? 'opacity-100'
-                                          : 'opacity-0'
-                                      )}
-                                    />
-                                    {
-                                      localStorageObject.name
-                                    }
-                                  </CommandItem>
-                                )
-                              )}
-                            </CommandGroup>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-                    </div>
+                    {localStorageObjects.length === 0 ? (
+                      <div>
+                        フォルダがないため、自動作成されます。
+                      </div>
+                    ) : (
+                      <div className="py-4">
+                        <Popover
+                          open={open}
+                          onOpenChange={setOpen}
+                        >
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              aria-expanded={open}
+                              className="w-full justify-between"
+                            >
+                              {value !== null
+                                ? localStorageObjects[value]
+                                    .name
+                                : 'Select folder...'}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="p-0">
+                            <Command>
+                              <CommandGroup>
+                                {localStorageObjects.map(
+                                  (
+                                    localStorageObject,
+                                    index
+                                  ) => (
+                                    <CommandItem
+                                      key={index}
+                                      value={String(index)}
+                                      onSelect={() => {
+                                        setValue(
+                                          Number(index)
+                                        );
+                                        setOpen(false);
+                                      }}
+                                    >
+                                      <Check
+                                        className={cn(
+                                          'mr-2 h-4 w-4',
+                                          value === index
+                                            ? 'opacity-100'
+                                            : 'opacity-0'
+                                        )}
+                                      />
+                                      {
+                                        localStorageObject.name
+                                      }
+                                    </CommandItem>
+                                  )
+                                )}
+                              </CommandGroup>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    )}
                     <DialogFooter>
                       <DialogClose asChild>
                         <Button
                           type="submit"
-                          disabled={value === null}
+                          disabled={
+                            value === null &&
+                            localStorageObjects.length !== 0
+                          }
                           onClick={() =>
                             preserveToFolderHandler(
                               item.id.videoId,
