@@ -20,7 +20,7 @@ export const youtubeSearch = async (
         maxResults: 50,
         key:
           localStorageInputValue ||
-          process.env.YOUTUBE_API_KEY,
+          process.env.YOUTUBE_DATA_API_KEY,
       },
     };
     const res = await axios(config);
@@ -29,7 +29,8 @@ export const youtubeSearch = async (
       return item.id.kind === 'youtube#video';
     });
     return videos;
-  } catch {
+  } catch (err) {
+    console.log(err);
     return [];
   }
 };

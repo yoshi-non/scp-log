@@ -81,8 +81,7 @@ const AddMovie = ({
         keyword,
         localStorageInputValue
       );
-      if (!data) return;
-      if (data.length === 0) {
+      if (!data || data.length === 0) {
         toast.error(
           'Youtube Data API keyが間違っているか、APIの呼び出し回数が上限に達しました。'
         );
