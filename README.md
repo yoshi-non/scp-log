@@ -20,7 +20,7 @@ npm start
 ## デスクトップアプリ化(Electron)
 
 デスクトップアプリ化するときにはAPI_KEYを自身で設定する必要があります。
-.envファイルを.env.exampleと同じ階層に作成しNEXT_PUBLIC_YOUTUBE_API_KEYにYoutube Data APIのKeyを自身で取得して貼り付けてください。
+settingページでYoutube Data APIのKeyを自身で取得して貼り付けてください。
 ※Youtube Data APIは検索で使用します(無料枠で大丈夫です)。
 
 以下作業をしてからコマンドを使用してください。

@@ -22,6 +22,7 @@ const InputKey = () => {
     );
     if (storedData) {
       setLocalStorageInputValue(storedData);
+      setInputValue(storedData);
     } else {
       saveToLocalStorage(
         localStorageInputKey,
@@ -46,6 +47,7 @@ const InputKey = () => {
   };
 
   const preserveInputKeyHandler = () => {
+    if (localStorageInputValue === inputValue) return;
     preserveInputKey(inputValue);
   };
 
@@ -53,6 +55,10 @@ const InputKey = () => {
     <div className="px-20">
       <p className="text-xl font-bold">
         Youtube Data API key (検索機能に使用します)
+      </p>
+      <p className="text-xs text-primary">
+        *デスクトップアプリではKeyの設定が必須になります。
+        (WEBアプリでは設定しなくても検索機能は使用できます)
       </p>
       <div className="flex gap-2 mt-2">
         <Input

@@ -31,6 +31,9 @@ import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { preserveToFolder } from './logics/preserveToFolder';
 import { mockYoutubeSearchGetDomain } from '@/apis/mocks/common';
 import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
+import { localStorageInputKey } from '@/constants/localStorageKey';
+import { getFromLocalStorageInputKey } from '@/utils/storage';
+import { toast } from 'sonner';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -55,6 +58,9 @@ const AddMovie = ({
 }: Props) => {
   const [open, setOpen] = useState<boolean>(false);
   const [value, setValue] = useState<number | null>(null);
+  const localStorageInputValue =
+    getFromLocalStorageInputKey(localStorageInputKey);
+
   const youtubeSearchHandler = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
@@ -71,8 +77,17 @@ const AddMovie = ({
       });
       setSearchResult(filterData);
     } else {
-      const data = await youtubeSearch(keyword);
+      const data = await youtubeSearch(
+        keyword,
+        localStorageInputValue
+      );
       if (!data) return;
+      if (data.length === 0) {
+        toast.error(
+          'Youtube Data API keyが間違っているか、APIの呼び出し回数が上限に達しました。'
+        );
+        return;
+      }
       setSearchResult(data);
     }
   };

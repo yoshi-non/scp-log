@@ -22,6 +22,9 @@ const Header = () => {
         {/* <Link href={'/'}>
           <Button variant="link">使い方</Button>
         </Link> */}
+        <Link href={'/setting'}>
+          <Button variant="link">設定</Button>
+        </Link>
         <div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
