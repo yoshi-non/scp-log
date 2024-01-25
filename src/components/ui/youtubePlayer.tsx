@@ -30,6 +30,7 @@ const YoutubePlayer = ({ videoId, onVideoEnd }: Props) => {
         height: '100%',
         width: '100%',
         videoId: videoId,
+        host: 'https://www.youtube-nocookie.com',
         playerVars: {
           autoplay: 1,
           fs: 0,
