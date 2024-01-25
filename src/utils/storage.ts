@@ -2,7 +2,7 @@ import { LocalStorageObjects } from '@/types/localstrageObjects';
 
 export const saveToLocalStorage = (
   key: string,
-  data: LocalStorageObjects
+  data: LocalStorageObjects | string
 ) => {
   try {
     const serializedData = JSON.stringify(data);
@@ -53,12 +53,24 @@ export const getFromLocalStorage = (
 ): LocalStorageObjects | false => {
   try {
     const storedData = localStorage.getItem(key);
-
-    if (storedData) {
-      return JSON.parse(storedData) as LocalStorageObjects;
-    }
-
+    if (!storedData) return false;
+    return JSON.parse(storedData) as LocalStorageObjects;
+  } catch (error) {
+    console.error(
+      'Error getting data from localStorage:',
+      error
+    );
     return false;
+  }
+};
+
+export const getFromLocalStorageInputKey = (
+  key: string
+): string | false => {
+  try {
+    const storedData = localStorage.getItem(key);
+    if (!storedData || storedData === '') return false;
+    return JSON.parse(storedData) as string;
   } catch (error) {
     console.error(
       'Error getting data from localStorage:',
