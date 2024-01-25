@@ -29,8 +29,7 @@ export const youtubeSearch = async (
       return item.id.kind === 'youtube#video';
     });
     return videos;
-  } catch (err) {
-    console.log(err);
+  } catch {
     return [];
   }
 };
