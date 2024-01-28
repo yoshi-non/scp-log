@@ -43,5 +43,8 @@ next-env.d.ts
 # VSCode
 .vscode/*
 
+# download
+/download
+
 # Memo
 MEMO.md
