@@ -6,7 +6,9 @@ import React from 'react';
 const Downloadtestpage = () => {
   const youtubeDownloadHandler = async () => {
     const url = '7bu39dMD5MA';
-    await youtubeDownload(url);
+    const res = await youtubeDownload(url);
+    if (!res) return;
+    console.log(res.status);
   };
 
   return (
