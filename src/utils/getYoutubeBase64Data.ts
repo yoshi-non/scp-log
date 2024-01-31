@@ -12,7 +12,7 @@ export const getYoutubeBase64Data = async (
   youtubeId: string
 ) => {
   const destFilePath = path.resolve(
-    './tmp',
+    './public/tmp',
     `${youtubeId}`
   );
   const audioFilePath = destFilePath + `_audio.wav`;
@@ -90,7 +90,7 @@ export const getYoutubeBase64Data = async (
       };
     }
 
-    const folderPath = path.resolve('./', 'tmp/');
+    const folderPath = path.resolve('./public', 'tmp/');
 
     if (!fsSync.existsSync(folderPath)) {
       fsSync.mkdirSync(folderPath);
