@@ -12,7 +12,7 @@ export const getYoutubeBase64Data = async (
   youtubeId: string
 ) => {
   const destFilePath = path.resolve(
-    './downloads/youtube',
+    './tmpDownloadYoutube',
     `${youtubeId}`
   );
   const audioFilePath = destFilePath + `_audio.wav`;
@@ -92,7 +92,7 @@ export const getYoutubeBase64Data = async (
 
     const folderPath = path.resolve(
       './',
-      'downloads/youtube'
+      'tmpDownloadYoutube/'
     );
 
     if (!fsSync.existsSync(folderPath)) {
