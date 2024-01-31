@@ -11,6 +11,23 @@ ffmpeg.setFfmpegPath(
 export const getYoutubeBase64Data = async (
   youtubeId: string
 ) => {
+  console.log('youtubeDownload start');
+  if (!youtubeId.match(/^[a-z_A-Z0-9\-]{11}$/g)) {
+    console.error(
+      `YouTubeID validation error : ${youtubeId}`
+    );
+    return {
+      statusCode: 400,
+      body: 'YouTubeID validation error!',
+    };
+  }
+
+  const folderPath = path.resolve('./public', 'tmp/');
+
+  if (!fsSync.existsSync(folderPath)) {
+    fsSync.mkdirSync(folderPath);
+  }
+
   const destFilePath = path.resolve(
     './public/tmp',
     `${youtubeId}`
@@ -79,23 +96,6 @@ export const getYoutubeBase64Data = async (
   };
 
   try {
-    console.log('youtubeDownload start');
-    if (!youtubeId.match(/^[a-z_A-Z0-9\-]{11}$/g)) {
-      console.error(
-        `YouTubeID validation error : ${youtubeId}`
-      );
-      return {
-        statusCode: 400,
-        body: 'YouTubeID validation error!',
-      };
-    }
-
-    const folderPath = path.resolve('./public', 'tmp/');
-
-    if (!fsSync.existsSync(folderPath)) {
-      fsSync.mkdirSync(folderPath);
-    }
-
     const audioPromise = audioDownload();
     const videoPromise = videoDownload();
     await Promise.all([audioPromise, videoPromise]);
