@@ -22,14 +22,14 @@ export const getYoutubeBase64Data = async (
     };
   }
 
-  const folderPath = path.resolve('./public', 'tmp/');
+  const folderPath = path.resolve('/', 'tmp/');
 
   if (!fsSync.existsSync(folderPath)) {
     fsSync.mkdirSync(folderPath);
   }
 
   const destFilePath = path.resolve(
-    './public/tmp',
+    '/tmp',
     `${youtubeId}`
   );
   const audioFilePath = destFilePath + `_audio.wav`;
