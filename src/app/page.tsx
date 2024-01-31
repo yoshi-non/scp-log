@@ -57,6 +57,9 @@ export default function Home() {
           <TabsTrigger value="addMovie">
             Add Movie
           </TabsTrigger>
+          <TabsTrigger value="download">
+            Download
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="playlist">
           <ResizablePanelGroup
@@ -89,6 +92,18 @@ export default function Home() {
         </TabsContent>
         <TabsContent value="addMovie">
           <AddMovie
+            tab="addMovie"
+            localStorageObjects={localStorageObjects}
+            setLocalStorageObjects={setLocalStorageObjects}
+            keyword={keyword}
+            setKeyword={setKeyword}
+            searchResult={searchResult}
+            setSearchResult={setSearchResult}
+          />
+        </TabsContent>
+        <TabsContent value="download">
+          <AddMovie
+            tab="download"
             localStorageObjects={localStorageObjects}
             setLocalStorageObjects={setLocalStorageObjects}
             keyword={keyword}

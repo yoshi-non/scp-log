@@ -31,15 +31,13 @@ import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { preserveToFolder } from './logics/preserveToFolder';
 import { mockYoutubeSearchGetDomain } from '@/apis/mocks/common';
 import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
-import {
-  localStorageInputKey,
-} from '@/constants/localStorageKey';
-import {
-  getFromLocalStorageInputKey,
-} from '@/utils/storage';
+import { localStorageInputKey } from '@/constants/localStorageKey';
+import { getFromLocalStorageInputKey } from '@/utils/storage';
 import { toast } from 'sonner';
+import { youtubeDownload } from '@/utils/youtubeDownload';
 
 type Props = {
+  tab: string;
   localStorageObjects: LocalStorageObjects;
   setLocalStorageObjects: React.Dispatch<
     React.SetStateAction<LocalStorageObjects>
@@ -53,6 +51,7 @@ type Props = {
 };
 
 const AddMovie = ({
+  tab,
   localStorageObjects,
   setLocalStorageObjects,
   keyword,
@@ -160,101 +159,132 @@ const AddMovie = ({
                       <DownloadIcon />
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>
-                        プレイリストに追加
-                      </DialogTitle>
-                      <DialogDescription>
-                        どのフォルダに保存しますか？
-                        <br />
-                        ※フォルダがない場合は新規作成されます。
-                      </DialogDescription>
-                    </DialogHeader>
-                    {localStorageObjects.length === 0 ? (
-                      <div>
-                        フォルダがないため、自動作成されます。
-                      </div>
-                    ) : (
-                      <div className="py-4">
-                        <Popover
-                          open={open}
-                          onOpenChange={setOpen}
-                        >
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              aria-expanded={open}
-                              className="w-full justify-between"
-                            >
-                              {value !== null
-                                ? localStorageObjects[value]
-                                    .name
-                                : 'Select folder...'}
-                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="p-0">
-                            <Command>
-                              <CommandGroup>
-                                {localStorageObjects.map(
-                                  (
-                                    localStorageObject,
-                                    index
-                                  ) => (
-                                    <CommandItem
-                                      key={index}
-                                      value={String(index)}
-                                      onSelect={() => {
-                                        setValue(
-                                          Number(index)
-                                        );
-                                        setOpen(false);
-                                      }}
-                                    >
-                                      <Check
-                                        className={cn(
-                                          'mr-2 h-4 w-4',
-                                          value === index
-                                            ? 'opacity-100'
-                                            : 'opacity-0'
+                  {tab === 'addMovie' ? (
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>
+                          プレイリストに追加
+                        </DialogTitle>
+                        <DialogDescription>
+                          どのフォルダに保存しますか？
+                          <br />
+                          ※フォルダがない場合は新規作成されます。
+                        </DialogDescription>
+                      </DialogHeader>
+                      {localStorageObjects.length === 0 ? (
+                        <div>
+                          フォルダがないため、自動作成されます。
+                        </div>
+                      ) : (
+                        <div className="py-4">
+                          <Popover
+                            open={open}
+                            onOpenChange={setOpen}
+                          >
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                role="combobox"
+                                aria-expanded={open}
+                                className="w-full justify-between"
+                              >
+                                {value !== null
+                                  ? localStorageObjects[
+                                      value
+                                    ].name
+                                  : 'Select folder...'}
+                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="p-0">
+                              <Command>
+                                <CommandGroup>
+                                  {localStorageObjects.map(
+                                    (
+                                      localStorageObject,
+                                      index
+                                    ) => (
+                                      <CommandItem
+                                        key={index}
+                                        value={String(
+                                          index
                                         )}
-                                      />
-                                      {
-                                        localStorageObject.name
-                                      }
-                                    </CommandItem>
-                                  )
-                                )}
-                              </CommandGroup>
-                            </Command>
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-                    )}
-                    <DialogFooter>
-                      <DialogClose asChild>
-                        <Button
-                          type="submit"
-                          disabled={
-                            value === null &&
-                            localStorageObjects.length !== 0
-                          }
-                          onClick={() =>
-                            preserveToFolderHandler(
-                              item.id.videoId,
-                              item.snippet.title,
-                              item.snippet.thumbnails.high
-                                .url
-                            )
-                          }
-                        >
-                          保存
-                        </Button>
-                      </DialogClose>
-                    </DialogFooter>
-                  </DialogContent>
+                                        onSelect={() => {
+                                          setValue(
+                                            Number(index)
+                                          );
+                                          setOpen(false);
+                                        }}
+                                      >
+                                        <Check
+                                          className={cn(
+                                            'mr-2 h-4 w-4',
+                                            value === index
+                                              ? 'opacity-100'
+                                              : 'opacity-0'
+                                          )}
+                                        />
+                                        {
+                                          localStorageObject.name
+                                        }
+                                      </CommandItem>
+                                    )
+                                  )}
+                                </CommandGroup>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                      )}
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button
+                            type="submit"
+                            disabled={
+                              value === null &&
+                              localStorageObjects.length !==
+                                0
+                            }
+                            onClick={() =>
+                              preserveToFolderHandler(
+                                item.id.videoId,
+                                item.snippet.title,
+                                item.snippet.thumbnails.high
+                                  .url
+                              )
+                            }
+                          >
+                            保存
+                          </Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+                  ) : (
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>
+                          オフライン保存
+                        </DialogTitle>
+                        <DialogDescription>
+                          このPCに動画データ(mp4)を保存します。
+                          {item.snippet.title}
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button
+                            onClick={() =>
+                              youtubeDownload(
+                                item.id.videoId
+                              )
+                            }
+                          >
+                            保存
+                          </Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+                  )}
                 </Dialog>
               </div>
             </div>
