@@ -99,7 +99,7 @@ export const getYoutubeBase64Data = async (
       fsSync.mkdirSync(folderPath);
     }
 
-    const audioPromise =  audioDownload();
+    const audioPromise = audioDownload();
     const videoPromise = videoDownload();
     await Promise.all([audioPromise, videoPromise]);
     await mergeFiles();
