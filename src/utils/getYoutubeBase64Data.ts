@@ -1,7 +1,7 @@
 'use server';
 
 import path from 'path';
-import fsSync, { promises as fs } from 'fs';
+import fsSync from 'fs';
 import ytdl from 'ytdl-core';
 import ffmpeg from 'fluent-ffmpeg';
 ffmpeg.setFfmpegPath(
