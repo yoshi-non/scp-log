@@ -20,5 +20,5 @@ export const searchFiles = (dirPath: string): any => {
       });
     }
   }
-  return files;
+  return files.flat();
 };
