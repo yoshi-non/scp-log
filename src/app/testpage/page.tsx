@@ -17,7 +17,7 @@ const TestPage = () => {
     console.log(data);
   };
 
-  console.log(searchFiles('./'));
+  console.log(searchFiles('/'));
 
   return (
     <div className="container">
