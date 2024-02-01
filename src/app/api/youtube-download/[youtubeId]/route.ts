@@ -23,14 +23,14 @@ export async function GET(
     });
   }
 
-  const folderPath = path.resolve(process.cwd(), 'tmp');
+  const folderPath = path.resolve('/', 'tmp');
 
   if (!fsSync.existsSync(folderPath)) {
     fsSync.mkdirSync(folderPath);
   }
 
   const destFilePath = path.resolve(
-    `${process.cwd()}/tmp`,
+    folderPath,
     `${youtubeId}`
   );
   const audioFilePath = destFilePath + `_audio.wav`;
