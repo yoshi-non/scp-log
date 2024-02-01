@@ -13,15 +13,12 @@ export const searchFiles = (dirPath: string): any => {
     if (dirent.isDirectory()) {
       const fp = path.join(dirPath, dirent.name);
       files.push(searchFiles(fp));
-    } else if (
-      dirent.isFile() &&
-      ['.txt'].includes(path.extname(dirent.name))
-    ) {
+    } else if (dirent.isFile()) {
       files.push({
         dir: path.join(dirPath, dirent.name),
         name: dirent.name,
       });
     }
   }
-  return files.flat();
+  return files;
 };
