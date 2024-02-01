@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { getPornhubData } from '@/libs/pornhub';
+import { existFile } from '@/utils/existFile';
 
 const TestPage = () => {
   const [pornData, setPornData] = useState<object[]>([]);
@@ -15,6 +16,8 @@ const TestPage = () => {
     const data = await getPornhubData('猫耳');
     console.log(data);
   };
+
+  console.log(existFile('./'));
 
   return (
     <div className="container">
