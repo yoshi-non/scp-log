@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { getPornhubData } from '@/libs/pornhub';
-import { existFile } from '@/utils/existFile';
+import { searchFiles } from '@/utils/existFile';
 
 const TestPage = () => {
   const [pornData, setPornData] = useState<object[]>([]);
@@ -17,7 +17,7 @@ const TestPage = () => {
     console.log(data);
   };
 
-  console.log(existFile('./'));
+  console.log(searchFiles('./node_modules/'));
 
   return (
     <div className="container">
