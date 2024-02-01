@@ -2,9 +2,7 @@ import path from 'path';
 import fsSync from 'fs';
 import ytdl from 'ytdl-core';
 import ffmpeg from 'fluent-ffmpeg';
-ffmpeg.setFfmpegPath(
-  path.resolve(process.cwd(), '/ffmpeg')
-);
+ffmpeg.setFfmpegPath('/ffmpeg');
 
 export async function GET(
   request: Request,
