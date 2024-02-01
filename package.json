@@ -72,6 +72,8 @@
     "typescript": "^5"
   },
   "pkg": {
-    "assets": ["node_modules/ffmpeg-static/ffmpeg"]
+    "assets": [
+      "node_modules/ffmpeg-static/*"
+    ]
   }
 }
