@@ -25,6 +25,3 @@ export const searchFiles = (dirPath: string): any => {
   }
   return files.flat();
 };
-
-const dirPath = './dir';
-console.log(searchFiles(dirPath));
