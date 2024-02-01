@@ -1,33 +1,38 @@
-'use server';
-
 import path from 'path';
 import fsSync from 'fs';
 import ytdl from 'ytdl-core';
 import ffmpeg from 'fluent-ffmpeg';
-const ffmpegPath = './node_modules/ffmpeg-static/ffmpeg';
-ffmpeg.setFfmpegPath(ffmpegPath);
+ffmpeg.setFfmpegPath(
+  path.resolve(
+    process.cwd(),
+    'node_modules/ffmpeg-static/ffmpeg'
+  )
+);
 
-export const getYoutubeBase64Data = async (
-  youtubeId: string
-) => {
-  console.log('youtubeDownload start');
+export async function GET(
+  request: Request,
+  { params }: { params: { youtubeId: string } }
+) {
+  const youtubeId = params.youtubeId;
   if (!youtubeId.match(/^[a-z_A-Z0-9\-]{11}$/g)) {
     console.error(
       `YouTubeID validation error : ${youtubeId}`
     );
-    return {
-      statusCode: 400,
-      body: 'YouTubeID validation error!',
-    };
+    return new Response('YouTubeID validation error!', {
+      status: 400,
+    });
   }
 
-  const folderPath = path.resolve('/', 'tmp/');
+  const folderPath = path.resolve(process.cwd(), 'tmp');
 
   if (!fsSync.existsSync(folderPath)) {
     fsSync.mkdirSync(folderPath);
   }
 
-  const destFilePath = path.resolve('/tmp', `${youtubeId}`);
+  const destFilePath = path.resolve(
+    `${process.cwd()}/tmp`,
+    `${youtubeId}`
+  );
   const audioFilePath = destFilePath + `_audio.wav`;
   const videoFilePath = destFilePath + `_video.mp4`;
   const mergePath = destFilePath + `.mp4`;
@@ -102,16 +107,16 @@ export const getYoutubeBase64Data = async (
 
     fsSync.unlinkSync(mergePath);
 
-    return {
-      statusCode: 200,
-      body: 'download success.',
-      data: base64Data,
-    };
+    return new Response(
+      JSON.stringify({ body: base64Data }),
+      {
+        status: 200,
+      }
+    );
   } catch (error) {
     console.error(error);
-    return {
-      statusCode: 400,
-      body: 'download failed.',
-    };
+    return new Response('download failed.', {
+      status: 400,
+    });
   }
-};
+}
