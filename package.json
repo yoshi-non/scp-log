@@ -73,7 +73,7 @@
   },
   "pkg": {
     "assets": [
-      "node_modules/ffmpeg-static"
+      "./node_modules/ffmpeg-static/ffmpeg"
     ]
   }
 }
