@@ -3,10 +3,7 @@ import fsSync from 'fs';
 import ytdl from 'ytdl-core';
 import ffmpeg from 'fluent-ffmpeg';
 ffmpeg.setFfmpegPath(
-  path.resolve(
-    process.cwd(),
-    'node_modules/ffmpeg-static/ffmpeg'
-  )
+  path.resolve(process.cwd(), '/ffmpeg')
 );
 
 export async function GET(
