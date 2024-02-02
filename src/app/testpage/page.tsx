@@ -17,7 +17,7 @@ const TestPage = () => {
     console.log(data);
   };
 
-  console.log(searchFiles('node_modules'));
+  console.log(searchFiles('./node_modules'));
 
   return (
     <div className="container">
