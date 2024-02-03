@@ -1,11 +1,6 @@
 'use server';
 
-import path from 'path';
-import fsSync from 'fs';
 import ytdl from 'ytdl-core';
-import FFmpeg from 'fluent-ffmpeg';
-// const ffmpegPath = './node_modules/ffmpeg-static/ffmpeg';
-// ffmpeg.setFfmpegPath(ffmpegPath);
 
 export const getYoutubeBase64Data = async (
   youtubeId: string
@@ -17,51 +12,57 @@ export const getYoutubeBase64Data = async (
     );
     return {
       statusCode: 400,
-      body: 'YouTubeID validation error!',
+      text: 'YouTubeID validation error!',
     };
   }
 
-  const folderPath = path.resolve('/', 'tmp/');
-
-  if (!fsSync.existsSync(folderPath)) {
-    fsSync.mkdirSync(folderPath);
-  }
-
-  const destFilePath = path.resolve('/tmp', `${youtubeId}`);
-  const audioFilePath = destFilePath + `_audio.wav`;
-  const videoFilePath = destFilePath + `_video.mp4`;
-  const mergePath = destFilePath + `.mp4`;
   const url = `https://www.youtube.com/watch?v=${youtubeId}`;
-
-  const audioDownload = () => {
-    return new Promise<void>((resolve, reject) => {
-      const audio = ytdl(url, {
-        filter: 'audioandvideo',
-        quality: 'highestaudio',
-      });
-
-      audio.pipe(fsSync.createWriteStream(audioFilePath));
-      audio.on('error', (err) => {
-        console.error(err);
-        reject('audio download error!');
-      });
-
-      audio.on('end', () => {
-        console.log(
-          `youtube file (${youtubeId}_audio.wav) downloaded.`
-        );
-        resolve();
-      });
-    });
-  };
-
+  let data = Buffer.from([]);
   const videoDownload = () => {
     return new Promise<void>((resolve, reject) => {
       const video = ytdl(url, {
-        quality: 'highestvideo',
+        quality: 'highestaudio',
+        filter: (format) =>
+          format.hasAudio === true &&
+          format.hasVideo === true,
       });
-
-      video.pipe(fsSync.createWriteStream(videoFilePath));
+      video.on('data', (chunk) => {
+        data = Buffer.concat([data, chunk]);
+      });
+      var starttime: number;
+      video.once('response', () => {
+        starttime = Date.now();
+      });
+      video.on(
+        'progress',
+        (chunkLength, downloaded, total) => {
+          const percent = downloaded / total;
+          const downloadedMinutes =
+            (Date.now() - starttime) / 1000 / 60;
+          const estimatedDownloadTime =
+            downloadedMinutes / percent - downloadedMinutes;
+          process.stdout.write(
+            `${(percent * 100).toFixed(2)}% downloaded `
+          );
+          process.stdout.write(
+            `(${(downloaded / 1024 / 1024).toFixed(
+              2
+            )}MB of ${(total / 1024 / 1024).toFixed(
+              2
+            )}MB)\n`
+          );
+          process.stdout.write(
+            `running for: ${downloadedMinutes.toFixed(
+              2
+            )}minutes`
+          );
+          process.stdout.write(
+            `, estimated time left: ${estimatedDownloadTime.toFixed(
+              2
+            )}minutes `
+          );
+        }
+      );
       video.on('error', (err) => {
         console.error(err);
         reject('video download error!');
@@ -76,46 +77,20 @@ export const getYoutubeBase64Data = async (
     });
   };
 
-  const mergeFiles = () => {
-    return new Promise<void>((resolve, reject) => {
-      FFmpeg()
-        .input(videoFilePath)
-        .input(audioFilePath)
-        .on('end', () => {
-          console.log(`Transcoding complete`);
-          resolve();
-        })
-        .on('error', (err) => {
-          console.error(`Error transcoding`);
-          reject(err);
-        })
-        .save(mergePath);
-    });
-  };
-
   try {
-    const audioPromise = audioDownload();
     const videoPromise = videoDownload();
-    await Promise.all([audioPromise, videoPromise]);
-    await mergeFiles();
-    const mp4Content = fsSync.readFileSync(mergePath);
-    const base64Data =
-      Buffer.from(mp4Content).toString('base64');
-
-    fsSync.unlinkSync(videoFilePath);
-    fsSync.unlinkSync(audioFilePath);
-    fsSync.unlinkSync(mergePath);
-
+    await Promise.all([videoPromise]);
+    const base64Data = Buffer.from(data).toString('base64');
     return {
       statusCode: 200,
-      body: 'download success.',
-      data: base64Data,
+      text: 'download success.',
+      body: base64Data,
     };
   } catch (error) {
     console.error(error);
     return {
       statusCode: 400,
-      body: 'download failed.',
+      text: 'download failed.',
     };
   }
 };

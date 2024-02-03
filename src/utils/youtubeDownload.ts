@@ -6,14 +6,11 @@ export const youtubeDownload = async (
   youtubeId: string
 ) => {
   try {
-    const res = await fetch(
-      `/api/youtube-download/${youtubeId}`
-    );
-    const resJson = await res.json();
-    if (!resJson.body) return;
+    const res = await getYoutubeBase64Data(youtubeId);
+    if (!res.body) return;
 
     const filename = `${youtubeId}.mp4`;
-    const base64Data = resJson.body;
+    const base64Data = res.body;
 
     // Base64データを直接デコード
     const binaryData = atob(base64Data);
