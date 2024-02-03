@@ -7,6 +7,7 @@ const nextConfig = {
   },
   experimental: {
     serverActions: true,
+    serverMinification: false,
   },
 };
 
