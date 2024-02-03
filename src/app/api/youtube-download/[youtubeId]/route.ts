@@ -1,8 +1,4 @@
-import path from 'path';
-import fsSync from 'fs';
 import ytdl from 'ytdl-core';
-// import ffmpeg from 'fluent-ffmpeg';
-// ffmpeg.setFfmpegPath('./ffmpeg');
 
 export async function GET(
   request: Request,
@@ -17,51 +13,53 @@ export async function GET(
       status: 400,
     });
   }
-
-  const folderPath = path.resolve('/', 'tmp');
-
-  if (!fsSync.existsSync(folderPath)) {
-    fsSync.mkdirSync(folderPath);
-  }
-
-  const destFilePath = path.resolve(
-    folderPath,
-    `${youtubeId}`
-  );
-  // const audioFilePath = destFilePath + `_audio.wav`;
-  const videoFilePath = destFilePath + `_video.mp4`;
-  // const mergePath = destFilePath + `.mp4`;
   const url = `https://www.youtube.com/watch?v=${youtubeId}`;
-
-  // const audioDownload = () => {
-  //   return new Promise<void>((resolve, reject) => {
-  //     const audio = ytdl(url, {
-  //       filter: 'audioandvideo',
-  //       quality: 'highestaudio',
-  //     });
-
-  //     audio.pipe(fsSync.createWriteStream(audioFilePath));
-  //     audio.on('error', (err) => {
-  //       console.error(err);
-  //       reject('audio download error!');
-  //     });
-
-  //     audio.on('end', () => {
-  //       console.log(
-  //         `youtube file (${youtubeId}_audio.wav) downloaded.`
-  //       );
-  //       resolve();
-  //     });
-  //   });
-  // };
-
+  let data = Buffer.from([]);
   const videoDownload = () => {
     return new Promise<void>((resolve, reject) => {
       const video = ytdl(url, {
-        quality: 'highest',
+        quality: 'highestaudio',
+        filter: (format) =>
+          format.hasAudio === true &&
+          format.hasVideo === true,
       });
-
-      video.pipe(fsSync.createWriteStream(videoFilePath));
+      video.on('data', (chunk) => {
+        data = Buffer.concat([data, chunk]);
+      });
+      var starttime: number;
+      video.once('response', () => {
+        starttime = Date.now();
+      });
+      video.on(
+        'progress',
+        (chunkLength, downloaded, total) => {
+          const percent = downloaded / total;
+          const downloadedMinutes =
+            (Date.now() - starttime) / 1000 / 60;
+          const estimatedDownloadTime =
+            downloadedMinutes / percent - downloadedMinutes;
+          process.stdout.write(
+            `${(percent * 100).toFixed(2)}% downloaded `
+          );
+          process.stdout.write(
+            `(${(downloaded / 1024 / 1024).toFixed(
+              2
+            )}MB of ${(total / 1024 / 1024).toFixed(
+              2
+            )}MB)\n`
+          );
+          process.stdout.write(
+            `running for: ${downloadedMinutes.toFixed(
+              2
+            )}minutes`
+          );
+          process.stdout.write(
+            `, estimated time left: ${estimatedDownloadTime.toFixed(
+              2
+            )}minutes `
+          );
+        }
+      );
       video.on('error', (err) => {
         console.error(err);
         reject('video download error!');
@@ -76,34 +74,10 @@ export async function GET(
     });
   };
 
-  // const mergeFiles = () => {
-  //   return new Promise<void>((resolve, reject) => {
-  //     ffmpeg()
-  //       .input(videoFilePath)
-  //       .input(audioFilePath)
-  //       .save(mergePath)
-  //       .on('end', function () {
-  //         console.log('download finished.');
-  //         resolve();
-  //       });
-  //   });
-  // };
-
   try {
-    // const audioPromise = audioDownload();
     const videoPromise = videoDownload();
-    // await Promise.all([audioPromise, videoPromise]);
     await Promise.all([videoPromise]);
-    // await mergeFiles();
-    // const mp4Content = fsSync.readFileSync(mergePath);
-    const mp4Content = fsSync.readFileSync(videoFilePath);
-    const base64Data =
-      Buffer.from(mp4Content).toString('base64');
-
-    fsSync.unlinkSync(videoFilePath);
-    // fsSync.unlinkSync(audioFilePath);
-    // fsSync.unlinkSync(mergePath);
-
+    const base64Data = Buffer.from(data).toString('base64');
     return new Response(
       JSON.stringify({ body: base64Data }),
       {
