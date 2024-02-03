@@ -3,9 +3,9 @@
 import path from 'path';
 import fsSync from 'fs';
 import ytdl from 'ytdl-core';
-import ffmpeg from 'fluent-ffmpeg';
-const ffmpegPath = './node_modules/ffmpeg-static/ffmpeg';
-ffmpeg.setFfmpegPath(ffmpegPath);
+import FFmpeg from 'fluent-ffmpeg';
+// const ffmpegPath = './node_modules/ffmpeg-static/ffmpeg';
+// ffmpeg.setFfmpegPath(ffmpegPath);
 
 export const getYoutubeBase64Data = async (
   youtubeId: string
@@ -78,16 +78,18 @@ export const getYoutubeBase64Data = async (
 
   const mergeFiles = () => {
     return new Promise<void>((resolve, reject) => {
-      ffmpeg()
+      FFmpeg()
         .input(videoFilePath)
         .input(audioFilePath)
-        .save(mergePath)
-        .on('end', function () {
-          console.log('download finished.');
-          fsSync.unlinkSync(videoFilePath);
-          fsSync.unlinkSync(audioFilePath);
+        .on('end', () => {
+          console.log(`Transcoding complete`);
           resolve();
-        });
+        })
+        .on('error', (err) => {
+          console.error(`Error transcoding`);
+          reject(err);
+        })
+        .save(mergePath);
     });
   };
 
@@ -100,6 +102,8 @@ export const getYoutubeBase64Data = async (
     const base64Data =
       Buffer.from(mp4Content).toString('base64');
 
+    fsSync.unlinkSync(videoFilePath);
+    fsSync.unlinkSync(audioFilePath);
     fsSync.unlinkSync(mergePath);
 
     return {

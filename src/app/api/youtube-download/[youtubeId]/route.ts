@@ -1,8 +1,8 @@
 import path from 'path';
 import fsSync from 'fs';
 import ytdl from 'ytdl-core';
-import ffmpeg from 'fluent-ffmpeg';
-ffmpeg.setFfmpegPath('./ffmpeg');
+// import ffmpeg from 'fluent-ffmpeg';
+// ffmpeg.setFfmpegPath('./ffmpeg');
 
 export async function GET(
   request: Request,
@@ -28,37 +28,37 @@ export async function GET(
     folderPath,
     `${youtubeId}`
   );
-  const audioFilePath = destFilePath + `_audio.wav`;
+  // const audioFilePath = destFilePath + `_audio.wav`;
   const videoFilePath = destFilePath + `_video.mp4`;
-  const mergePath = destFilePath + `.mp4`;
+  // const mergePath = destFilePath + `.mp4`;
   const url = `https://www.youtube.com/watch?v=${youtubeId}`;
 
-  const audioDownload = () => {
-    return new Promise<void>((resolve, reject) => {
-      const audio = ytdl(url, {
-        filter: 'audioandvideo',
-        quality: 'highestaudio',
-      });
+  // const audioDownload = () => {
+  //   return new Promise<void>((resolve, reject) => {
+  //     const audio = ytdl(url, {
+  //       filter: 'audioandvideo',
+  //       quality: 'highestaudio',
+  //     });
 
-      audio.pipe(fsSync.createWriteStream(audioFilePath));
-      audio.on('error', (err) => {
-        console.error(err);
-        reject('audio download error!');
-      });
+  //     audio.pipe(fsSync.createWriteStream(audioFilePath));
+  //     audio.on('error', (err) => {
+  //       console.error(err);
+  //       reject('audio download error!');
+  //     });
 
-      audio.on('end', () => {
-        console.log(
-          `youtube file (${youtubeId}_audio.wav) downloaded.`
-        );
-        resolve();
-      });
-    });
-  };
+  //     audio.on('end', () => {
+  //       console.log(
+  //         `youtube file (${youtubeId}_audio.wav) downloaded.`
+  //       );
+  //       resolve();
+  //     });
+  //   });
+  // };
 
   const videoDownload = () => {
     return new Promise<void>((resolve, reject) => {
       const video = ytdl(url, {
-        quality: 'highestvideo',
+        quality: 'highest',
       });
 
       video.pipe(fsSync.createWriteStream(videoFilePath));
@@ -76,31 +76,33 @@ export async function GET(
     });
   };
 
-  const mergeFiles = () => {
-    return new Promise<void>((resolve, reject) => {
-      ffmpeg()
-        .input(videoFilePath)
-        .input(audioFilePath)
-        .save(mergePath)
-        .on('end', function () {
-          console.log('download finished.');
-          fsSync.unlinkSync(videoFilePath);
-          fsSync.unlinkSync(audioFilePath);
-          resolve();
-        });
-    });
-  };
+  // const mergeFiles = () => {
+  //   return new Promise<void>((resolve, reject) => {
+  //     ffmpeg()
+  //       .input(videoFilePath)
+  //       .input(audioFilePath)
+  //       .save(mergePath)
+  //       .on('end', function () {
+  //         console.log('download finished.');
+  //         resolve();
+  //       });
+  //   });
+  // };
 
   try {
-    const audioPromise = audioDownload();
+    // const audioPromise = audioDownload();
     const videoPromise = videoDownload();
-    await Promise.all([audioPromise, videoPromise]);
-    await mergeFiles();
-    const mp4Content = fsSync.readFileSync(mergePath);
+    // await Promise.all([audioPromise, videoPromise]);
+    await Promise.all([videoPromise]);
+    // await mergeFiles();
+    // const mp4Content = fsSync.readFileSync(mergePath);
+    const mp4Content = fsSync.readFileSync(videoFilePath);
     const base64Data =
       Buffer.from(mp4Content).toString('base64');
 
-    fsSync.unlinkSync(mergePath);
+    fsSync.unlinkSync(videoFilePath);
+    // fsSync.unlinkSync(audioFilePath);
+    // fsSync.unlinkSync(mergePath);
 
     return new Response(
       JSON.stringify({ body: base64Data }),
