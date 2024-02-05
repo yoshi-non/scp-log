@@ -266,7 +266,7 @@ const AddMovie = ({
                           オフライン保存
                         </DialogTitle>
                         <DialogDescription>
-                          このPCに動画データ(mp4)を保存します。
+                          このPCに音声データ(webm)を保存します。
                           {item.snippet.title}
                         </DialogDescription>
                       </DialogHeader>

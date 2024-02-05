@@ -18,18 +18,19 @@ export async function GET(
   const audioDownload = () => {
     return new Promise<void>((resolve, reject) => {
       const audio = ytdl(url, {
-        quality: 'highest',
         filter: (format) =>
-          format.container === 'mp4' &&
-          format.hasAudio &&
-          format.hasVideo === false,
+          format.hasVideo === false &&
+          format.hasAudio === true &&
+          format.audioQuality === 'AUDIO_QUALITY_MEDIUM' &&
+          format.container === 'webm',
       });
-      audio.on('data', (chunk) => {
-        data = Buffer.concat([data, chunk]);
-      });
+
       var starttime: number;
       audio.once('response', () => {
         starttime = Date.now();
+      });
+      audio.on('data', (chunk) => {
+        data = Buffer.concat([data, chunk]);
       });
       audio.on(
         'progress',
@@ -74,15 +75,12 @@ export async function GET(
       });
     });
   };
-
   try {
     await audioDownload();
     const base64Data = Buffer.from(data).toString('base64');
     return new Response(
       JSON.stringify({ body: base64Data }),
-      {
-        status: 200,
-      }
+      { status: 200 }
     );
   } catch (error) {
     console.error(error);
