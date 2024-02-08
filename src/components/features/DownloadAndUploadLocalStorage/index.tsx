@@ -7,13 +7,15 @@ import {
   saveToLocalStorage,
 } from '@/utils/storage';
 import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { useChangeUploadFile } from './hooks/useChangeUploadFile';
 
 const DownloadAndUploadLocalStorage = () => {
   const [localStorageObjects, setLocalStorageObjects] =
     useState<LocalStorageObjects>([]);
   const [uploadFileObjects, setUploadFileObjects] =
     useState<LocalStorageObjects>([]);
+  const [isCheckFile, setIsCheckFile] =
+    useState<boolean>(true);
 
   useEffect(() => {
     const storedData = getFromLocalStorage(localStorageKey);
@@ -25,31 +27,18 @@ const DownloadAndUploadLocalStorage = () => {
     localStorageDownload(localStorageObjects);
   };
 
-  const changeUploadFile = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result;
-      if (!result) return;
-      try {
-        const parsedData = JSON.parse(result as string);
-        if (parsedData.length === 0) return;
-        setUploadFileObjects(parsedData);
-      } catch (error) {
-        console.error(error);
-        toast.error(`ファイルが規定の形式ではありません。`);
-        setUploadFileObjects([]);
-        return;
-      }
-    };
-    reader.readAsText(file);
-  };
-
   const uploadHandler = () => {
     saveToLocalStorage(localStorageKey, uploadFileObjects);
+  };
+
+  const UploadFileHandler = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    useChangeUploadFile(
+      e,
+      setUploadFileObjects,
+      setIsCheckFile
+    );
   };
 
   return (
@@ -74,14 +63,21 @@ const DownloadAndUploadLocalStorage = () => {
       </div>
 
       <div className="mt-5">
-        <p className="text-xl font-bold">
-          バックアップデータをアップロード
-        </p>
-        <input
-          type="file"
-          accept=".json"
-          onChange={(e) => changeUploadFile(e)}
-        />
+        <div>
+          <p className="text-xl font-bold">
+            バックアップデータをアップロード
+          </p>
+          <input
+            type="file"
+            accept=".json"
+            onChange={(e) => UploadFileHandler(e)}
+          />
+          {!isCheckFile && (
+            <p className=" text-xs text-primary">
+              ファイルが規定の形式ではありません。
+            </p>
+          )}
+        </div>
         <Button
           disabled={uploadFileObjects.length === 0}
           variant="outline"
