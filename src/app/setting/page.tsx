@@ -1,5 +1,6 @@
 'use client';
 
+import DeleteLocalStorage from '@/components/features/DeleteLocalStorage';
 import DownloadAndUploadLocalStorage from '@/components/features/DownloadAndUploadLocalStorage';
 import InputKey from '@/components/features/InputKey';
 
@@ -8,6 +9,7 @@ const Setting = () => {
     <div>
       <InputKey />
       <DownloadAndUploadLocalStorage />
+      <DeleteLocalStorage />
     </div>
   );
 };
