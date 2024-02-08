@@ -8,6 +8,16 @@ import {
 } from '@/utils/storage';
 import { useEffect, useState } from 'react';
 import { useChangeUploadFile } from './hooks/useChangeUploadFile';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 const DownloadAndUploadLocalStorage = () => {
   const [localStorageObjects, setLocalStorageObjects] =
@@ -39,6 +49,18 @@ const DownloadAndUploadLocalStorage = () => {
       setUploadFileObjects,
       setIsCheckFile
     );
+  };
+
+  const addUploadHandler = () => {
+    const newLocalStorageObjects = [
+      ...localStorageObjects,
+      ...uploadFileObjects,
+    ];
+    saveToLocalStorage(
+      localStorageKey,
+      newLocalStorageObjects
+    );
+    setLocalStorageObjects(newLocalStorageObjects);
   };
 
   return (
@@ -78,14 +100,53 @@ const DownloadAndUploadLocalStorage = () => {
             </p>
           )}
         </div>
-        <Button
-          disabled={uploadFileObjects.length === 0}
-          variant="outline"
-          onClick={uploadHandler}
-          className="mt-3"
-        >
-          アップロード
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              disabled={uploadFileObjects.length === 0}
+              variant="outline"
+              className="mt-3"
+            >
+              アップロード
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>
+                バックアップデータをアップロード
+              </DialogTitle>
+              <DialogDescription>
+                新規データとして追加するか全てのデータを上書きするか選択してください。
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <DialogClose asChild>
+                <div className="w-full flex justify-center gap-10">
+                  <Button
+                    disabled={
+                      uploadFileObjects.length === 0
+                    }
+                    variant="outline"
+                    onClick={addUploadHandler}
+                    className="mt-3"
+                  >
+                    新規に追加
+                  </Button>
+                  <Button
+                    disabled={
+                      uploadFileObjects.length === 0
+                    }
+                    variant="destructive"
+                    onClick={uploadHandler}
+                    className="mt-3"
+                  >
+                    全て上書き
+                  </Button>
+                </div>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
