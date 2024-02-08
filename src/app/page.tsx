@@ -2,10 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { LocalStorageObjects } from '@/types/localstrageObjects';
-import {
-  getFromLocalStorage,
-  saveToLocalStorage,
-} from '@/utils/storage';
+import { getFromLocalStorage } from '@/utils/storage';
 import {
   Tabs,
   TabsContent,
@@ -22,8 +19,10 @@ import AddMovie from '@/components/features/AddMovie';
 import PlayList from '@/components/features/PlayList';
 import { localStorageKey } from '@/constants/localStorageKey';
 import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
+import Loader from '@/components/features/Loader';
 
 export default function Home() {
+  const [loading, setLoading] = useState<boolean>(true);
   const [localStorageObjects, setLocalStorageObjects] =
     useState<LocalStorageObjects>([]);
   const [selectedFolderIndex, setSelectedFolderIndex] =
@@ -38,13 +37,8 @@ export default function Home() {
     const storedData = getFromLocalStorage(localStorageKey);
     if (storedData) {
       setLocalStorageObjects(storedData);
-    } else {
-      saveToLocalStorage(
-        localStorageKey,
-        localStorageObjects
-      );
+      setLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -62,33 +56,39 @@ export default function Home() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="playlist">
-          <ResizablePanelGroup
-            direction="horizontal"
-            className="min-h-[620px] border-y-2"
-          >
-            <ResizablePanel defaultSize={20} maxSize={50}>
-              <PlayListSideBar
-                localStorageObjects={localStorageObjects}
-                setLocalStorageObjects={
-                  setLocalStorageObjects
-                }
-                selectedFolderIndex={selectedFolderIndex}
-                setSelectedFolderIndex={
-                  setSelectedFolderIndex
-                }
-              />
-            </ResizablePanel>
-            <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={80}>
-              <PlayList
-                localStorageObjects={localStorageObjects}
-                setLocalStorageObjects={
-                  setLocalStorageObjects
-                }
-                selectedFolderIndex={selectedFolderIndex}
-              />
-            </ResizablePanel>
-          </ResizablePanelGroup>
+          {loading ? (
+            <div className="w-full min-h-[620px] h-full flex justify-center items-center">
+              <Loader />
+            </div>
+          ) : (
+            <ResizablePanelGroup
+              direction="horizontal"
+              className="min-h-[620px] border-y-2"
+            >
+              <ResizablePanel defaultSize={20} maxSize={50}>
+                <PlayListSideBar
+                  localStorageObjects={localStorageObjects}
+                  setLocalStorageObjects={
+                    setLocalStorageObjects
+                  }
+                  selectedFolderIndex={selectedFolderIndex}
+                  setSelectedFolderIndex={
+                    setSelectedFolderIndex
+                  }
+                />
+              </ResizablePanel>
+              <ResizableHandle withHandle />
+              <ResizablePanel defaultSize={80}>
+                <PlayList
+                  localStorageObjects={localStorageObjects}
+                  setLocalStorageObjects={
+                    setLocalStorageObjects
+                  }
+                  selectedFolderIndex={selectedFolderIndex}
+                />
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          )}
         </TabsContent>
         <TabsContent value="addMovie">
           <AddMovie
