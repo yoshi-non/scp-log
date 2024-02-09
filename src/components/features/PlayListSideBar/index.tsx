@@ -88,7 +88,7 @@ const PlayListSideBar = ({
   };
 
   return (
-    <div className="p-1">
+    <div className="p-1 h-[calc(100vh-120px)] overflow-hidden">
       <Button
         onClick={addFolderHandler}
         variant="ghost"

@@ -63,7 +63,7 @@ export default function Home() {
           ) : (
             <ResizablePanelGroup
               direction="horizontal"
-              className="min-h-[620px] border-y-2"
+              className="border-y-2"
             >
               <ResizablePanel defaultSize={20} maxSize={50}>
                 <PlayListSideBar
