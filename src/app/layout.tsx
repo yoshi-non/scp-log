@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Noto_Sans_JP } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/features/Header';
-import Footer from '@/components/features/Footer';
 import { ThemeProvider } from '@/components/functions/theme-provider';
 import { YouTubeContextProvider } from '@/components/functions/youtube-provider';
 import { Toaster } from '@/components/ui/sonner';
@@ -36,7 +35,6 @@ export default function RootLayout({
           >
             <Header />
             {children}
-            <Footer />
             <Toaster />
           </ThemeProvider>
         </YouTubeContextProvider>
