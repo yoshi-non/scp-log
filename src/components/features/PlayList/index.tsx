@@ -63,6 +63,7 @@ import {
 import SortableItemWrapper from '../DndKit/SortableItemWrapper';
 import { dndExchangeMovie } from './logics/dndExchangeMovie';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import AddRelatedMovie from '../AddRelatedMovie';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -279,11 +280,11 @@ const PlayList = ({
     <div className="flex w-full h-[calc(100vh-120px)] overflow-hidden">
       {localStorageObjects[selectedFolderIndex]?.movies
         .length > 0 ? (
-        <div className="w-[300px] bg-muted flex direction-normal items-start justify-center">
+        <div className="w-[300px] bg-muted">
           {isPlaying ? (
             // youtubeを再生するプレイヤー
             <div>
-              <div className="w-[300px]">
+              <div className="w-[300px] h-[169px]">
                 <YoutubePlayer
                   videoId={
                     localStorageObjects[selectedFolderIndex]
@@ -628,6 +629,12 @@ const PlayList = ({
               ))}
             </div>
           </div>
+          <AddRelatedMovie
+            movies={
+              localStorageObjects[selectedFolderIndex]
+                .movies
+            }
+          />
         </ScrollArea>
       )}
     </div>

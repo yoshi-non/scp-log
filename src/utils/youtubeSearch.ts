@@ -21,14 +21,12 @@ export const youtubeSearch = async (
         key:
           localStorageInputValue ||
           process.env.YOUTUBE_DATA_API_KEY,
+        type: 'video',
       },
     };
     const res = await axios(config);
     const result = res.data.items as YouTubeSearchResult[];
-    const videos = result.filter((item) => {
-      return item.id.kind === 'youtube#video';
-    });
-    return videos;
+    return result;
   } catch {
     return [];
   }

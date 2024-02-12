@@ -51,7 +51,7 @@ const YoutubePlayer = ({ videoId, onVideoEnd }: Props) => {
     };
   }, [videoId, player]);
 
-  return <div ref={wrapperRef} />;
+  return <div className="h-full" ref={wrapperRef} />;
 };
 
 export default YoutubePlayer;
