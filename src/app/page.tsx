@@ -61,10 +61,7 @@ export default function Home() {
               <Loader />
             </div>
           ) : (
-            <ResizablePanelGroup
-              direction="horizontal"
-              className="border-y-2"
-            >
+            <ResizablePanelGroup direction="horizontal">
               <ResizablePanel defaultSize={20} maxSize={50}>
                 <PlayListSideBar
                   localStorageObjects={localStorageObjects}

@@ -5,8 +5,6 @@ import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
 import axios, { AxiosRequestConfig } from 'axios';
 import kuromoji from 'kuromoji';
 
-type ProperNoun = string;
-
 let tokenizer: kuromoji.Tokenizer<kuromoji.IpadicFeatures> | null =
   null;
 
@@ -35,9 +33,9 @@ const tokenized = (
   return tokenizer.tokenize(text);
 };
 
-export const extractProperNounList = async (
+const extractProperNounList = async (
   text: string
-): Promise<ProperNoun[]> => {
+): Promise<string[]> => {
   if (!tokenizer) {
     await initializeTokenizer().catch((err) => {
       throw new Error(
@@ -46,8 +44,8 @@ export const extractProperNounList = async (
     });
   }
 
-  const pnList: ProperNoun[] = [];
-  let consecutiveWord: ProperNoun | null = null;
+  const pnList: string[] = [];
+  let consecutiveWord: string | null = null;
 
   tokenized(text).forEach((result) => {
     if (result.pos !== '名詞') {
@@ -77,7 +75,7 @@ const findMostFrequentSubstring = async (
 ) => {
   // kuromojiで形態素解析して名詞のみを抽出して連結して返す
   const text = words.join(' ');
-  const properNounList: ProperNoun[] =
+  const properNounList: string[] =
     await extractProperNounList(text);
   // 重複を削除
   const properNounSet = new Set<string>();
@@ -111,7 +109,7 @@ export const youtubeRelatedSearch = async (
       params: {
         part: 'snippet',
         q: concatenatedTitles,
-        maxResults: 5,
+        maxResults: 10,
         key:
           localStorageInputValue ||
           process.env.YOUTUBE_DATA_API_KEY,
