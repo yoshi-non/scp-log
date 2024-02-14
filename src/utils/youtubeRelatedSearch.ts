@@ -113,7 +113,7 @@ export const youtubeRelatedSearch = async (
       params: {
         part: 'snippet',
         q: concatenatedTitles,
-        maxResults: 5,
+        maxResults: 10,
         key:
           localStorageInputValue ||
           process.env.YOUTUBE_DATA_API_KEY,
@@ -126,8 +126,14 @@ export const youtubeRelatedSearch = async (
     const newNextPageToken =
       res.data.nextPageToken || undefined;
     const result = res.data.items as YouTubeSearchResult[];
-    console.log(result);
-    return { result, nextPageToken: newNextPageToken };
+    // moviesに含まれる動画を除外
+    const newResult = result.filter((movie) => {
+      return !movies.some((m) => m.id === movie.id.videoId);
+    });
+    return {
+      result: newResult,
+      nextPageToken: newNextPageToken,
+    };
   } catch (error) {
     console.error;
     return { result: [], nextPageToken: undefined };
