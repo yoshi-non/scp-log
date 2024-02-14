@@ -93,10 +93,19 @@ const PlayList = ({
     setIsPlaying(false);
   }, [selectedFolderIndex]);
 
+  const movies =
+    localStorageObjects[selectedFolderIndex]?.movies;
+  // ドラッグ&ドロップでソート可能なリスト
+  const [items, setItems] = useState<{
+    [key: string]: string[];
+  }>({
+    container1: movies.map((_, index) => String(index)),
+  });
+
   const onVideoEndHandler = () => {
     const index = getOnVideoEndIndex(
       selectedMovieIndex,
-      localStorageObjects[selectedFolderIndex].movies.length
+      movies.length
     );
     setSelectedMovieIndex(index);
   };
@@ -142,13 +151,6 @@ const PlayList = ({
     );
     setLocalStorageObjects(newObject);
   };
-
-  // ドラッグ&ドロップでソート可能なリスト
-  const [items, setItems] = useState<{
-    [key: string]: string[];
-  }>({
-    container1: [],
-  });
 
   // ドラッグの開始、移動、終了などにどのような入力を許可するかを決めるprops
   const sensors = useSensors(
@@ -267,15 +269,6 @@ const PlayList = ({
       setIsPlaying(true);
     }
   };
-  const movies =
-    localStorageObjects[selectedFolderIndex]?.movies;
-
-  useEffect(() => {
-    setItems({
-      container1: movies.map((_, index) => String(index)),
-    });
-    console.log('movies:', movies);
-  }, [movies]);
 
   return (
     <div className="flex w-full h-[calc(100vh-120px)] overflow-hidden">
@@ -617,10 +610,8 @@ const PlayList = ({
             localStorageObjects={localStorageObjects}
             setLocalStorageObjects={setLocalStorageObjects}
             selectedFolderIndex={selectedFolderIndex}
-            movies={
-              localStorageObjects[selectedFolderIndex]
-                .movies
-            }
+            movies={movies}
+            setItems={setItems}
           />
         </ScrollArea>
       )}

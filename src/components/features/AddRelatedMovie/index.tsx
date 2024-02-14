@@ -19,6 +19,7 @@ type Props = {
   >;
   selectedFolderIndex: number;
   movies: Movies;
+  setItems: React.Dispatch<{ [key: string]: string[] }>;
 };
 
 const AddRelatedMovie = ({
@@ -26,6 +27,7 @@ const AddRelatedMovie = ({
   setLocalStorageObjects,
   selectedFolderIndex,
   movies,
+  setItems,
 }: Props) => {
   const localStorageInputValue =
     getFromLocalStorageInputKey(localStorageInputKey);
@@ -67,6 +69,11 @@ const AddRelatedMovie = ({
       (movie) => movie.id.videoId !== movieId
     );
     setRelatedMovies(newRelatedMovies);
+    setItems({
+      container1: newObjects[
+        selectedFolderIndex
+      ].movies.map((_, index) => String(index)),
+    });
   };
   return (
     <div className="w-full p-2">
