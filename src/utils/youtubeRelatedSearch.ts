@@ -9,7 +9,7 @@ const findMostFrequentSubstring = async (
 ) => {
   // kuromojiで形態素解析して名詞のみを抽出して連結して返す
   try {
-    const text = words.join(' ');
+    const text: string = words.join(' ');
     console.log(text);
     const res = await fetch(`/api/kuromoji/${text}`);
     console.log(res);

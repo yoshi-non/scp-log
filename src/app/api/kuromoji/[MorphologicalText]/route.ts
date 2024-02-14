@@ -1,18 +1,15 @@
-'use strict';
-
 import { isDevelopment } from '@/utils/isDevelopment';
 import kuromoji from 'kuromoji';
 import path from 'path';
-
-const dicPath = path.resolve(
-  require.resolve('kuromoji'),
-  '../../dict'
-);
 
 let tokenizer: kuromoji.Tokenizer<kuromoji.IpadicFeatures> | null =
   null;
 
 const initializeTokenizer = (): Promise<void> => {
+  const dicPath: string = path.resolve(
+    require.resolve('kuromoji'),
+    '../../dict'
+  );
   return new Promise((resolve, reject) => {
     kuromoji
       .builder({
@@ -43,18 +40,17 @@ const tokenized = (
 
 export async function GET(
   request: Request,
-  { params }: { params: { text: string } }
+  { params }: { params: { MorphologicalText: string } }
 ) {
   console.log('kuromoji');
-
-  const text = params.text;
-  if (!text) {
-    console.error('text is empty');
-    return new Response('text is empty!', {
-      status: 400,
-    });
-  }
   try {
+    const text = params.MorphologicalText;
+    if (!text) {
+      console.error('text is empty');
+      return new Response('text is empty!', {
+        status: 400,
+      });
+    }
     if (!tokenizer) {
       await initializeTokenizer();
     }
@@ -82,13 +78,11 @@ export async function GET(
     }
     return new Response(
       JSON.stringify({ properNounList: pnList }),
-      {
-        status: 200,
-      }
+      { status: 200 }
     );
   } catch (error) {
     console.error(error);
-    return new Response(`failed.${error}`, {
+    return new Response(`failed.`, {
       status: 400,
     });
   }
