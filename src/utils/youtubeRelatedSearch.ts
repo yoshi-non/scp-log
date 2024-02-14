@@ -39,6 +39,10 @@ const tokenized = (
 const extractProperNounList = async (
   text: string
 ): Promise<string[]> => {
+  if (!tokenizer) {
+    await initializeTokenizer;
+  }
+
   const pnList: string[] = [];
   let consecutiveWord: string | null = null;
 
