@@ -6,16 +6,16 @@ let tokenizer: kuromoji.Tokenizer<kuromoji.IpadicFeatures> | null =
   null;
 
 const initializeTokenizer = (): Promise<void> => {
-  const dicPath: string = path.resolve(
-    require.resolve('kuromoji'),
-    '../../dict'
-  );
+  // const dicPath: string = path.resolve(
+  //   require.resolve('kuromoji'),
+  //   '../../dict'
+  // );
   return new Promise((resolve, reject) => {
     kuromoji
       .builder({
         dicPath: isDevelopment()
           ? './node_modules/kuromoji/dict'
-          : dicPath,
+          : '../../dict',
       })
       .build((err, _tokenizer) => {
         if (err) {
