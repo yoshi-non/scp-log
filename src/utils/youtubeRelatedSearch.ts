@@ -5,22 +5,22 @@ import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
 import axios, { AxiosRequestConfig } from 'axios';
 import kuromoji from 'kuromoji';
 import { isDevelopment } from './isDevelopment';
+import path from 'path';
 
 let tokenizer: kuromoji.Tokenizer<kuromoji.IpadicFeatures> | null =
   null;
+const dicPath = path.resolve(
+  require.resolve('kuromoji'),
+  '../../dict'
+);
 
 const initializeTokenizer = (): Promise<void> => {
   return new Promise((resolve, reject) => {
     kuromoji
-      .builder({
-        dicPath: isDevelopment()
-          ? './node_modules/kuromoji/dict'
-          : 'https://scp-log.vercel.app/dict',
-      })
+      .builder({ dicPath })
       .build((err, _tokenizer) => {
         if (err) {
-          console.error(err);
-          reject();
+          reject(err);
         } else {
           tokenizer = _tokenizer!;
           resolve();
