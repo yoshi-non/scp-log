@@ -3,7 +3,7 @@
 import { searchFiles } from '@/utils/existFile';
 
 const TestPage = () => {
-  console.log(searchFiles('/dist'));
+  console.log(searchFiles('/dict'));
   return <div className="container"></div>;
 };
 
