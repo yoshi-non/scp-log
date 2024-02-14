@@ -4,6 +4,7 @@ import { searchFiles } from '@/utils/existFile';
 
 const TestPage = () => {
   console.log(searchFiles('./dict/base.dat.gz'));
+  console.log(searchFiles('./dict'));
   console.log(searchFiles('/node_modules'));
   console.log(searchFiles('./node_modules'));
   return <div className="container"></div>;
