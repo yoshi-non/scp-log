@@ -4,6 +4,7 @@ import { Movies } from '@/types/localstrageObjects';
 import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
 import axios, { AxiosRequestConfig } from 'axios';
 import kuromoji from 'kuromoji';
+import { isDevelopment } from './isDevelopment';
 
 let tokenizer: kuromoji.Tokenizer<kuromoji.IpadicFeatures> | null =
   null;
@@ -11,7 +12,11 @@ let tokenizer: kuromoji.Tokenizer<kuromoji.IpadicFeatures> | null =
 const initializeTokenizer = (): Promise<void> => {
   return new Promise((resolve, reject) => {
     kuromoji
-      .builder({ dicPath: './node_modules/kuromoji/dict' })
+      .builder({
+        dicPath: isDevelopment()
+          ? './node_modules/kuromoji/dict'
+          : '/dict',
+      })
       .build((err, _tokenizer) => {
         if (err) {
           console.error(err);
