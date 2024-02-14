@@ -18,13 +18,21 @@ const AddRelatedMovie = ({ movies }: Props) => {
   const [relatedMovies, setRelatedMovies] = useState<
     YouTubeSearchResult[]
   >([]);
+  const [nextPageToken, setNextPageToken] = useState<
+    string | undefined
+  >(undefined);
 
   const youtubeRelatedSearchHandler = async () => {
     const searchRelatedMovies = await youtubeRelatedSearch(
       movies,
-      localStorageInputValue
+      localStorageInputValue,
+      nextPageToken
     );
-    setRelatedMovies(searchRelatedMovies);
+    setNextPageToken(searchRelatedMovies.nextPageToken);
+    setRelatedMovies([
+      ...relatedMovies,
+      ...searchRelatedMovies.result,
+    ]);
   };
   return (
     <div className="w-full p-2">

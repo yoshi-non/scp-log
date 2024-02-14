@@ -92,8 +92,12 @@ const findMostFrequentSubstring = async (
 
 export const youtubeRelatedSearch = async (
   movies: Movies,
-  localStorageInputValue: string | false
-): Promise<YouTubeSearchResult[]> => {
+  localStorageInputValue: string | false,
+  nextPageToken?: string
+): Promise<{
+  result: YouTubeSearchResult[];
+  nextPageToken?: string;
+}> => {
   try {
     const relateWord: string[] = movies.map((movie) => {
       return movie.title;
@@ -114,15 +118,18 @@ export const youtubeRelatedSearch = async (
           localStorageInputValue ||
           process.env.YOUTUBE_DATA_API_KEY,
         type: 'video',
+        pageToken: nextPageToken,
       },
     };
     const res = await axios(config);
+    console.log(res);
+    const newNextPageToken =
+      res.data.nextPageToken || undefined;
     const result = res.data.items as YouTubeSearchResult[];
-    console.log(concatenatedTitles);
     console.log(result);
-    return result;
+    return { result, nextPageToken: newNextPageToken };
   } catch (error) {
     console.error;
-    return [];
+    return { result: [], nextPageToken: undefined };
   }
 };
