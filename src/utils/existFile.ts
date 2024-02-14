@@ -1,7 +1,7 @@
 'use server';
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 export const searchFiles = (dirPath: string): any => {
   const allDirents = fs.readdirSync(dirPath, {
