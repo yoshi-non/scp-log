@@ -63,6 +63,7 @@ import {
 import SortableItemWrapper from '../DndKit/SortableItemWrapper';
 import { dndExchangeMovie } from './logics/dndExchangeMovie';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import AddRelatedMovie from '../AddRelatedMovie';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -92,10 +93,19 @@ const PlayList = ({
     setIsPlaying(false);
   }, [selectedFolderIndex]);
 
+  const movies =
+    localStorageObjects[selectedFolderIndex]?.movies;
+  // ドラッグ&ドロップでソート可能なリスト
+  const [items, setItems] = useState<{
+    [key: string]: string[];
+  }>({
+    container1: movies.map((_, index) => String(index)),
+  });
+
   const onVideoEndHandler = () => {
     const index = getOnVideoEndIndex(
       selectedMovieIndex,
-      localStorageObjects[selectedFolderIndex].movies.length
+      movies.length
     );
     setSelectedMovieIndex(index);
   };
@@ -141,13 +151,6 @@ const PlayList = ({
     );
     setLocalStorageObjects(newObject);
   };
-
-  // ドラッグ&ドロップでソート可能なリスト
-  const [items, setItems] = useState<{
-    [key: string]: string[];
-  }>({
-    container1: [],
-  });
 
   // ドラッグの開始、移動、終了などにどのような入力を許可するかを決めるprops
   const sensors = useSensors(
@@ -267,46 +270,28 @@ const PlayList = ({
     }
   };
 
-  useEffect(() => {
-    setItems({
-      container1: localStorageObjects[
-        selectedFolderIndex
-      ]?.movies.map((_, index) => String(index)),
-    });
-  }, [localStorageObjects, selectedFolderIndex]);
-
   return (
     <div className="flex w-full h-[calc(100vh-120px)] overflow-hidden">
-      {localStorageObjects[selectedFolderIndex]?.movies
-        .length > 0 ? (
-        <div className="w-[300px] bg-muted flex direction-normal items-start justify-center">
+      {movies.length > 0 ? (
+        <div className="w-[300px] bg-muted">
           {isPlaying ? (
             // youtubeを再生するプレイヤー
             <div>
-              <div className="w-[300px]">
+              <div className="w-[300px] h-[169px]">
                 <YoutubePlayer
-                  videoId={
-                    localStorageObjects[selectedFolderIndex]
-                      .movies[selectedMovieIndex]?.id
-                  }
+                  videoId={movies[selectedMovieIndex]?.id}
                   onVideoEnd={onVideoEndHandler}
                 />
               </div>
               <p className="text-xl p-2">
-                {
-                  localStorageObjects[selectedFolderIndex]
-                    .movies[selectedMovieIndex]?.title
-                }
+                {movies[selectedMovieIndex]?.title}
               </p>
             </div>
           ) : (
             <div className="flex flex-col">
               <div className="overflow-hidden flex justify-center items-center w-[300px] h-[169px]">
                 <Image
-                  src={
-                    localStorageObjects[selectedFolderIndex]
-                      .movies[0].thumbnail
-                  }
+                  src={movies[0].thumbnail}
                   width={300}
                   height={169}
                   alt="thumbnail"
@@ -389,10 +374,7 @@ const PlayList = ({
                   </p>
                 </div>
                 <p className="text-primary">
-                  {
-                    localStorageObjects[selectedFolderIndex]
-                      .movies.length
-                  }
+                  {movies.length}
                   本の動画
                 </p>
               </div>
@@ -420,9 +402,7 @@ const PlayList = ({
                 strategy={rectSortingStrategy}
               >
                 <div className="flex-auto">
-                  {localStorageObjects[
-                    selectedFolderIndex
-                  ]?.movies.map((movie, index) => (
+                  {movies.map((movie, index) => (
                     <div
                       key={index}
                       className="h-[100px] border-b-2 border-primary-background"
@@ -474,9 +454,7 @@ const PlayList = ({
               </SortableContext>
             </DndContext>
             <div className="w-[39px]">
-              {localStorageObjects[
-                selectedFolderIndex
-              ]?.movies.map((movie, index) => (
+              {movies.map((movie, index) => (
                 <Menubar
                   className="h-[100px] p-0 flex flex-col border-x-0 border-t-0 border-b-2 border-primary-background rounded-none"
                   key={index}
@@ -628,6 +606,13 @@ const PlayList = ({
               ))}
             </div>
           </div>
+          <AddRelatedMovie
+            localStorageObjects={localStorageObjects}
+            setLocalStorageObjects={setLocalStorageObjects}
+            selectedFolderIndex={selectedFolderIndex}
+            movies={movies}
+            setItems={setItems}
+          />
         </ScrollArea>
       )}
     </div>
