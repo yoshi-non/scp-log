@@ -3,90 +3,34 @@
 import { Movies } from '@/types/localstrageObjects';
 import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
 import axios, { AxiosRequestConfig } from 'axios';
-import kuromoji from 'kuromoji';
-import { isDevelopment } from './isDevelopment';
-import path from 'path';
-
-let tokenizer: kuromoji.Tokenizer<kuromoji.IpadicFeatures> | null =
-  null;
-const dicPath = path.resolve(
-  require.resolve('kuromoji'),
-  '../../dict'
-);
-
-const initializeTokenizer = new Promise(
-  (resolve, reject) => {
-    kuromoji
-      .builder({ dicPath })
-      .build((error, tokenizer) => {
-        if (error) {
-          return reject(error);
-        }
-        resolve(tokenizer);
-      });
-  }
-);
-
-const tokenized = (
-  text: string
-): kuromoji.IpadicFeatures[] => {
-  if (!tokenizer) {
-    throw new Error('Tokenizer is not initialized');
-  }
-  return tokenizer.tokenize(text);
-};
-
-const extractProperNounList = async (
-  text: string
-): Promise<string[]> => {
-  if (!tokenizer) {
-    await initializeTokenizer;
-  }
-
-  const pnList: string[] = [];
-  let consecutiveWord: string | null = null;
-
-  tokenized(text).forEach((result) => {
-    if (result.pos !== '名詞') {
-      if (consecutiveWord !== null) {
-        pnList.push(consecutiveWord);
-      }
-      consecutiveWord = null;
-      return;
-    }
-
-    if (consecutiveWord === null) {
-      consecutiveWord = result.surface_form;
-    } else {
-      consecutiveWord += result.surface_form;
-    }
-  });
-
-  if (consecutiveWord !== null) {
-    pnList.push(consecutiveWord);
-  }
-
-  return pnList;
-};
 
 const findMostFrequentSubstring = async (
   words: string[]
 ) => {
   // kuromojiで形態素解析して名詞のみを抽出して連結して返す
-  const text = words.join(' ');
-  const properNounList: string[] =
-    await extractProperNounList(text);
-  // 重複を削除
-  const properNounSet = new Set<string>();
-  properNounList.forEach((pn) => {
-    properNounSet.add(pn);
-  });
-  // ,で連結
-  let concatenatedTitles = '';
-  properNounSet.forEach((word) => {
-    concatenatedTitles += word + ',';
-  });
-  return concatenatedTitles;
+  try {
+    const text = words.join(' ');
+    console.log(text);
+    const res = await fetch(`/api/kuromoji/${text}`);
+    console.log(res);
+    const resJson = await res.json();
+    const properNounList: string[] = resJson.properNounList;
+    // 重複を削除
+    const properNounSet = new Set<string>();
+    properNounList.forEach((pn) => {
+      properNounSet.add(pn);
+    });
+    // ,で連結
+    let concatenatedTitles = '';
+    properNounSet.forEach((word) => {
+      concatenatedTitles += word + ',';
+    });
+    return concatenatedTitles;
+  } catch (error) {
+    console.error;
+    console.error('kuromoji error:', error);
+    return;
+  }
 };
 
 export const youtubeRelatedSearch = async (
@@ -103,6 +47,9 @@ export const youtubeRelatedSearch = async (
     });
     const concatenatedTitles =
       await findMostFrequentSubstring(relateWord);
+    if (!concatenatedTitles) {
+      return { result: [] };
+    }
     const config: AxiosRequestConfig = {
       url: 'https://www.googleapis.com/youtube/v3/search',
       method: 'GET',
