@@ -14,20 +14,18 @@ const dicPath = path.resolve(
   '../../dict'
 );
 
-const initializeTokenizer = (): Promise<void> => {
-  return new Promise((resolve, reject) => {
+const initializeTokenizer = new Promise(
+  (resolve, reject) => {
     kuromoji
       .builder({ dicPath })
-      .build((err, _tokenizer) => {
-        if (err) {
-          reject(err);
-        } else {
-          tokenizer = _tokenizer!;
-          resolve();
+      .build((error, tokenizer) => {
+        if (error) {
+          return reject(error);
         }
+        resolve(tokenizer);
       });
-  });
-};
+  }
+);
 
 const tokenized = (
   text: string
@@ -41,14 +39,6 @@ const tokenized = (
 const extractProperNounList = async (
   text: string
 ): Promise<string[]> => {
-  if (!tokenizer) {
-    await initializeTokenizer().catch((err) => {
-      throw new Error(
-        `Failed to initialize tokenizer: ${err}`
-      );
-    });
-  }
-
   const pnList: string[] = [];
   let consecutiveWord: string | null = null;
 
