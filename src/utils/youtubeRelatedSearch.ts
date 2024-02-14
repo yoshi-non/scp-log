@@ -15,7 +15,7 @@ const initializeTokenizer = (): Promise<void> => {
       .builder({
         dicPath: isDevelopment()
           ? './node_modules/kuromoji/dict'
-          : './dict',
+          : 'https://scp-log.vercel.app/dict',
       })
       .build((err, _tokenizer) => {
         if (err) {
