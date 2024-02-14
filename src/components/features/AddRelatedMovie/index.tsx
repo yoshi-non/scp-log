@@ -115,17 +115,15 @@ const AddRelatedMovie = ({
           </button>
         ))}
       </div>
-      <div>
-        <Button
-          className="w-full"
-          variant="outline"
-          onClick={youtubeRelatedSearchHandler}
-        >
-          {relatedMovies.length > 0
-            ? 'さらに検索'
-            : '関連動画を追加'}
-        </Button>
-      </div>
+      <Button
+        className="w-full"
+        variant="outline"
+        onClick={youtubeRelatedSearchHandler}
+      >
+        {relatedMovies.length > 0
+          ? 'さらに検索'
+          : '関連動画を追加'}
+      </Button>
     </div>
   );
 };
