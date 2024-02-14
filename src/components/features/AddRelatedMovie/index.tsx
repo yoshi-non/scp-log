@@ -1,18 +1,32 @@
 import { Button } from '@/components/ui/button';
 import { localStorageInputKey } from '@/constants/localStorageKey';
-import { Movies } from '@/types/localstrageObjects';
+import {
+  LocalStorageObjects,
+  Movies,
+} from '@/types/localstrageObjects';
 import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
 import { getFromLocalStorageInputKey } from '@/utils/storage';
 import { youtubeRelatedSearch } from '@/utils/youtubeRelatedSearch';
 import { PlusIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
 import { useState } from 'react';
+import { preserveToFolder } from '../AddMovie/logics/preserveToFolder';
 
 type Props = {
+  localStorageObjects: LocalStorageObjects;
+  setLocalStorageObjects: React.Dispatch<
+    React.SetStateAction<LocalStorageObjects>
+  >;
+  selectedFolderIndex: number;
   movies: Movies;
 };
 
-const AddRelatedMovie = ({ movies }: Props) => {
+const AddRelatedMovie = ({
+  localStorageObjects,
+  setLocalStorageObjects,
+  selectedFolderIndex,
+  movies,
+}: Props) => {
   const localStorageInputValue =
     getFromLocalStorageInputKey(localStorageInputKey);
   const [relatedMovies, setRelatedMovies] = useState<
@@ -33,6 +47,26 @@ const AddRelatedMovie = ({ movies }: Props) => {
       ...relatedMovies,
       ...searchRelatedMovies.result,
     ]);
+  };
+
+  const preserveToFolderHandler = (
+    movieId: string,
+    movieTitle: string,
+    thumbnailUrl: string
+  ) => {
+    const newObjects = preserveToFolder(
+      selectedFolderIndex,
+      movieId,
+      movieTitle,
+      thumbnailUrl,
+      localStorageObjects
+    );
+    setLocalStorageObjects(newObjects);
+    // 関連動画に追加したIDの動画を削除
+    const newRelatedMovies = relatedMovies.filter(
+      (movie) => movie.id.videoId !== movieId
+    );
+    setRelatedMovies(newRelatedMovies);
   };
   return (
     <div className="w-full p-2">
@@ -58,7 +92,16 @@ const AddRelatedMovie = ({ movies }: Props) => {
               {relatedMovie.snippet.title}
             </p>
             <div className="flex justify-center items-center h-full">
-              <button className="hover:bg-background rounded-full p-3">
+              <button
+                onClick={() =>
+                  preserveToFolderHandler(
+                    relatedMovie.id.videoId,
+                    relatedMovie.snippet.title,
+                    relatedMovie.snippet.thumbnails.high.url
+                  )
+                }
+                className="hover:bg-background rounded-full p-3"
+              >
                 <PlusIcon width={23} height={23} />
               </button>
             </div>

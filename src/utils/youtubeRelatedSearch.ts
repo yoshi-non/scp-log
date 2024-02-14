@@ -113,7 +113,7 @@ export const youtubeRelatedSearch = async (
       params: {
         part: 'snippet',
         q: concatenatedTitles,
-        maxResults: 10,
+        maxResults: 5,
         key:
           localStorageInputValue ||
           process.env.YOUTUBE_DATA_API_KEY,
