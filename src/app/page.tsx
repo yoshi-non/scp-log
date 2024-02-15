@@ -34,11 +34,15 @@ export default function Home() {
   >([]);
 
   useEffect(() => {
-    const storedData = getFromLocalStorage(localStorageKey);
-    if (storedData) {
-      setLocalStorageObjects(storedData);
+    const getLocalStorageData = () => {
+      const storedData =
+        getFromLocalStorage(localStorageKey);
+      if (storedData) {
+        setLocalStorageObjects(storedData);
+      }
       setLoading(false);
-    }
+    };
+    getLocalStorageData();
   }, []);
 
   return (
