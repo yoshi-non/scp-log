@@ -1,21 +1,14 @@
-import { isDevelopment } from '@/utils/isDevelopment';
+// 開発環境でのみ (npm run dev) で動作するAPI
 import kuromoji from 'kuromoji';
-import path from 'path';
 
 let tokenizer: kuromoji.Tokenizer<kuromoji.IpadicFeatures> | null =
   null;
 
 const initializeTokenizer = (): Promise<void> => {
-  // const dicPath: string = path.resolve(
-  //   require.resolve('kuromoji'),
-  //   '../../dict'
-  // );
   return new Promise((resolve, reject) => {
     kuromoji
       .builder({
-        dicPath: isDevelopment()
-          ? './node_modules/kuromoji/dict'
-          : '../../dict',
+        dicPath: './node_modules/kuromoji/dict',
       })
       .build((err, _tokenizer) => {
         if (err) {

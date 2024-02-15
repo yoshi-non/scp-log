@@ -3,6 +3,7 @@
 import { Movies } from '@/types/localstrageObjects';
 import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
 import axios, { AxiosRequestConfig } from 'axios';
+import { isDevelopment } from './isDevelopment';
 
 const findMostFrequentSubstring = async (
   words: string[]
@@ -11,10 +12,16 @@ const findMostFrequentSubstring = async (
   try {
     const text: string = words.join(' ');
     console.log(text);
-    const res = await fetch(`/api/kuromoji/${text}`);
+    const res = await fetch(
+      isDevelopment()
+        ? `/api/kuromoji/${text}`
+        : `/api/kuromoji/?input=${encodeURIComponent(text)}`
+    );
     console.log(res);
     const resJson = await res.json();
-    const properNounList: string[] = resJson.properNounList;
+    const properNounList: string[] = isDevelopment()
+      ? resJson.properNounList
+      : resJson;
     // 重複を削除
     const properNounSet = new Set<string>();
     properNounList.forEach((pn) => {
