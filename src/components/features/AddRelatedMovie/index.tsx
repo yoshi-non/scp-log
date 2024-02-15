@@ -9,7 +9,7 @@ import { getFromLocalStorageInputKey } from '@/utils/storage';
 import { youtubeRelatedSearch } from '@/utils/youtubeRelatedSearch';
 import { PlusIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { preserveToFolder } from '../AddMovie/logics/preserveToFolder';
 
 type Props = {
@@ -75,6 +75,12 @@ const AddRelatedMovie = ({
       ].movies.map((_, index) => String(index)),
     });
   };
+
+  useEffect(() => {
+    setRelatedMovies([]);
+    setNextPageToken(undefined);
+  }, [selectedFolderIndex]);
+
   return (
     <div className="w-full p-2">
       <div className="mt-2">
