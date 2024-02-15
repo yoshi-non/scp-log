@@ -11,28 +11,52 @@ const findMostFrequentSubstring = async (
   // kuromojiで形態素解析して名詞のみを抽出して連結して返す
   try {
     const text: string = words.join(' ');
-    console.log(text);
-    const res = await fetch(
-      isDevelopment()
-        ? `/api/kuromoji/${text}`
-        : `/api/kuromoji/?input=${encodeURIComponent(text)}`
-    );
-    console.log(res);
-    const resJson = await res.json();
-    const properNounList: string[] = isDevelopment()
-      ? resJson.properNounList
-      : resJson;
-    // 重複を削除
-    const properNounSet = new Set<string>();
-    properNounList.forEach((pn) => {
-      properNounSet.add(pn);
-    });
-    // ,で連結
-    let concatenatedTitles = '';
-    properNounSet.forEach((word) => {
-      concatenatedTitles += word + ',';
-    });
-    return concatenatedTitles;
+    let concatenatedTitles: string = '';
+    const baseApiUrl = `${process.env.FRONTEND_URL}/api/`;
+    const url = isDevelopment()
+      ? `${baseApiUrl}kuromoji/${text}`
+      : `${baseApiUrl}?input=${encodeURIComponent(text)}`;
+    let control: AbortController | undefined;
+    if (control) {
+      control.abort();
+    }
+    control = new AbortController();
+    const signal = control.signal;
+    const result = fetch(url, { signal })
+      .then((res) => {
+        if (res.status !== 200) {
+          return res
+            .text()
+            .then((message) =>
+              Promise.reject(
+                new Error(
+                  `[status:${res.status}]: ${message}`
+                )
+              )
+            );
+        }
+        return res.json();
+      })
+      .then((json) => {
+        const properNounList = isDevelopment()
+          ? (json.properNounList as string[])
+          : (json as string[]);
+        // 重複を削除
+        const properNounSet = new Set<string>();
+        properNounList.forEach((pn) => {
+          properNounSet.add(pn);
+        });
+        // ,で連結
+        properNounSet.forEach((word) => {
+          concatenatedTitles += word + ',';
+        });
+        const result: string = concatenatedTitles;
+        return result;
+      })
+      .then((result) => {
+        return result;
+      });
+    return result;
   } catch (error) {
     console.error('kuromoji error:', error);
     return;
@@ -74,7 +98,6 @@ export const youtubeRelatedSearch = async (
       },
     };
     const res = await axios(config);
-    console.log(res);
     const newNextPageToken =
       res.data.nextPageToken || undefined;
     const result = res.data.items as YouTubeSearchResult[];
