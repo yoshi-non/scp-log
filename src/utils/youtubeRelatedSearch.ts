@@ -34,7 +34,6 @@ const findMostFrequentSubstring = async (
     });
     return concatenatedTitles;
   } catch (error) {
-    console.error;
     console.error('kuromoji error:', error);
     return;
   }
