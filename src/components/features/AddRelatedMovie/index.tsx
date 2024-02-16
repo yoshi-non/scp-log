@@ -11,6 +11,7 @@ import { PlusIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { preserveToFolder } from '../AddMovie/logics/preserveToFolder';
+import { Loader2 } from 'lucide-react';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -37,18 +38,33 @@ const AddRelatedMovie = ({
   const [nextPageToken, setNextPageToken] = useState<
     string | undefined
   >(undefined);
+  const [isloading, setIsLoading] =
+    useState<boolean>(false);
+  const [isSearchMovies, setIsSearchMovies] =
+    useState<boolean>(true);
 
   const youtubeRelatedSearchHandler = async () => {
-    const searchRelatedMovies = await youtubeRelatedSearch(
-      movies,
-      localStorageInputValue,
-      nextPageToken
-    );
-    setNextPageToken(searchRelatedMovies.nextPageToken);
-    setRelatedMovies([
-      ...relatedMovies,
-      ...searchRelatedMovies.result,
-    ]);
+    setIsLoading(true);
+    try {
+      const searchRelatedMovies =
+        await youtubeRelatedSearch(
+          movies,
+          localStorageInputValue,
+          nextPageToken
+        );
+      setNextPageToken(searchRelatedMovies.nextPageToken);
+      setRelatedMovies([
+        ...relatedMovies,
+        ...searchRelatedMovies.result,
+      ]);
+      if (searchRelatedMovies.result.length === 0) {
+        setIsSearchMovies(false);
+      }
+    } catch (error) {
+      setIsSearchMovies(false);
+      console.error(error);
+    }
+    setIsLoading(false);
   };
 
   const preserveToFolderHandler = (
@@ -79,6 +95,7 @@ const AddRelatedMovie = ({
   useEffect(() => {
     setRelatedMovies([]);
     setNextPageToken(undefined);
+    setIsSearchMovies(true);
   }, [selectedFolderIndex]);
 
   return (
@@ -121,15 +138,25 @@ const AddRelatedMovie = ({
           </button>
         ))}
       </div>
-      <Button
-        className="w-full"
-        variant="outline"
-        onClick={youtubeRelatedSearchHandler}
-      >
-        {relatedMovies.length > 0
-          ? 'さらに検索'
-          : '関連動画を追加'}
-      </Button>
+      {isloading ? (
+        <div className="w-full flex items-center justify-center">
+          <Loader2 className="h-10 w-10 animate-spin" />
+        </div>
+      ) : isSearchMovies ? (
+        <Button
+          className="w-full"
+          variant="outline"
+          onClick={youtubeRelatedSearchHandler}
+        >
+          {relatedMovies.length > 0
+            ? 'さらに検索'
+            : '関連動画を追加'}
+        </Button>
+      ) : (
+        <div className="w-full flex items-center justify-center">
+          <p>関連動画が見つかりませんでした。</p>
+        </div>
+      )}
     </div>
   );
 };
