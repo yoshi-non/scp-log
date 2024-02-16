@@ -4,6 +4,7 @@ import { Movies } from '@/types/localstrageObjects';
 import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
 import axios, { AxiosRequestConfig } from 'axios';
 import { isDevelopment } from './isDevelopment';
+import { findMostFrequentWords } from './findMostFrequentWords';
 
 const findMostFrequentSubstring = async (
   words: string[]
@@ -41,15 +42,10 @@ const findMostFrequentSubstring = async (
         const properNounList = isDevelopment()
           ? (json.properNounList as string[])
           : (json as string[]);
-        // 重複を削除
-        const properNounSet = new Set<string>();
-        properNounList.forEach((pn) => {
-          properNounSet.add(pn);
-        });
+        const mostFrequentWords =
+          findMostFrequentWords(properNounList);
         // ,で連結
-        properNounSet.forEach((word) => {
-          concatenatedTitles += word + ',';
-        });
+        concatenatedTitles = mostFrequentWords.join(',');
         const result: string = concatenatedTitles;
         return result;
       })
