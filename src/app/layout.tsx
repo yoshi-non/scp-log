@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/components/functions/theme-provider';
 import { YouTubeContextProvider } from '@/components/functions/youtube-provider';
 import { Toaster } from '@/components/ui/sonner';
 import GoogleAnalytics from '@/components/functions/GoogleAnalytics';
+import { Suspense } from 'react';
 
 const notoSansJP = Noto_Sans_JP({ subsets: ['latin'] });
 
@@ -23,7 +24,9 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning={true}>
       <head>
-        <GoogleAnalytics />
+        <Suspense>
+          <GoogleAnalytics />
+        </Suspense>
       </head>
       <body className={notoSansJP.className}>
         <YouTubeContextProvider>
