@@ -19,6 +19,7 @@ npm start
 
 ## フォルダ構成
 ```
+├ api // Next.js環境で作成できなかったapi
 ├ src
 │ ├ api // API層
 │ ├ app // Next.jsのルーティング
