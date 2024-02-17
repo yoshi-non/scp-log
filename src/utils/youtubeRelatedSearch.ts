@@ -13,9 +13,9 @@ const findMostFrequentSubstring = async (
   try {
     const text: string = words.join(' ');
     let concatenatedTitles: string = '';
-    const baseApiUrl = `${process.env.FRONTEND_URL}/api/`;
+    const baseApiUrl = `${process.env.FRONTEND_URL}/api/kuromoji`;
     const url = isDevelopment()
-      ? `${baseApiUrl}kuromoji/${encodeURIComponent(text)}`
+      ? `${baseApiUrl}/${encodeURIComponent(text)}`
       : `${baseApiUrl}?input=${encodeURIComponent(text)}`;
     let control: AbortController | undefined;
     if (control) {
