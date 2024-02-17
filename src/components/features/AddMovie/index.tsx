@@ -1,4 +1,3 @@
-import { mockYoutubeSearchGet } from '@/apis/mocks/youtubeSearch/get';
 import { Input } from '@/components/ui/input';
 import { youtubeSearch } from '@/utils/youtubeSearch';
 import { DownloadIcon } from '@radix-ui/react-icons';
@@ -29,7 +28,6 @@ import {
 import { cn } from '@/libs/utils';
 import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { preserveToFolder } from './logics/preserveToFolder';
-import { mockYoutubeSearchGetDomain } from '@/apis/mocks/common';
 import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
 import { localStorageInputKey } from '@/constants/localStorageKey';
 import { getFromLocalStorageInputKey } from '@/utils/storage';
@@ -70,11 +68,19 @@ const AddMovie = ({
     event.preventDefault();
     event.stopPropagation();
     if (!checkValidate()) return;
-    // localhostの場合は、APIを叩かない
-    const domain = window.location.origin;
-    if (domain === mockYoutubeSearchGetDomain) {
-      const data =
-        mockYoutubeSearchGet() as YouTubeSearchResult[];
+    if (
+      process.env.NEXT_PUBLIC_IS_MOCK_YOUTUBE_SEARCH ===
+      'true'
+    ) {
+      // 開発環境でのみ使用
+      const fetchMockData = async () => {
+        const data = await fetch(
+          'http://localhost:3000/api/mocks/youtube-search'
+        );
+        return data.json();
+      };
+      const data: YouTubeSearchResult[] =
+        await fetchMockData();
       const filterData = data.filter((item) => {
         return item.id.kind === 'youtube#video';
       });
