@@ -55,11 +55,15 @@ const PlayList = ({
   // ドラッグ&ドロップでソート可能なリスト
   const [items, setItems] = useState<{
     [key: string]: string[];
-  }>({
-    container1: movies
-      ? movies.map((_, index) => String(index))
-      : [],
-  });
+  }>({ container1: [] });
+
+  useEffect(() => {
+    setItems({
+      container1: localStorageObjects[
+        selectedFolderIndex
+      ]?.movies.map((_, index) => String(index)),
+    });
+  }, [selectedFolderIndex, localStorageObjects]);
 
   const onVideoEndHandler = () => {
     const index = getOnVideoEndIndex(
@@ -246,7 +250,7 @@ const PlayList = ({
       )}
 
       {items.container1?.length > 0 &&
-        movies.length > 0 && (
+        movies?.length > 0 && (
           <ScrollArea className="w-full">
             <div className="flex">
               <div className="flex-auto">
