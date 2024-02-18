@@ -14,3 +14,10 @@ export type Movies = {
   thumbnail: string;
   favorite: boolean;
 }[];
+
+export type Movie = {
+  id: string;
+  title: string;
+  thumbnail: string;
+  favorite: boolean;
+};
