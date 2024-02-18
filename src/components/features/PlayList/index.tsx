@@ -1,16 +1,14 @@
 import { LocalStorageObjects } from '@/types/localstrageObjects';
 import {
   DotsVerticalIcon,
-  Pencil1Icon,
   RocketIcon,
   TrashIcon,
   TriangleRightIcon,
 } from '@radix-ui/react-icons';
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getOnVideoEndIndex } from './logics/getOnVideoEndIndex';
 import YoutubePlayer from '@/components/ui/youtubePlayer';
-import { renameFolder } from '../PlayListSideBar/logics/renameFolder';
 import { Button } from '@/components/ui/button';
 import {
   Menubar,
@@ -40,8 +38,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+
 import { deleteFile } from './logics/deleteFile';
 import { transferFile } from './logics/transferFile';
 import {
@@ -64,6 +61,7 @@ import SortableItemWrapper from '../DndKit/SortableItemWrapper';
 import { dndExchangeMovie } from './logics/dndExchangeMovie';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import AddRelatedMovie from '../AddRelatedMovie';
+import PlaylistTitleDialog from '../PlaylistTitleDialog';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -78,7 +76,6 @@ const PlayList = ({
   setLocalStorageObjects,
   selectedFolderIndex,
 }: Props) => {
-  const inputRenameRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState<boolean>(false);
   const [newFolderIndex, setNewFolderIndex] = useState<
     number | null
@@ -93,8 +90,9 @@ const PlayList = ({
     setIsPlaying(false);
   }, [selectedFolderIndex]);
 
-  const movies =
-    localStorageObjects[selectedFolderIndex]?.movies;
+  const selectedFolder =
+    localStorageObjects[selectedFolderIndex];
+  const movies = selectedFolder?.movies;
   // ドラッグ&ドロップでソート可能なリスト
   const [items, setItems] = useState<{
     [key: string]: string[];
@@ -110,19 +108,6 @@ const PlayList = ({
       movies.length
     );
     setSelectedMovieIndex(index);
-  };
-
-  const renameFolderHandler = (
-    index: number,
-    newName: string
-  ) => {
-    if (!localStorageObjects) return;
-    const newObjects = renameFolder(
-      index,
-      newName,
-      localStorageObjects
-    );
-    setLocalStorageObjects(newObjects);
   };
 
   const transferFileHandler = (movieIndex: number) => {
@@ -301,78 +286,19 @@ const PlayList = ({
               </div>
               <div className="text-left p-2">
                 <div className="flex items-center text-xl gap-1">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        className="justify-start px-2 py-1.5"
-                      >
-                        <Pencil1Icon
-                          width={20}
-                          height={20}
-                        />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>
-                          Rename{' '}
-                          {
-                            localStorageObjects[
-                              selectedFolderIndex
-                            ].name
-                          }
-                        </DialogTitle>
-                        <DialogDescription>
-                          フォルダー名を変更します。
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="grid gap-4 py-4">
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label
-                            htmlFor="name"
-                            className="text-right"
-                          >
-                            Name
-                          </Label>
-                          <Input
-                            id="name"
-                            defaultValue={
-                              localStorageObjects[
-                                selectedFolderIndex
-                              ].name
-                            }
-                            className="col-span-3"
-                            ref={inputRenameRef}
-                          />
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <DialogClose asChild>
-                          <Button
-                            onClick={() =>
-                              renameFolderHandler(
-                                selectedFolderIndex,
-                                inputRenameRef.current
-                                  ?.value ??
-                                  localStorageObjects[
-                                    selectedFolderIndex
-                                  ].name
-                              )
-                            }
-                          >
-                            変更
-                          </Button>
-                        </DialogClose>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                  <p className="font-bold">
-                    {
-                      localStorageObjects[
-                        selectedFolderIndex
-                      ].name
+                  <PlaylistTitleDialog
+                    selectedFolderIndex={
+                      selectedFolderIndex
                     }
+                    localStorageObjects={
+                      localStorageObjects
+                    }
+                    setLocalStorageObjects={
+                      setLocalStorageObjects
+                    }
+                  />
+                  <p className="font-bold">
+                    {selectedFolder.name}
                   </p>
                 </div>
                 <p className="text-primary">

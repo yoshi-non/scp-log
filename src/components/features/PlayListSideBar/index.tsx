@@ -27,7 +27,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { renameFolder } from './logics/renameFolder';
+import { renameFolder } from '../PlaylistTitleDialog/logics/renameFolder';
 import { deleteFolder } from './logics/deleteFolder';
 import { localStorageKey } from '@/constants/localStorageKey';
 
