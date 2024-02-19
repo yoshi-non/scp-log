@@ -4,7 +4,6 @@ import { preserveInputKey } from './logics/preserveInputKey';
 import { localStorageInputKey } from '@/constants/localStorageKey';
 import {
   getFromLocalStorageInputKey,
-  saveToLocalStorage,
 } from '@/utils/storage';
 import { useEffect, useState } from 'react';
 
@@ -20,16 +19,8 @@ const InputKey = () => {
     const storedData = getFromLocalStorageInputKey(
       localStorageInputKey
     );
-    if (storedData) {
-      setLocalStorageInputValue(storedData);
-      setInputValue(storedData);
-    } else {
-      saveToLocalStorage(
-        localStorageInputKey,
-        localStorageInputValue
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (!storedData) return;
+    setLocalStorageInputValue(storedData);
   }, []);
 
   const changeMaskHandler = () => {

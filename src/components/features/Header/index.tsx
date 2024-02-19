@@ -19,9 +19,6 @@ const Header = () => {
         <h1 className="font-bold text-3xl">SCP Log</h1>
       </Link>
       <div className="flex gap-5 items-center">
-        {/* <Link href={'/'}>
-          <Button variant="link">使い方</Button>
-        </Link> */}
         <Link href={'/setting'}>
           <Button variant="link">設定</Button>
         </Link>
