@@ -5,27 +5,17 @@ import { useEffect, useState } from 'react';
 import { getOnVideoEndIndex } from './logics/getOnVideoEndIndex';
 import YoutubePlayer from '@/components/ui/youtubePlayer';
 import {
-  DndContext,
-  closestCorners,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
   UniqueIdentifier,
   DragOverEvent,
   DragEndEvent,
 } from '@dnd-kit/core';
-import {
-  sortableKeyboardCoordinates,
-  rectSortingStrategy,
-  SortableContext,
-} from '@dnd-kit/sortable';
-import SortableItemWrapper from '../DndKit/SortableItemWrapper';
+import SortableItemWrapper from '../../functions/DndKit/SortableItemWrapper';
 import { dndExchangeMovie } from './logics/dndExchangeMovie';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import AddRelatedMovie from '../AddRelatedMovie';
 import PlaylistTitleDialog from '../PlaylistTitleDialog';
 import PlaylistMenubarDialog from '../PlaylistMenubarDialog';
+import DndContextWrapper from '../../functions/DndKit/DndContextWrapper';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -72,14 +62,6 @@ const PlayList = ({
     );
     setSelectedMovieIndex(index);
   };
-
-  // ドラッグの開始、移動、終了などにどのような入力を許可するかを決めるprops
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
 
   //各コンテナ取得関数
   const findContainer = (id: UniqueIdentifier) => {
@@ -254,60 +236,53 @@ const PlayList = ({
           <ScrollArea className="w-full">
             <div className="flex">
               <div className="flex-auto">
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCorners}
-                  onDragOver={handleDragOver}
-                  onDragEnd={handleDragEnd}
+                <DndContextWrapper
+                  sortableContextId="container1"
+                  handleDragOver={handleDragOver}
+                  handleDragEnd={handleDragEnd}
+                  items={items}
                 >
-                  <SortableContext
-                    id="container1"
-                    items={items.container1}
-                    strategy={rectSortingStrategy}
-                  >
-                    {movies.map((movie, index) => (
-                      // Webアクセシビリティのためのdivタグを使用
-                      // todo:ドラッグアンドドロップの判定で何秒以上長押ししたらドラッグアンドドロップが開始されるかを設定する
-                      <div
-                        key={index}
-                        className="h-[100px] w-full border-b-2 border-primary-background hover:bg-accent hover:text-accent-foreground"
-                        onClick={() => {
-                          setSelectedMovieIndex(index);
-                          setIsPlaying(true);
-                        }}
+                  {movies.map((movie, index) => (
+                    // Webアクセシビリティのためのdivタグを使用
+                    // todo:ドラッグアンドドロップの判定で何秒以上長押ししたらドラッグアンドドロップが開始されるかを設定する
+                    <div
+                      key={index}
+                      className="h-[100px] w-full border-b-2 border-primary-background hover:bg-accent hover:text-accent-foreground"
+                      onClick={() => {
+                        setSelectedMovieIndex(index);
+                        setIsPlaying(true);
+                      }}
+                    >
+                      <SortableItemWrapper
+                        id={String(index)}
                       >
-                        <SortableItemWrapper
-                          id={String(index)}
-                        >
-                          <div className="h-[100px] flex overflow-hidden justify-center">
-                            <div className="h-[100px] w-10 min-w-10 flex justify-center items-center overflow-hidden">
-                              {index ===
-                                selectedMovieIndex &&
-                              isPlaying ? (
-                                <TriangleRightIcon
-                                  width={30}
-                                  height={30}
-                                />
-                              ) : (
-                                <span>{index + 1}</span>
-                              )}
-                            </div>
-                            <Image
-                              src={movie.thumbnail}
-                              width={240}
-                              height={130}
-                              alt="thumbnail"
-                              className="object-cover w-[200px] min-w-[200px] h-[98px] overflow-hidden"
-                            />
-                            <p className="h-full p-2 text-left flex-auto">
-                              {movie.title}
-                            </p>
+                        <div className="h-[100px] flex overflow-hidden justify-center">
+                          <div className="h-[100px] w-10 min-w-10 flex justify-center items-center overflow-hidden">
+                            {index === selectedMovieIndex &&
+                            isPlaying ? (
+                              <TriangleRightIcon
+                                width={30}
+                                height={30}
+                              />
+                            ) : (
+                              <span>{index + 1}</span>
+                            )}
                           </div>
-                        </SortableItemWrapper>
-                      </div>
-                    ))}
-                  </SortableContext>
-                </DndContext>
+                          <Image
+                            src={movie.thumbnail}
+                            width={240}
+                            height={130}
+                            alt="thumbnail"
+                            className="object-cover w-[200px] min-w-[200px] h-[98px] overflow-hidden"
+                          />
+                          <p className="h-full p-2 text-left flex-auto">
+                            {movie.title}
+                          </p>
+                        </div>
+                      </SortableItemWrapper>
+                    </div>
+                  ))}
+                </DndContextWrapper>
               </div>
               <div className="w-[39px]">
                 {movies.map((movie, index) => (
