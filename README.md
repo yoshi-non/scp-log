@@ -21,7 +21,6 @@ npm start
 ```
 ├ api // Next.js環境で作成できなかったapi
 ├ src
-│ ├ api // API層
 │ ├ app // Next.jsのルーティング
 │ ├ components // コンポーネント
 │ │ ├ features // 特定の機能を実現するコンポーネント
