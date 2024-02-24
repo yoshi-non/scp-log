@@ -12,7 +12,6 @@ import {
 } from '@/components/ui/dialog';
 import { youtubeDownload } from '@/utils/youtubeDownload';
 import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
-import { isDevelopment } from '@/utils/isDevelopment';
 import { downloadMp4 } from '@/utils/downloadMp4';
 
 type Props = {
@@ -20,9 +19,11 @@ type Props = {
 };
 
 const AddMovieOfflineDialog = ({ item }: Props) => {
-  const youtubeDownloadHandler = (videoId: string) => {
-    downloadMp4(videoId);
-  };
+  const isElectron: boolean =
+    process.env.NEXT_PUBLIC_IS_ELECTRON === 'true'
+      ? true
+      : false;
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -34,26 +35,47 @@ const AddMovieOfflineDialog = ({ item }: Props) => {
           <DownloadIcon />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>オフライン保存</DialogTitle>
-          <DialogDescription>
-            このPCに音声データ(webm)を保存します。
-            {item.snippet.title}
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button
-              onClick={() =>
-                youtubeDownloadHandler(item.id.videoId)
-              }
-            >
-              保存
-            </Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
+      {isElectron ? (
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>オフライン保存</DialogTitle>
+            <DialogDescription>
+              このPCに動画データ(mp4)を保存します。
+              {item.snippet.title}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button
+                onClick={() => downloadMp4(item.id.videoId)}
+              >
+                保存
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      ) : (
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>オフライン保存</DialogTitle>
+            <DialogDescription>
+              このPCに音声データ(webm)を保存します。
+              {item.snippet.title}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button
+                onClick={() =>
+                  youtubeDownload(item.id.videoId)
+                }
+              >
+                保存
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      )}
     </Dialog>
   );
 };

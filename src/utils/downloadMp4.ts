@@ -1,9 +1,14 @@
 'use client';
 
+import { isDevelopment } from './isDevelopment';
+
 export const downloadMp4 = async (
   videoId: string
 ): Promise<void> => {
-  const url = `https://scp-log.vercel.app/api/youtube-download?youtubeId=${videoId}`;
+  const frontUrl = isDevelopment()
+    ? process.env.NEXT_PUBLIC_FRONT_URL
+    : 'https://scp-log.vercel.app';
+  const url = `${frontUrl}/api/youtube-download?youtubeId=${videoId}`;
   const res = await fetch(url);
   console.log(res);
 
