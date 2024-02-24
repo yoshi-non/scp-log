@@ -12,12 +12,17 @@ import {
 } from '@/components/ui/dialog';
 import { youtubeDownload } from '@/utils/youtubeDownload';
 import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
+import { isDevelopment } from '@/utils/isDevelopment';
+import { downloadMp4 } from '@/utils/downloadMp4';
 
 type Props = {
   item: YouTubeSearchResult;
 };
 
 const AddMovieOfflineDialog = ({ item }: Props) => {
+  const youtubeDownloadHandler = (videoId: string) => {
+    downloadMp4(videoId);
+  };
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -41,7 +46,7 @@ const AddMovieOfflineDialog = ({ item }: Props) => {
           <DialogClose asChild>
             <Button
               onClick={() =>
-                youtubeDownload(item.id.videoId)
+                youtubeDownloadHandler(item.id.videoId)
               }
             >
               保存

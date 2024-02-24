@@ -28,5 +28,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "api/kuromoji/index.js"]
+  "exclude": [
+    "node_modules",
+    "api/kuromoji/index.js",
+    "api/youtube-download/index.js"
+  ]
 }
