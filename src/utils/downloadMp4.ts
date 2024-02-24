@@ -8,7 +8,7 @@ export const downloadMp4 = async (
   const frontUrl = isDevelopment()
     ? process.env.NEXT_PUBLIC_FRONT_URL
     : 'https://scp-log.vercel.app';
-  const url = `${frontUrl}/api/youtube-download?youtubeId=${videoId}`;
+  const url = `${frontUrl}/vercel-api/youtube-download?youtubeId=${videoId}`;
   const res = await fetch(url);
   console.log(res);
 

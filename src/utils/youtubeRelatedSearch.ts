@@ -13,10 +13,15 @@ const findMostFrequentSubstring = async (
   try {
     const text: string = words.join(' ');
     let concatenatedTitles: string = '';
-    const baseApiUrl = `${process.env.FRONTEND_URL}/api/kuromoji`;
     const url = isDevelopment()
-      ? `${baseApiUrl}/${encodeURIComponent(text)}`
-      : `${baseApiUrl}?input=${encodeURIComponent(text)}`;
+      ? `${
+          process.env.FRONTEND_URL
+        }/api/kuromoji/${encodeURIComponent(text)}`
+      : `${
+          process.env.FRONTEND_URL
+        }/vercel-api/kuromoji?input=${encodeURIComponent(
+          text
+        )}`;
     let control: AbortController | undefined;
     if (control) {
       control.abort();
