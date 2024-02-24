@@ -3,7 +3,7 @@
 export const downloadMp4 = async (
   videoId: string
 ): Promise<void> => {
-  const url = `http://localhost:3000/api/youtube-download?youtubeId=${videoId}`;
+  const url = `https://scp-log.vercel.app/api/youtube-download?youtubeId=${videoId}`;
   const res = await fetch(url);
   console.log(res);
 
