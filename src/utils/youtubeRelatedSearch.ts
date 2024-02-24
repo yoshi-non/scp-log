@@ -16,12 +16,10 @@ const findMostFrequentSubstring = async (
     const url = isDevelopment()
       ? `${
           process.env.FRONTEND_URL
-        }/api/kuromoji/${encodeURIComponent(text)}`
+        }/apis/kuromoji/${encodeURIComponent(text)}`
       : `${
           process.env.FRONTEND_URL
-        }/vercel-api/kuromoji?input=${encodeURIComponent(
-          text
-        )}`;
+        }/api/kuromoji?input=${encodeURIComponent(text)}`;
     let control: AbortController | undefined;
     if (control) {
       control.abort();

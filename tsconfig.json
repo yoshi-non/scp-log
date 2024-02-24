@@ -30,7 +30,7 @@
   ],
   "exclude": [
     "node_modules",
-    "vercel-api/kuromoji/index.js",
-    "vercel-api/youtube-download/index.js"
+    "api/kuromoji/index.js",
+    "api/youtube-download/index.js"
   ]
 }

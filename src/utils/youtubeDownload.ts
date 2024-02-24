@@ -5,7 +5,7 @@ export const youtubeDownload = async (
 ) => {
   try {
     const res = await fetch(
-      `/api/youtube-audio-download/${youtubeId}`
+      `/apis/youtube-audio-download/${youtubeId}`
     );
     const resJson = await res.json();
     if (!resJson.body) return;
