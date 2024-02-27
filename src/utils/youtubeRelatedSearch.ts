@@ -5,6 +5,7 @@ import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
 import axios, { AxiosRequestConfig } from 'axios';
 import { isDevelopment } from './isDevelopment';
 import { findMostFrequentWords } from './findMostFrequentWords';
+import { extractProperNounList } from './electron/extractProperNounList';
 
 const findMostFrequentSubstring = async (
   words: string[]
@@ -13,6 +14,16 @@ const findMostFrequentSubstring = async (
   try {
     const text: string = words.join(' ');
     let concatenatedTitles: string = '';
+    if (process.env.NEXT_PUBLIC_IS_ELECTRON === 'true') {
+      const properNounList = await extractProperNounList(
+        text
+      );
+      const mostFrequentWords =
+        findMostFrequentWords(properNounList);
+      // ,で連結
+      concatenatedTitles = mostFrequentWords.join(',');
+      return concatenatedTitles;
+    }
     const url = isDevelopment()
       ? `${
           process.env.FRONTEND_URL
@@ -26,36 +37,28 @@ const findMostFrequentSubstring = async (
     }
     control = new AbortController();
     const signal = control.signal;
-    const result = fetch(url, { signal })
-      .then((res) => {
-        if (res.status !== 200) {
-          return res
-            .text()
-            .then((message) =>
-              Promise.reject(
-                new Error(
-                  `[status:${res.status}]: ${message}`
-                )
-              )
-            );
-        }
-        return res.json();
-      })
-      .then((json) => {
-        const properNounList = isDevelopment()
-          ? (json.properNounList as string[])
-          : (json as string[]);
-        const mostFrequentWords =
-          findMostFrequentWords(properNounList);
-        // ,で連結
-        concatenatedTitles = mostFrequentWords.join(',');
-        const result: string = concatenatedTitles;
-        return result;
-      })
-      .then((result) => {
-        return result;
-      });
-    return result;
+    const res: Response = await fetch(url, { signal });
+
+    if (res.status !== 200) {
+      return res
+        .text()
+        .then((message) =>
+          Promise.reject(
+            new Error(`[status:${res.status}]: ${message}`)
+          )
+        );
+    }
+    const json = await res.json();
+
+    const properNounList = isDevelopment()
+      ? (json.properNounList as string[])
+      : (json as string[]);
+    const mostFrequentWords =
+      findMostFrequentWords(properNounList);
+    // ,で連結
+    concatenatedTitles = mostFrequentWords.join(',');
+    return concatenatedTitles;
+
   } catch (error) {
     console.error('kuromoji error:', error);
     return;
