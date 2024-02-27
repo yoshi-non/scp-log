@@ -56,6 +56,14 @@ npm run dev-electron
 npm run dist
 ```
 
+### メモ
+| apiファイル | 使う箇所 | 
+| ----- | ----- |
+| api/kuromoji | vercel dev, 本番 |
+| api/youtube-download | vercel dev |
+| apis/kuromoji | npm run dev, build |
+| apis/youtube-audio-donwload | npm run dev, build |
+
 ## shadcn/ui
 https://ui.shadcn.com/docs
 
