@@ -2,21 +2,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Pencil1Icon } from '@radix-ui/react-icons';
 import { Button } from '@/components/ui/button';
-import {
-  LocalStorageObjects,
-} from '@/types/localstrageObjects';
+import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { renameFolder } from './logics/renameFolder';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 type Props = {
   selectedFolderIndex: number;
@@ -39,6 +35,7 @@ const PlaylistTitleDialog = ({
     newName: string
   ) => {
     if (!localStorageObjects) return;
+    if (newName === '') return;
     const newObjects = renameFolder(
       index,
       newName,
@@ -46,8 +43,25 @@ const PlaylistTitleDialog = ({
     );
     setLocalStorageObjects(newObjects);
   };
+
+  const [open, setOpen] = useState<boolean>(false);
+  const [composing, setComposition] =
+    useState<boolean>(false);
+  const startComposition = () => setComposition(true);
+  const endComposition = () => setComposition(false);
+  const handleKeyDown = (
+    e: string,
+    index: number,
+    newName: string
+  ) => {
+    if (e === 'Enter') {
+      if (composing) return;
+      renameFolderHandler(index, newName);
+      setOpen(false);
+    }
+  };
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           variant="ghost"
@@ -72,27 +86,23 @@ const PlaylistTitleDialog = ({
             </Label>
             <Input
               id="name"
+              placeholder="フォルダー名"
               defaultValue={selectedFolder.name}
               className="col-span-3"
               ref={inputRenameRef}
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button
-              onClick={() =>
-                renameFolderHandler(
+              onCompositionStart={startComposition}
+              onCompositionEnd={endComposition}
+              onKeyDown={(event) =>
+                handleKeyDown(
+                  event.key,
                   selectedFolderIndex,
                   inputRenameRef.current?.value ??
                     selectedFolder.name
                 )
               }
-            >
-              変更
-            </Button>
-          </DialogClose>
-        </DialogFooter>
+            />
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );
