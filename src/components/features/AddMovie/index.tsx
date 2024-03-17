@@ -1,7 +1,7 @@
 import { Input } from '@/components/ui/input';
 import { youtubeSearch } from '@/utils/youtubeSearch';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
 import { localStorageInputKey } from '@/constants/localStorageKey';
@@ -79,6 +79,17 @@ const AddMovie = ({
     return !!keyword.trim();
   };
 
+  /**
+   * 初期ロード
+   * - inputにフォーカスを当てる
+   */
+  const inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [tab]);
+
   return (
     <div>
       <div className="w-[70%] mx-auto mt-5">
@@ -86,6 +97,7 @@ const AddMovie = ({
           <Input
             type="search"
             placeholder="動画を検索"
+            ref={inputRef}
             value={keyword}
             onChange={(event) =>
               setKeyword(event.target.value)

@@ -32,6 +32,8 @@ export default function Home() {
   const [searchResult, setSearchResult] = useState<
     YouTubeSearchResult[]
   >([]);
+  const [tabName, setTabName] =
+    useState<string>('playlist');
 
   useEffect(() => {
     const getLocalStorageData = () => {
@@ -49,13 +51,22 @@ export default function Home() {
     <main>
       <Tabs defaultValue="playlist" className="w-full">
         <TabsList className="mx-5">
-          <TabsTrigger value="playlist">
+          <TabsTrigger
+            value="playlist"
+            onClick={() => setTabName('playlist')}
+          >
             Playlist
           </TabsTrigger>
-          <TabsTrigger value="addMovie">
+          <TabsTrigger
+            value="addMovie"
+            onClick={() => setTabName('addMovie')}
+          >
             Add Movie
           </TabsTrigger>
-          <TabsTrigger value="download">
+          <TabsTrigger
+            value="download"
+            onClick={() => setTabName('download')}
+          >
             Download
           </TabsTrigger>
         </TabsList>
@@ -93,7 +104,7 @@ export default function Home() {
         </TabsContent>
         <TabsContent value="addMovie">
           <AddMovie
-            tab="addMovie"
+            tab={tabName}
             localStorageObjects={localStorageObjects}
             setLocalStorageObjects={setLocalStorageObjects}
             keyword={keyword}
@@ -104,7 +115,7 @@ export default function Home() {
         </TabsContent>
         <TabsContent value="download">
           <AddMovie
-            tab="download"
+            tab={tabName}
             localStorageObjects={localStorageObjects}
             setLocalStorageObjects={setLocalStorageObjects}
             keyword={keyword}
