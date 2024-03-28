@@ -49,9 +49,7 @@ type Props = {
   setLocalStorageObjects: React.Dispatch<
     React.SetStateAction<LocalStorageObjects>
   >;
-  setIsPlaying: React.Dispatch<
-    React.SetStateAction<boolean>
-  >;
+  setIsReady: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const PlaylistMenubarDialog = ({
@@ -61,7 +59,7 @@ const PlaylistMenubarDialog = ({
   selectedFolderIndex,
   localStorageObjects,
   setLocalStorageObjects,
-  setIsPlaying,
+  setIsReady,
 }: Props) => {
   const [open, setOpen] = useState<boolean>(false);
   const [newFolderIndex, setNewFolderIndex] = useState<
@@ -82,7 +80,7 @@ const PlaylistMenubarDialog = ({
       localStorageObjects
     );
     if (movieIndex === selectedMovieIndex) {
-      setIsPlaying(false);
+      setIsReady(false);
     }
     setLocalStorageObjects(newObjects);
   };
