@@ -33,15 +33,12 @@ const VideoMenuBar = ({
   return (
     <div className="w-[200px] mx-auto mt-3">
       <div className="flex justify-around items-center">
-        {/* 戻るボタン */}
         <Button
           className="rounded-full p-2"
           onClick={() => prevVideo()}
         >
           <TrackPreviousIcon className="w-6 h-6" />
         </Button>
-
-        {/* 再生ボタン */}
         <Button
           disabled={
             isPlaying === 'BUFFERING' || isPlaying === null
@@ -56,7 +53,6 @@ const VideoMenuBar = ({
             <PlayIcon className="w-6 h-6" />
           )}
         </Button>
-        {/* 進むボタン */}
         <Button
           className="rounded-full p-2"
           onClick={() => nextVideo()}
