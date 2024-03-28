@@ -1,7 +1,7 @@
 import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { TriangleRightIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 import { getOnVideoEndIndex } from './logics/getOnVideoEndIndex';
 import YoutubePlayer from '@/components/ui/youtubePlayer';
 import {
@@ -16,6 +16,7 @@ import AddRelatedMovie from '../AddRelatedMovie';
 import PlaylistTitleDialog from '../PlaylistTitleDialog';
 import PlaylistMenubarDialog from '../PlaylistMenubarDialog';
 import DndContextWrapper from '../../functions/DndKit/DndContextWrapper';
+import VideoMenuBar from '../VideoMenuBar';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -32,11 +33,12 @@ const PlayList = ({
 }: Props) => {
   const [selectedMovieIndex, setSelectedMovieIndex] =
     useState<number>(0);
+  const [isReady, setIsReady] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] =
     useState<boolean>(false);
 
   useEffect(() => {
-    setIsPlaying(false);
+    setIsReady(false);
   }, [selectedFolderIndex]);
 
   const selectedFolder =
@@ -61,6 +63,22 @@ const PlayList = ({
       movies.length
     );
     setSelectedMovieIndex(index);
+  };
+
+  const playerRef = useRef<YT.Player | null>(null);
+
+  const onPlayVideo = () => {
+    console.log(playerRef.current);
+    if (playerRef.current) {
+      playerRef.current.playVideo();
+    }
+  };
+
+  const onPauseVideo = () => {
+    console.log(playerRef.current?.pauseVideo);
+    if (playerRef.current) {
+      playerRef.current.pauseVideo();
+    }
   };
 
   //各コンテナ取得関数
@@ -169,7 +187,7 @@ const PlayList = ({
       }
     } else {
       setSelectedMovieIndex(activeIndex);
-      setIsPlaying(true);
+      setIsReady(true);
     }
   };
 
@@ -177,15 +195,23 @@ const PlayList = ({
     <div className="flex w-full h-[calc(100vh-120px)] overflow-hidden">
       {movies && movies.length > 0 ? (
         <div className="w-[300px] bg-muted">
-          {isPlaying ? (
+          {isReady ? (
             // youtubeを再生するプレイヤー
             <div>
               <div className="w-[300px] h-[169px]">
                 <YoutubePlayer
+                  ref={playerRef}
                   videoId={movies[selectedMovieIndex]?.id}
                   onVideoEnd={onVideoEndHandler}
+                  onVideoPlay={() => setIsPlaying(true)}
+                  onVideoPause={() => setIsPlaying(false)}
                 />
               </div>
+              <VideoMenuBar
+                isPlaying={isPlaying}
+                playVideo={onPlayVideo}
+                pauseVideo={onPauseVideo}
+              />
               <p className="text-xl p-2">
                 {movies[selectedMovieIndex]?.title}
               </p>
@@ -250,7 +276,7 @@ const PlayList = ({
                       className="h-[100px] w-full border-b-2 border-primary-background hover:bg-accent hover:text-accent-foreground"
                       onClick={() => {
                         setSelectedMovieIndex(index);
-                        setIsPlaying(true);
+                        setIsReady(true);
                       }}
                     >
                       <SortableItemWrapper
@@ -259,7 +285,7 @@ const PlayList = ({
                         <div className="h-[100px] flex overflow-hidden justify-center">
                           <div className="h-[100px] w-10 min-w-10 flex justify-center items-center overflow-hidden">
                             {index === selectedMovieIndex &&
-                            isPlaying ? (
+                            isReady ? (
                               <TriangleRightIcon
                                 width={30}
                                 height={30}
@@ -300,7 +326,7 @@ const PlayList = ({
                     setLocalStorageObjects={
                       setLocalStorageObjects
                     }
-                    setIsPlaying={setIsPlaying}
+                    setIsReady={setIsReady}
                   />
                 ))}
               </div>
