@@ -11,12 +11,16 @@ type Props = {
   isPlaying: PlayingType;
   playVideo: () => void;
   pauseVideo: () => void;
+  prevVideo: () => void;
+  nextVideo: () => void;
 };
 
 const VideoMenuBar = ({
   isPlaying,
   playVideo,
   pauseVideo,
+  prevVideo,
+  nextVideo,
 }: Props) => {
   const handlePlayClick = () => {
     if (isPlaying === 'PLAYING') {
@@ -32,9 +36,7 @@ const VideoMenuBar = ({
         {/* 戻るボタン */}
         <Button
           className="rounded-full p-2"
-          onClick={() => {
-            // 戻る処理
-          }}
+          onClick={() => prevVideo()}
         >
           <TrackPreviousIcon className="w-6 h-6" />
         </Button>
@@ -57,9 +59,7 @@ const VideoMenuBar = ({
         {/* 進むボタン */}
         <Button
           className="rounded-full p-2"
-          onClick={() => {
-            // 進む処理
-          }}
+          onClick={() => nextVideo()}
         >
           <TrackNextIcon className="w-6 h-6" />
         </Button>

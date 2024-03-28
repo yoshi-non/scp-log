@@ -188,6 +188,19 @@ const PlayList = ({
     }
   };
 
+  const handlePrevVideo = () => {
+    const newIndex =
+      (selectedMovieIndex - 1 + movies.length) %
+      movies.length;
+    setSelectedMovieIndex(newIndex);
+  };
+
+  const handleNextVideo = () => {
+    const newIndex =
+      (selectedMovieIndex + 1) % movies.length;
+    setSelectedMovieIndex(newIndex);
+  };
+
   return (
     <div className="flex w-full h-[calc(100vh-120px)] overflow-hidden">
       {movies && movies.length > 0 ? (
@@ -215,6 +228,8 @@ const PlayList = ({
                 isPlaying={isPlaying}
                 playVideo={playVideo}
                 pauseVideo={pauseVideo}
+                prevVideo={handlePrevVideo}
+                nextVideo={handleNextVideo}
               />
               <p className="text-xl p-2">
                 {movies[selectedMovieIndex]?.title}
