@@ -5,9 +5,10 @@ import {
   TrackNextIcon,
   TrackPreviousIcon,
 } from '@radix-ui/react-icons';
+import { PlayingType } from '../PlayList';
 
 type Props = {
-  isPlaying: boolean;
+  isPlaying: PlayingType;
   playVideo: () => void;
   pauseVideo: () => void;
 };
@@ -18,12 +19,11 @@ const VideoMenuBar = ({
   pauseVideo,
 }: Props) => {
   const handlePlayClick = () => {
-    if (isPlaying) {
+    if (isPlaying === 'PLAYING') {
       pauseVideo();
-      console.log('pause');
-    } else {
+    }
+    if (isPlaying === 'PAUSED') {
       playVideo();
-      console.log('play');
     }
   };
   return (
@@ -41,10 +41,14 @@ const VideoMenuBar = ({
 
         {/* 再生ボタン */}
         <Button
+          disabled={
+            isPlaying === 'BUFFERING' || isPlaying === null
+          }
           className="rounded-full p-2"
           onClick={handlePlayClick}
         >
-          {isPlaying ? (
+          {isPlaying === 'PLAYING' ||
+          isPlaying === 'BUFFERING' ? (
             <PauseIcon className="w-6 h-6" />
           ) : (
             <PlayIcon className="w-6 h-6" />

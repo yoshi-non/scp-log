@@ -1,7 +1,7 @@
 import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { TriangleRightIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
-import { use, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getOnVideoEndIndex } from './logics/getOnVideoEndIndex';
 import YoutubePlayer from '@/components/ui/youtubePlayer';
 import {
@@ -17,6 +17,7 @@ import PlaylistTitleDialog from '../PlaylistTitleDialog';
 import PlaylistMenubarDialog from '../PlaylistMenubarDialog';
 import DndContextWrapper from '../../functions/DndKit/DndContextWrapper';
 import VideoMenuBar from '../VideoMenuBar';
+import useYouTubePlayer from '@/usecases/useYouTubePlayer';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -25,6 +26,12 @@ type Props = {
   >;
   selectedFolderIndex: number;
 };
+
+export type PlayingType =
+  | 'PLAYING'
+  | 'PAUSED'
+  | 'BUFFERING'
+  | null;
 
 const PlayList = ({
   localStorageObjects,
@@ -35,7 +42,13 @@ const PlayList = ({
     useState<number>(0);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] =
-    useState<boolean>(false);
+    useState<PlayingType>(null);
+  const { playVideo, pauseVideo, playerRef } =
+    useYouTubePlayer();
+
+  useEffect(() => {
+    setIsPlaying('BUFFERING');
+  }, [selectedMovieIndex]);
 
   useEffect(() => {
     setIsReady(false);
@@ -63,22 +76,6 @@ const PlayList = ({
       movies.length
     );
     setSelectedMovieIndex(index);
-  };
-
-  const playerRef = useRef<YT.Player | null>(null);
-
-  const onPlayVideo = () => {
-    console.log(playerRef.current);
-    if (playerRef.current) {
-      playerRef.current.playVideo();
-    }
-  };
-
-  const onPauseVideo = () => {
-    console.log(playerRef.current?.pauseVideo);
-    if (playerRef.current) {
-      playerRef.current.pauseVideo();
-    }
   };
 
   //各コンテナ取得関数
@@ -203,14 +200,21 @@ const PlayList = ({
                   ref={playerRef}
                   videoId={movies[selectedMovieIndex]?.id}
                   onVideoEnd={onVideoEndHandler}
-                  onVideoPlay={() => setIsPlaying(true)}
-                  onVideoPause={() => setIsPlaying(false)}
+                  onVideoPlay={() =>
+                    setIsPlaying('PLAYING')
+                  }
+                  onVideoPause={() =>
+                    setIsPlaying('PAUSED')
+                  }
+                  onVideoBuffering={() =>
+                    setIsPlaying('BUFFERING')
+                  }
                 />
               </div>
               <VideoMenuBar
                 isPlaying={isPlaying}
-                playVideo={onPlayVideo}
-                pauseVideo={onPauseVideo}
+                playVideo={playVideo}
+                pauseVideo={pauseVideo}
               />
               <p className="text-xl p-2">
                 {movies[selectedMovieIndex]?.title}

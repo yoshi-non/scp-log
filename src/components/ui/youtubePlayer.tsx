@@ -1,6 +1,7 @@
 import {
   forwardRef,
   useEffect,
+  useImperativeHandle,
   useRef,
   useState,
 } from 'react';
@@ -16,6 +17,7 @@ type Props = {
   onVideoEnd: () => void;
   onVideoPlay: () => void;
   onVideoPause: () => void;
+  onVideoBuffering: () => void;
 };
 
 const YoutubePlayer = forwardRef<PlayerRef, Props>(
@@ -25,9 +27,10 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
       onVideoEnd,
       onVideoPlay,
       onVideoPause,
+      onVideoBuffering,
     } = props;
     const wrapperRef = useRef<HTMLDivElement>(null);
-    const [player, setPlayer] = useState<YT.Player>();
+    let player: YT.Player | undefined;
     const [isYouTubeReady] = useYouTubeSupportInited()!;
 
     useEffect(() => {
@@ -39,7 +42,6 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
     }, []);
 
     useEffect(() => {
-      let mounted = true;
       if (!document.getElementById('__yt_player')) return;
       if (
         player &&
@@ -50,95 +52,63 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
       }
 
       isYouTubeReady.then(() => {
-        if (!mounted) return;
-        const newPlayer = new window.YT.Player(
-          '__yt_player',
-          {
-            height: '100%',
-            width: '100%',
-            videoId: videoId,
-            host: 'https://www.youtube-nocookie.com',
-            playerVars: {
-              autoplay: 1,
-              fs: 0,
-              modestbranding: 1,
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        player = new window.YT.Player('__yt_player', {
+          height: '100%',
+          width: '100%',
+          videoId: videoId,
+          host: 'https://www.youtube-nocookie.com',
+          playerVars: {
+            autoplay: 1,
+            fs: 0,
+            modestbranding: 1,
+          },
+          events: {
+            onStateChange: (e) => {
+              if (e.data === 0) {
+                onVideoEnd();
+              }
+              if (e.data === 1) {
+                onVideoPlay();
+              }
+              if (e.data === 2) {
+                onVideoPause();
+              }
+              if (e.data === 3) {
+                onVideoBuffering();
+              }
             },
-            events: {
-              onStateChange: (e) => {
-                if (e.data === 0) {
-                  onVideoEnd();
-                }
-                if (e.data === 1) {
-                  onVideoPlay();
-                }
-                if (e.data === 2) {
-                  onVideoPause();
-                }
-              },
-            },
-          }
-        ) as YT.Player;
-        if (mounted) {
-          setPlayer(newPlayer);
-        }
+          },
+        }) as YT.Player;
       });
 
       return () => {
-        setPlayer(undefined);
-        mounted = false;
+        player?.destroy();
       };
     }, [videoId, isYouTubeReady]);
 
-    // useImperativeHandle(ref, () => ({
-    //   playVideo: () => {
-    //     console.log('playVideo');
-    //     console.log(player);
-    //     player?.playVideo();
-    //   },
-    //   pauseVideo: () => {
-    //     player?.pauseVideo();
-    //   },
-    // }));
-
-    if (typeof ref === 'function') {
-      ref({
-        playVideo: () => {
-          if (
-            player &&
-            typeof player.playVideo === 'function'
-          ) {
-            player.playVideo();
-          }
-        },
-        pauseVideo: () => {
-          if (
-            player &&
-            typeof player.pauseVideo === 'function'
-          ) {
-            player.pauseVideo();
-          }
-        },
-      });
-    } else if (ref) {
-      ref.current = {
-        playVideo: () => {
-          if (
-            player &&
-            typeof player.playVideo === 'function'
-          ) {
-            player.playVideo();
-          }
-        },
-        pauseVideo: () => {
-          if (
-            player &&
-            typeof player.pauseVideo === 'function'
-          ) {
-            player.pauseVideo();
-          }
-        },
-      };
-    }
+    useImperativeHandle(ref, () => ({
+      playVideo: () => {
+        const iframe =
+          wrapperRef.current?.querySelector('iframe');
+        if (iframe) {
+          iframe.contentWindow?.postMessage(
+            '{"event":"command","func":"playVideo","args":""}',
+            '*'
+          );
+        }
+      },
+      pauseVideo: () => {
+        const iframe =
+          wrapperRef.current?.querySelector('iframe');
+        if (iframe) {
+          iframe.contentWindow?.postMessage(
+            '{"event":"command","func":"pauseVideo","args":""}',
+            '*'
+          );
+        }
+      },
+    }));
 
     return <div className="h-full" ref={wrapperRef} />;
   }
