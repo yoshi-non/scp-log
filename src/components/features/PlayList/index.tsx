@@ -4,20 +4,17 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { getOnVideoEndIndex } from './logics/getOnVideoEndIndex';
 import YoutubePlayer from '@/components/ui/youtubePlayer';
-import {
-  UniqueIdentifier,
-  DragOverEvent,
-  DragEndEvent,
-} from '@dnd-kit/core';
 import SortableItemWrapper from '../../functions/DndKit/SortableItemWrapper';
-import { dndExchangeMovie } from './logics/dndExchangeMovie';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import AddRelatedMovie from '../AddRelatedMovie';
 import PlaylistTitleDialog from '../PlaylistTitleDialog';
 import PlaylistMenubarDialog from '../PlaylistMenubarDialog';
 import DndContextWrapper from '../../functions/DndKit/DndContextWrapper';
-import VideoMenuBar from '../VideoMenuBar';
+import { VideoMenuBar } from '../VideoMenuBar';
 import { useYouTubePlayer } from '@/usecases/useYouTubePlayer';
+import { useDragAndDrop } from './hooks/useDragAndDrop';
+import { PlayingType } from '@/types/PlayingType';
+import { useShortcutToggle } from './hooks/useShortcutToggle';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -27,20 +24,14 @@ type Props = {
   selectedFolderIndex: number;
 };
 
-export type PlayingType =
-  | 'PLAYING'
-  | 'PAUSED'
-  | 'BUFFERING'
-  | null;
-
 const PlayList = ({
   localStorageObjects,
   setLocalStorageObjects,
   selectedFolderIndex,
 }: Props) => {
+  const [isReady, setIsReady] = useState<boolean>(false);
   const [selectedMovieIndex, setSelectedMovieIndex] =
     useState<number>(0);
-  const [isReady, setIsReady] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] =
     useState<PlayingType>(null);
   const { playVideo, pauseVideo, playerRef } =
@@ -50,22 +41,23 @@ const PlayList = ({
     setIsReady(false);
   }, [selectedFolderIndex]);
 
+  const { items, setItems, handleDragOver, handleDragEnd } =
+    useDragAndDrop(
+      selectedFolderIndex,
+      localStorageObjects,
+      setLocalStorageObjects,
+      setIsReady,
+      selectedMovieIndex,
+      setSelectedMovieIndex
+    );
+
   const selectedFolder =
     localStorageObjects[selectedFolderIndex];
   const movies = selectedFolder?.movies;
-  // ドラッグ&ドロップでソート可能なリスト
-  const [items, setItems] = useState<{
-    [key: string]: string[];
-  }>({ container1: [] });
 
-  useEffect(() => {
-    setItems({
-      container1: localStorageObjects[
-        selectedFolderIndex
-      ]?.movies.map((_, index) => String(index)),
-    });
-  }, [selectedFolderIndex, localStorageObjects]);
-
+  /**
+   * 動画が終了したときに次の動画を再生する
+   */
   const onVideoEndHandler = () => {
     const index = getOnVideoEndIndex(
       selectedMovieIndex,
@@ -74,116 +66,9 @@ const PlayList = ({
     setSelectedMovieIndex(index);
   };
 
-  //各コンテナ取得関数
-  const findContainer = (id: UniqueIdentifier) => {
-    const containerKey = Object.keys(items).find((key) =>
-      items[key].includes(id.toString())
-    );
-    return containerKey || id;
-  };
-
-  //ドラッグ可能なアイテムがドロップ可能なコンテナの上に移動時に発火する関数
-  const handleDragOver = (event: DragOverEvent) => {
-    const { active, over } = event;
-    const id = active.id.toString();
-    const overId = over?.id;
-    if (!overId) return;
-    const activeContainer = findContainer(id);
-    const overContainer = findContainer(overId);
-    if (
-      !activeContainer ||
-      !overContainer ||
-      activeContainer === overContainer
-    ) {
-      return;
-    }
-
-    setItems((prev) => {
-      const activeItems = prev[activeContainer];
-      const overItems = prev[overContainer];
-      const activeIndex = activeItems.indexOf(id);
-      const overIndex = overItems.indexOf(
-        overId.toString()
-      );
-      const newIndex =
-        overId in prev
-          ? overItems.length + 1
-          : overIndex >= 0
-          ? overIndex +
-            (overIndex === overItems.length - 1 ? 1 : 0)
-          : overItems.length + 1;
-      return {
-        ...prev,
-        [activeContainer]: prev[activeContainer].filter(
-          (item) => item !== id
-        ),
-        [overContainer]: [
-          ...overItems.slice(0, newIndex),
-          items[activeContainer][activeIndex],
-          ...overItems.slice(
-            newIndex,
-            prev[overContainer].length
-          ),
-        ],
-      };
-    });
-  };
-
-  // ドラッグ終了時に発火する関数
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    const id = active.id.toString();
-    const overId = over?.id;
-    if (!overId) return;
-    const activeContainer = findContainer(id);
-    const overContainer = findContainer(overId);
-    if (
-      !activeContainer ||
-      !overContainer ||
-      activeContainer !== overContainer
-    ) {
-      return;
-    }
-    const activeIndex = items[activeContainer].indexOf(id);
-    const overIndex = items[overContainer].indexOf(
-      overId.toString()
-    );
-    if (activeIndex !== overIndex) {
-      const newObjects = dndExchangeMovie(
-        activeIndex,
-        overIndex,
-        selectedFolderIndex,
-        localStorageObjects
-      );
-      setLocalStorageObjects(newObjects);
-      if (activeIndex === selectedMovieIndex) {
-        setSelectedMovieIndex(overIndex);
-      }
-      if (overIndex === selectedMovieIndex) {
-        setSelectedMovieIndex(activeIndex);
-      }
-      if (
-        overIndex !== selectedMovieIndex &&
-        activeIndex !== selectedMovieIndex &&
-        overIndex < selectedMovieIndex &&
-        activeIndex > selectedMovieIndex
-      ) {
-        setSelectedMovieIndex(selectedMovieIndex + 1);
-      }
-      if (
-        activeIndex !== selectedMovieIndex &&
-        overIndex !== selectedMovieIndex &&
-        activeIndex < selectedMovieIndex &&
-        overIndex > selectedMovieIndex
-      ) {
-        setSelectedMovieIndex(selectedMovieIndex - 1);
-      }
-    } else {
-      setSelectedMovieIndex(activeIndex);
-      setIsReady(true);
-    }
-  };
-
+  /**
+   * 前の動画を再生する
+   */
   const handlePrevVideo = () => {
     const newIndex =
       (selectedMovieIndex - 1 + movies.length) %
@@ -191,47 +76,22 @@ const PlayList = ({
     setSelectedMovieIndex(newIndex);
   };
 
+  /**
+   * 次の動画を再生する
+   */
   const handleNextVideo = () => {
     const newIndex =
       (selectedMovieIndex + 1) % movies.length;
     setSelectedMovieIndex(newIndex);
   };
 
-  /**
-   * k or スペースキーを押すと動画を一時停止または再生する
-   * - input要素にフォーカスがある場合は動作しない
-   */
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (isPlaying === null || isPlaying === 'BUFFERING')
-        return;
-      if (
-        document.activeElement instanceof HTMLInputElement
-      )
-        return;
-      if (e.key === 'k' || e.key === ' ') {
-        e.preventDefault();
-
-        if (isPlaying === 'PLAYING') {
-          pauseVideo();
-        }
-        if (isPlaying === 'PAUSED') {
-          playVideo();
-        }
-      }
-    };
-
-    document.addEventListener('keydown', down);
-    return () =>
-      document.removeEventListener('keydown', down);
-  }, [isPlaying, playVideo, pauseVideo]);
+  useShortcutToggle(isPlaying, playVideo, pauseVideo);
 
   return (
     <div className="flex w-full h-[calc(100vh-120px)] overflow-hidden">
       {movies && movies.length > 0 ? (
         <div className="w-[300px] bg-muted">
           {isReady ? (
-            // youtubeを再生するプレイヤー
             <div>
               <div className="w-[300px] h-[169px]">
                 <YoutubePlayer
