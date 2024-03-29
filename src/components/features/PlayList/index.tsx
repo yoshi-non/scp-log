@@ -199,13 +199,19 @@ const PlayList = ({
 
   /**
    * k or スペースキーを押すと動画を一時停止または再生する
+   * - input要素にフォーカスがある場合は動作しない
    */
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      e.preventDefault();
       if (isPlaying === null || isPlaying === 'BUFFERING')
         return;
+      if (
+        document.activeElement instanceof HTMLInputElement
+      )
+        return;
       if (e.key === 'k' || e.key === ' ') {
+        e.preventDefault();
+
         if (isPlaying === 'PLAYING') {
           pauseVideo();
         }
