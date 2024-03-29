@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-const useYouTubePlayer = () => {
+export const useYouTubePlayer = () => {
   const playerRef = useRef<YT.Player | null>(null);
 
   const playVideo = () => {
@@ -17,5 +17,3 @@ const useYouTubePlayer = () => {
 
   return { playVideo, pauseVideo, playerRef };
 };
-
-export default useYouTubePlayer;

@@ -24,7 +24,7 @@ export const TooltipWrapper = ({
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger>{children}</TooltipTrigger>
+        <TooltipTrigger asChild>{children}</TooltipTrigger>
         <TooltipContent className="border-0">
           {text}
         </TooltipContent>
