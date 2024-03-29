@@ -40,7 +40,7 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
       wrapperRef.current?.appendChild(tag);
     }, []);
 
-    const playerSetup = (videoId: string) => {
+    const playerSetup = async(videoId: string) => {
       isYouTubeReady.then(() => {
         player = new window.YT.Player('__yt_player', {
           height: '100%',
