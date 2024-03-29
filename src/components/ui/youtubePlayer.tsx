@@ -34,6 +34,7 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
 
     useEffect(() => {
       if (!wrapperRef) return;
+      console.log('wrapperRef', wrapperRef);
       const tag = document.createElement('div');
       tag.id = `__yt_player`;
       tag.className = `w-full h-full`;
