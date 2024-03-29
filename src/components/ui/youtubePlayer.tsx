@@ -40,24 +40,8 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
       wrapperRef.current?.appendChild(tag);
     }, []);
 
-    useEffect(() => {
-      console.log('effect start');
-      if (!document.getElementById('__yt_player')) return;
-      console.log('effect start2');
-      if (
-        player &&
-        typeof player.loadVideoById === 'function'
-      ) {
-        player.loadVideoById(videoId);
-        console.log('effect start3');
-        return;
-      }
-
-      console.log('effect start4');
-      console.log('isYouTubeReady', isYouTubeReady);
+    const playerSetup = (videoId: string) => {
       isYouTubeReady.then(() => {
-        console.log('youtube ready');
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         player = new window.YT.Player('__yt_player', {
           height: '100%',
           width: '100%',
@@ -86,10 +70,29 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
           },
         }) as YT.Player;
       });
+    };
+
+    useEffect(() => {
+      console.log('effect start');
+      if (!document.getElementById('__yt_player')) return;
+      console.log('effect start2');
+      if (
+        player &&
+        typeof player.loadVideoById === 'function'
+      ) {
+        player.loadVideoById(videoId);
+        console.log('effect start3');
+        return;
+      }
+
+      console.log('effect start4');
+      console.log('isYouTubeReady', isYouTubeReady);
+      playerSetup(videoId);
 
       return () => {
         player?.destroy();
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [videoId]);
 
     useImperativeHandle(ref, () => ({
