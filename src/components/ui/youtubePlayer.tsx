@@ -3,7 +3,6 @@ import {
   useEffect,
   useImperativeHandle,
   useRef,
-  useState,
 } from 'react';
 import { useYouTubeSupportInited } from '../functions/youtube-provider';
 
