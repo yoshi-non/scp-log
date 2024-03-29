@@ -5,8 +5,8 @@ import {
   TrackNextIcon,
   TrackPreviousIcon,
 } from '@radix-ui/react-icons';
-import { PlayingType } from '../PlayList';
 import { TooltipWrapper } from '@/components/ui/tooltip-wrapper';
+import { PlayingType } from '@/types/PlayingType';
 
 type Props = {
   isPlaying: PlayingType;
@@ -16,7 +16,7 @@ type Props = {
   nextVideo: () => void;
 };
 
-const VideoMenuBar = ({
+export const VideoMenuBar = ({
   isPlaying,
   playVideo,
   pauseVideo,
@@ -74,5 +74,3 @@ const VideoMenuBar = ({
     </div>
   );
 };
-
-export default VideoMenuBar;
