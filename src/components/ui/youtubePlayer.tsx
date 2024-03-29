@@ -41,7 +41,9 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
     }, []);
 
     const playerSetup = async (videoId: string) => {
+      console.log('playerSetup');
       await isYouTubeReady; // wait until isYouTubeReady is resolved
+      console.log('playerSetup2');
       player = new window.YT.Player('__yt_player', {
         height: '100%',
         width: '100%',
