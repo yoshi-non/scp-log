@@ -61,6 +61,8 @@ const YouTubeContextProvider: React.FC<{
   const promise = new Promise<void>((resolve) => {
     if (typeof window !== 'undefined') {
       window.onYouTubeIframeAPIReady = resolve;
+    } else {
+      resolve();
     }
   });
 
