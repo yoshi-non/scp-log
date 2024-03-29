@@ -54,6 +54,7 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
       }
 
       console.log('effect start4');
+      console.log('isYouTubeReady', isYouTubeReady);
       isYouTubeReady.then(() => {
         console.log('youtube ready');
         // eslint-disable-next-line react-hooks/exhaustive-deps
