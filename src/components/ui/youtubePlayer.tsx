@@ -40,36 +40,35 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
       wrapperRef.current?.appendChild(tag);
     }, []);
 
-    const playerSetup = async(videoId: string) => {
-      isYouTubeReady.then(() => {
-        player = new window.YT.Player('__yt_player', {
-          height: '100%',
-          width: '100%',
-          videoId: videoId,
-          host: 'https://www.youtube-nocookie.com',
-          playerVars: {
-            autoplay: 1,
-            fs: 0,
-            modestbranding: 1,
+    const playerSetup = async (videoId: string) => {
+      await isYouTubeReady; // wait until isYouTubeReady is resolved
+      player = new window.YT.Player('__yt_player', {
+        height: '100%',
+        width: '100%',
+        videoId: videoId,
+        host: 'https://www.youtube-nocookie.com',
+        playerVars: {
+          autoplay: 1,
+          fs: 0,
+          modestbranding: 1,
+        },
+        events: {
+          onStateChange: (e) => {
+            if (e.data === 0) {
+              onVideoEnd();
+            }
+            if (e.data === 1) {
+              onVideoPlay();
+            }
+            if (e.data === 2) {
+              onVideoPause();
+            }
+            if (e.data === 3) {
+              onVideoBuffering();
+            }
           },
-          events: {
-            onStateChange: (e) => {
-              if (e.data === 0) {
-                onVideoEnd();
-              }
-              if (e.data === 1) {
-                onVideoPlay();
-              }
-              if (e.data === 2) {
-                onVideoPause();
-              }
-              if (e.data === 3) {
-                onVideoBuffering();
-              }
-            },
-          },
-        }) as YT.Player;
-      });
+        },
+      }) as YT.Player;
     };
 
     useEffect(() => {
