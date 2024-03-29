@@ -47,10 +47,6 @@ const PlayList = ({
     useYouTubePlayer();
 
   useEffect(() => {
-    setIsPlaying('BUFFERING');
-  }, [selectedMovieIndex]);
-
-  useEffect(() => {
     setIsReady(false);
   }, [selectedFolderIndex]);
 
