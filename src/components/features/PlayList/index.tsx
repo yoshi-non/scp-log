@@ -202,6 +202,7 @@ const PlayList = ({
    */
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
+      e.preventDefault();
       if (isPlaying === null || isPlaying === 'BUFFERING')
         return;
       if (e.key === 'k' || e.key === ' ') {
