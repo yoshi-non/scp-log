@@ -34,12 +34,11 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
 
     useEffect(() => {
       if (!wrapperRef) return;
-      console.log('wrapperRef', wrapperRef);
       const tag = document.createElement('div');
       tag.id = `__yt_player`;
       tag.className = `w-full h-full`;
       wrapperRef.current?.appendChild(tag);
-    }, [wrapperRef]);
+    }, []);
 
     useEffect(() => {
       if (!document.getElementById('__yt_player')) return;
@@ -52,6 +51,7 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
       }
 
       isYouTubeReady.then(() => {
+        console.log('youtube ready');
         // eslint-disable-next-line react-hooks/exhaustive-deps
         player = new window.YT.Player('__yt_player', {
           height: '100%',
