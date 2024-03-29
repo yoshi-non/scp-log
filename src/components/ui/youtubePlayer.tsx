@@ -85,7 +85,7 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
       return () => {
         player?.destroy();
       };
-    }, [videoId, isYouTubeReady]);
+    }, [videoId]);
 
     useImperativeHandle(ref, () => ({
       playVideo: () => {
