@@ -3,7 +3,6 @@ import { Noto_Sans_JP } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/features/Header';
 import { ThemeProvider } from '@/components/functions/theme-provider';
-import { YouTubeContextProvider } from '@/components/functions/youtube-provider';
 import { Toaster } from '@/components/ui/sonner';
 import GoogleAnalytics from '@/components/functions/GoogleAnalytics';
 import { Suspense } from 'react';
@@ -29,18 +28,16 @@ export default function RootLayout({
         </Suspense>
       </head>
       <body className={notoSansJP.className}>
-        <YouTubeContextProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Header />
-            {children}
-            <Toaster />
-          </ThemeProvider>
-        </YouTubeContextProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Header />
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

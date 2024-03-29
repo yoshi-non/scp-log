@@ -20,6 +20,7 @@ import PlayList from '@/components/features/PlayList';
 import { localStorageKey } from '@/constants/localStorageKey';
 import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
 import Loader from '@/components/features/Loader';
+import { YouTubeContextProvider } from '@/components/functions/youtube-provider';
 
 export default function Home() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -49,82 +50,99 @@ export default function Home() {
 
   return (
     <main>
-      <Tabs defaultValue="playlist" className="w-full">
-        <TabsList className="mx-5">
-          <TabsTrigger
-            value="playlist"
-            onClick={() => setTabName('playlist')}
-          >
-            Playlist
-          </TabsTrigger>
-          <TabsTrigger
-            value="addMovie"
-            onClick={() => setTabName('addMovie')}
-          >
-            Add Movie
-          </TabsTrigger>
-          <TabsTrigger
-            value="download"
-            onClick={() => setTabName('download')}
-          >
-            Download
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="playlist">
-          {loading ? (
-            <div className="w-full min-h-[620px] h-full flex justify-center items-center">
-              <Loader />
-            </div>
-          ) : (
-            <ResizablePanelGroup direction="horizontal">
-              <ResizablePanel defaultSize={20} maxSize={50}>
-                <PlayListSideBar
-                  localStorageObjects={localStorageObjects}
-                  setLocalStorageObjects={
-                    setLocalStorageObjects
-                  }
-                  selectedFolderIndex={selectedFolderIndex}
-                  setSelectedFolderIndex={
-                    setSelectedFolderIndex
-                  }
-                />
-              </ResizablePanel>
-              <ResizableHandle withHandle />
-              <ResizablePanel defaultSize={80}>
-                <PlayList
-                  localStorageObjects={localStorageObjects}
-                  setLocalStorageObjects={
-                    setLocalStorageObjects
-                  }
-                  selectedFolderIndex={selectedFolderIndex}
-                />
-              </ResizablePanel>
-            </ResizablePanelGroup>
-          )}
-        </TabsContent>
-        <TabsContent value="addMovie">
-          <AddMovie
-            tab={tabName}
-            localStorageObjects={localStorageObjects}
-            setLocalStorageObjects={setLocalStorageObjects}
-            keyword={keyword}
-            setKeyword={setKeyword}
-            searchResult={searchResult}
-            setSearchResult={setSearchResult}
-          />
-        </TabsContent>
-        <TabsContent value="download">
-          <AddMovie
-            tab={tabName}
-            localStorageObjects={localStorageObjects}
-            setLocalStorageObjects={setLocalStorageObjects}
-            keyword={keyword}
-            setKeyword={setKeyword}
-            searchResult={searchResult}
-            setSearchResult={setSearchResult}
-          />
-        </TabsContent>
-      </Tabs>
+      <YouTubeContextProvider>
+        <Tabs defaultValue="playlist" className="w-full">
+          <TabsList className="mx-5">
+            <TabsTrigger
+              value="playlist"
+              onClick={() => setTabName('playlist')}
+            >
+              Playlist
+            </TabsTrigger>
+            <TabsTrigger
+              value="addMovie"
+              onClick={() => setTabName('addMovie')}
+            >
+              Add Movie
+            </TabsTrigger>
+            <TabsTrigger
+              value="download"
+              onClick={() => setTabName('download')}
+            >
+              Download
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="playlist">
+            {loading ? (
+              <div className="w-full min-h-[620px] h-full flex justify-center items-center">
+                <Loader />
+              </div>
+            ) : (
+              <ResizablePanelGroup direction="horizontal">
+                <ResizablePanel
+                  defaultSize={20}
+                  maxSize={50}
+                >
+                  <PlayListSideBar
+                    localStorageObjects={
+                      localStorageObjects
+                    }
+                    setLocalStorageObjects={
+                      setLocalStorageObjects
+                    }
+                    selectedFolderIndex={
+                      selectedFolderIndex
+                    }
+                    setSelectedFolderIndex={
+                      setSelectedFolderIndex
+                    }
+                  />
+                </ResizablePanel>
+                <ResizableHandle withHandle />
+                <ResizablePanel defaultSize={80}>
+                  <PlayList
+                    localStorageObjects={
+                      localStorageObjects
+                    }
+                    setLocalStorageObjects={
+                      setLocalStorageObjects
+                    }
+                    selectedFolderIndex={
+                      selectedFolderIndex
+                    }
+                  />
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            )}
+          </TabsContent>
+          <TabsContent value="addMovie">
+            <AddMovie
+              tab={tabName}
+              localStorageObjects={localStorageObjects}
+              setLocalStorageObjects={
+                setLocalStorageObjects
+              }
+              keyword={keyword}
+              setKeyword={setKeyword}
+              searchResult={searchResult}
+              setSearchResult={setSearchResult}
+            />
+          </TabsContent>
+          <TabsContent value="download">
+            <AddMovie
+              tab={tabName}
+              localStorageObjects={localStorageObjects}
+              setLocalStorageObjects={
+                setLocalStorageObjects
+              }
+              keyword={keyword}
+              setKeyword={setKeyword}
+              searchResult={searchResult}
+              setSearchResult={setSearchResult}
+            />
+          </TabsContent>
+        </Tabs>
+      </YouTubeContextProvider>
     </main>
   );
 }

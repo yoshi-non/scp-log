@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useState,
 } from 'react';
 
 declare global {
@@ -31,51 +32,51 @@ declare global {
   }
 }
 
-const YouTubeSupportContext = createContext<
-  [Promise<void>] | undefined
->(undefined);
+const YouTubeSupportContext = createContext<boolean>(false);
 
 const YouTubeContextProvider: React.FC<{
   children: React.ReactNode;
 }> = (props) => {
+  const [isReady, setIsReady] = useState<boolean>(false);
   useEffect(() => {
-    if (document.getElementById('__yt_script')) {
-      console.log('already loaded');
-      return;
-    }
-    const tag = document.createElement('script');
-    tag.id = '__yt_script';
-    tag.src = 'https://www.youtube.com/iframe_api';
-    const firstScriptTag =
-      document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode?.insertBefore(
-      tag,
-      firstScriptTag
-    );
+    const initializeYouTubeAPI = () => {
+      if (
+        typeof window.YT !== 'undefined' &&
+        typeof window.YT.Player !== 'undefined'
+      ) {
+        setIsReady(true);
+      } else {
+        const tag = document.createElement('script');
+        tag.id = '__yt_script';
+        tag.src = 'https://www.youtube.com/iframe_api';
+        const firstScriptTag =
+          document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode?.insertBefore(
+          tag,
+          firstScriptTag
+        );
+
+        window.onYouTubeIframeAPIReady = () => {
+          setIsReady(true);
+        };
+      }
+    };
+
+    initializeYouTubeAPI();
 
     return () => {
-      document.getElementById('__yt_script')?.remove();
+      setIsReady(false); // Clear the YouTube API state when unmounting
     };
   }, []);
 
-  const promise = new Promise<void>((resolve) => {
-    if (typeof window !== 'undefined') {
-      window.onYouTubeIframeAPIReady = () => {
-        resolve();
-      };
-    }
-  });
-
   return (
-    <YouTubeSupportContext.Provider value={[promise]}>
+    <YouTubeSupportContext.Provider value={isReady}>
       {props.children}
     </YouTubeSupportContext.Provider>
   );
 };
 
-export const useYouTubeSupportInited = ():
-  | Promise<void>[]
-  | undefined => {
+export const useYouTubeSupportInited = (): boolean => {
   return useContext(YouTubeSupportContext);
 };
 
