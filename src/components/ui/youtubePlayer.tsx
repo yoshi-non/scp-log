@@ -40,10 +40,8 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
       wrapperRef.current?.appendChild(tag);
     }, []);
 
-    const playerSetup = async (videoId: string) => {
-      console.log('playerSetup');
-      await isYouTubeReady;
-      console.log('playerSetup2');
+    const playerSetup = (videoId: string) => {
+      isYouTubeReady;
       player = new window.YT.Player('__yt_player', {
         height: '100%',
         width: '100%',
@@ -74,22 +72,15 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
     };
 
     useEffect(() => {
-      console.log('effect start');
       if (!document.getElementById('__yt_player')) return;
-      console.log('effect start2');
       if (
         player &&
         typeof player.loadVideoById === 'function'
       ) {
         player.loadVideoById(videoId);
-        console.log('effect start3');
         return;
       }
-
-      console.log('effect start4');
-      console.log('isYouTubeReady', isYouTubeReady);
       playerSetup(videoId);
-
       return () => {
         player?.destroy();
       };

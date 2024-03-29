@@ -65,7 +65,7 @@ const YouTubeContextProvider: React.FC<{
     initializeYouTubeAPI();
 
     return () => {
-      setIsReady(false); // Clear the YouTube API state when unmounting
+      setIsReady(false);
     };
   }, []);
 
