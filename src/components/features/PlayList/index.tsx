@@ -17,7 +17,7 @@ import PlaylistTitleDialog from '../PlaylistTitleDialog';
 import PlaylistMenubarDialog from '../PlaylistMenubarDialog';
 import DndContextWrapper from '../../functions/DndKit/DndContextWrapper';
 import VideoMenuBar from '../VideoMenuBar';
-import useYouTubePlayer from '@/usecases/useYouTubePlayer';
+import { useYouTubePlayer } from '@/usecases/useYouTubePlayer';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -197,6 +197,28 @@ const PlayList = ({
     setSelectedMovieIndex(newIndex);
   };
 
+  /**
+   * k or スペースキーを押すと動画を一時停止または再生する
+   */
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (isPlaying === null || isPlaying === 'BUFFERING')
+        return;
+      if (e.key === 'k' || e.key === ' ') {
+        if (isPlaying === 'PLAYING') {
+          pauseVideo();
+        }
+        if (isPlaying === 'PAUSED') {
+          playVideo();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', down);
+    return () =>
+      document.removeEventListener('keydown', down);
+  }, [isPlaying, playVideo, pauseVideo]);
+
   return (
     <div className="flex w-full h-[calc(100vh-120px)] overflow-hidden">
       {movies && movies.length > 0 ? (
@@ -239,6 +261,8 @@ const PlayList = ({
                   width={300}
                   height={169}
                   alt="thumbnail"
+                  priority
+                  className="object-cover w-[300px] min-w[300px] h-[169px] overflow-hidden"
                 />
               </div>
               <div className="text-left p-2">
@@ -315,6 +339,7 @@ const PlayList = ({
                             height={130}
                             alt="thumbnail"
                             className="object-cover w-[200px] min-w-[200px] h-[98px] overflow-hidden"
+                            priority
                           />
                           <p className="h-full p-2 text-left flex-auto">
                             {movie.title}

@@ -6,6 +6,7 @@ import {
   TrackPreviousIcon,
 } from '@radix-ui/react-icons';
 import { PlayingType } from '../PlayList';
+import { TooltipWrapper } from '@/components/ui/tooltip-wrapper';
 
 type Props = {
   isPlaying: PlayingType;
@@ -39,20 +40,30 @@ const VideoMenuBar = ({
         >
           <TrackPreviousIcon className="w-6 h-6" />
         </Button>
-        <Button
-          disabled={
-            isPlaying === 'BUFFERING' || isPlaying === null
+        <TooltipWrapper
+          text={
+            isPlaying === 'PLAYING' ||
+            isPlaying === 'BUFFERING'
+              ? '一時停止（k）'
+              : '再生（k）'
           }
-          className="rounded-full p-2"
-          onClick={handlePlayClick}
         >
-          {isPlaying === 'PLAYING' ||
-          isPlaying === 'BUFFERING' ? (
-            <PauseIcon className="w-6 h-6" />
-          ) : (
-            <PlayIcon className="w-6 h-6" />
-          )}
-        </Button>
+          <Button
+            disabled={
+              isPlaying === 'BUFFERING' ||
+              isPlaying === null
+            }
+            className="rounded-full p-2"
+            onClick={handlePlayClick}
+          >
+            {isPlaying === 'PLAYING' ||
+            isPlaying === 'BUFFERING' ? (
+              <PauseIcon className="w-6 h-6" />
+            ) : (
+              <PlayIcon className="w-6 h-6" />
+            )}
+          </Button>
+        </TooltipWrapper>
         <Button
           className="rounded-full p-2"
           onClick={() => nextVideo()}
