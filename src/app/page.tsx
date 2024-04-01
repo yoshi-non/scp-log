@@ -29,7 +29,9 @@ export default function Home() {
   const [selectedFolderIndex, setSelectedFolderIndex] =
     useState<number>(0);
 
-  const [keyword, setKeyword] = useState<string>('');
+  // 検索キーワードの一時保存
+  const [tmpKeyword, setTmpKeyword] = useState<string>('');
+
   const [searchResult, setSearchResult] = useState<
     YouTubeSearchResult[]
   >([]);
@@ -122,8 +124,8 @@ export default function Home() {
               setLocalStorageObjects={
                 setLocalStorageObjects
               }
-              keyword={keyword}
-              setKeyword={setKeyword}
+              tmpKeyword={tmpKeyword}
+              setTmpKeyword={setTmpKeyword}
               searchResult={searchResult}
               setSearchResult={setSearchResult}
             />
@@ -135,8 +137,8 @@ export default function Home() {
               setLocalStorageObjects={
                 setLocalStorageObjects
               }
-              keyword={keyword}
-              setKeyword={setKeyword}
+              tmpKeyword={tmpKeyword}
+              setTmpKeyword={setTmpKeyword}
               searchResult={searchResult}
               setSearchResult={setSearchResult}
             />

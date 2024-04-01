@@ -5,7 +5,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 
 export const youtubeSearch = async (
   keyword: string,
-  localStorageInputValue: string | false
+  youtubeApiKey: string | false
 ): Promise<YouTubeSearchResult[]> => {
   try {
     const config: AxiosRequestConfig = {
@@ -19,8 +19,7 @@ export const youtubeSearch = async (
         q: keyword,
         maxResults: 50,
         key:
-          localStorageInputValue ||
-          process.env.YOUTUBE_DATA_API_KEY,
+          youtubeApiKey || process.env.YOUTUBE_DATA_API_KEY,
         type: 'video',
       },
     };

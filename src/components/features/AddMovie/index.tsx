@@ -16,8 +16,10 @@ type Props = {
   setLocalStorageObjects: React.Dispatch<
     React.SetStateAction<LocalStorageObjects>
   >;
-  keyword: string;
-  setKeyword: React.Dispatch<React.SetStateAction<string>>;
+  tmpKeyword: string;
+  setTmpKeyword: React.Dispatch<
+    React.SetStateAction<string>
+  >;
   searchResult: YouTubeSearchResult[];
   setSearchResult: React.Dispatch<
     React.SetStateAction<YouTubeSearchResult[]>
@@ -28,21 +30,29 @@ const AddMovie = ({
   tab,
   localStorageObjects,
   setLocalStorageObjects,
-  keyword,
-  setKeyword,
+  tmpKeyword,
+  setTmpKeyword,
   searchResult,
   setSearchResult,
 }: Props) => {
+  // 保存先のフォルダーの値
   const [value, setValue] = useState<number | null>(null);
-  const localStorageInputValue =
-    getFromLocalStorageInputKey(localStorageInputKey);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  /**
+   * ローカルストレージからAPIキーを取得
+   */
+  const youtubeApiKey = getFromLocalStorageInputKey(
+    localStorageInputKey
+  );
 
   const youtubeSearchHandler = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
     event.stopPropagation();
-    if (!checkValidate()) return;
+    if (!inputRef.current) return;
+    if (inputRef.current.value.trim() === '') return;
     if (
       process.env.NEXT_PUBLIC_IS_MOCK_YOUTUBE_SEARCH ===
       'true'
@@ -62,8 +72,8 @@ const AddMovie = ({
       setSearchResult(filterData);
     } else {
       const data = await youtubeSearch(
-        keyword,
-        localStorageInputValue
+        inputRef.current.value,
+        youtubeApiKey
       );
       if (!data || data.length === 0) {
         toast.error(
@@ -72,18 +82,14 @@ const AddMovie = ({
         return;
       }
       setSearchResult(data);
+      setTmpKeyword(inputRef.current.value);
     }
-  };
-
-  const checkValidate = () => {
-    return !!keyword.trim();
   };
 
   /**
    * 初期ロード
    * - inputにフォーカスを当てる
    */
-  const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
@@ -97,11 +103,9 @@ const AddMovie = ({
           <Input
             type="search"
             placeholder="動画を検索"
+            defaultValue={tmpKeyword}
             ref={inputRef}
-            defaultValue={keyword}
-            onChange={(event) =>
-              setKeyword(event.target.value)
-            }
+            onBlur={(e) => setTmpKeyword(e.target.value)}
             required
           />
         </form>
