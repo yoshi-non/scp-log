@@ -98,7 +98,7 @@ const AddMovie = ({
             type="search"
             placeholder="動画を検索"
             ref={inputRef}
-            value={keyword}
+            defaultValue={keyword}
             onChange={(event) =>
               setKeyword(event.target.value)
             }
