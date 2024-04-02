@@ -45,11 +45,11 @@ export const useShortcutToggle = (
         e.preventDefault();
         seekTo(5);
       }
-      if (e.key === 'j' || e.key === 'ArrowLeft') {
+      if (e.key === 'j') {
         e.preventDefault();
         seekTo(-10);
       }
-      if (e.key === 'j' || e.key === 'ArrowLeft') {
+      if (e.key === 'ArrowLeft') {
         e.preventDefault();
         seekTo(-5);
       }

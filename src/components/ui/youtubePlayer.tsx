@@ -40,6 +40,8 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
       useState<number>(0);
     const [currentTime, setCurrentTime] =
       useState<number>(0);
+    const [isPlaying, setIsPlaying] =
+      useState<boolean>(false);
 
     useEffect(() => {
       if (!wrapperRef) return;
@@ -72,6 +74,7 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
               onVideoPlay();
               const newCurrentTime =
                 player?.getCurrentTime() || 0;
+              setIsPlaying(true);
               setTmpCurrentTime(newCurrentTime);
             }
             if (e.data === 2) {
@@ -79,6 +82,7 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
               const newCurrentTime =
                 player?.getCurrentTime() || 0;
               console.log(newCurrentTime);
+              setIsPlaying(false);
               setTmpCurrentTime(newCurrentTime);
             }
             if (e.data === 3) {
@@ -93,19 +97,26 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
     };
 
     useEffect(() => {
-      const intervalId = setInterval(() => {
-        // プレーヤーが準備完了した後に、定期的に再生時間を取得する処理を開始します
-        console.log(tmpCurrentTime);
-        if (tmpCurrentTime === 0) {
-          // 0秒の場合は何もしない
-          setCurrentTime(0);
-          return;
-        }
-        const currentTime = tmpCurrentTime + 0.1;
-        setCurrentTime(currentTime);
-      }, 100);
-      return () => clearInterval(intervalId);
-    }, [player, tmpCurrentTime, setTmpCurrentTime]);
+      if (isPlaying) {
+        const intervalId = setInterval(() => {
+          // プレーヤーが準備完了した後に、定期的に再生時間を取得する処理を開始します
+          console.log(tmpCurrentTime);
+          if (tmpCurrentTime === 0) {
+            // 0秒の場合は何もしない
+            setCurrentTime(0);
+            return;
+          }
+          const currentTime = tmpCurrentTime + 0.1;
+          setCurrentTime(currentTime);
+        }, 100);
+        return () => clearInterval(intervalId);
+      }
+    }, [
+      player,
+      tmpCurrentTime,
+      setTmpCurrentTime,
+      isPlaying,
+    ]);
 
     useEffect(() => {
       if (!document.getElementById('__yt_player')) return;
@@ -148,6 +159,7 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
         const iframe =
           wrapperRef.current?.querySelector('iframe');
         console.log('seekTo', currentTime, seconds);
+        // 少数4桁までの誤差を許容する
         const newCurrentTime = currentTime + seconds;
         console.log('newCurrentTime', newCurrentTime);
         if (iframe) {
