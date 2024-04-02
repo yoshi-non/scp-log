@@ -3,12 +3,17 @@ import {
   useEffect,
   useImperativeHandle,
   useRef,
+  useState,
 } from 'react';
 import { useYouTubeSupportInited } from '../functions/youtube-provider';
 
 type PlayerRef = {
   playVideo: () => void;
   pauseVideo: () => void;
+  seekTo: (
+    seconds: number,
+    allowSeekAhead: boolean
+  ) => void;
 };
 
 type Props = {
@@ -31,6 +36,10 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
     const wrapperRef = useRef<HTMLDivElement>(null);
     let player: YT.Player | undefined;
     const isYouTubeReady = useYouTubeSupportInited()!;
+    const [tmpCurrentTime, setTmpCurrentTime] =
+      useState<number>(0);
+    const [currentTime, setCurrentTime] =
+      useState<number>(0);
 
     useEffect(() => {
       if (!wrapperRef) return;
@@ -42,6 +51,7 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
 
     const playerSetup = (videoId: string) => {
       isYouTubeReady;
+      setTmpCurrentTime(0);
       player = new window.YT.Player('__yt_player', {
         height: '100%',
         width: '100%',
@@ -55,21 +65,47 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
         events: {
           onStateChange: (e) => {
             if (e.data === 0) {
+              setTmpCurrentTime(0);
               onVideoEnd();
             }
             if (e.data === 1) {
               onVideoPlay();
+              const newCurrentTime =
+                player?.getCurrentTime() || 0;
+              setTmpCurrentTime(newCurrentTime);
             }
             if (e.data === 2) {
               onVideoPause();
+              const newCurrentTime =
+                player?.getCurrentTime() || 0;
+              console.log(newCurrentTime);
+              setTmpCurrentTime(newCurrentTime);
             }
             if (e.data === 3) {
               onVideoBuffering();
+              const newCurrentTime =
+                player?.getCurrentTime() || 0;
+              setTmpCurrentTime(newCurrentTime);
             }
           },
         },
       }) as YT.Player;
     };
+
+    useEffect(() => {
+      const intervalId = setInterval(() => {
+        // プレーヤーが準備完了した後に、定期的に再生時間を取得する処理を開始します
+        console.log(tmpCurrentTime);
+        if (tmpCurrentTime === 0) {
+          // 0秒の場合は何もしない
+          setCurrentTime(0);
+          return;
+        }
+        const currentTime = tmpCurrentTime + 0.1;
+        setCurrentTime(currentTime);
+      }, 100);
+      return () => clearInterval(intervalId);
+    }, [player, tmpCurrentTime, setTmpCurrentTime]);
 
     useEffect(() => {
       if (!document.getElementById('__yt_player')) return;
@@ -104,6 +140,19 @@ const YoutubePlayer = forwardRef<PlayerRef, Props>(
         if (iframe) {
           iframe.contentWindow?.postMessage(
             '{"event":"command","func":"pauseVideo","args":""}',
+            '*'
+          );
+        }
+      },
+      seekTo: (seconds, allowSeekAhead) => {
+        const iframe =
+          wrapperRef.current?.querySelector('iframe');
+        console.log('seekTo', currentTime, seconds);
+        const newCurrentTime = currentTime + seconds;
+        console.log('newCurrentTime', newCurrentTime);
+        if (iframe) {
+          iframe.contentWindow?.postMessage(
+            `{"event":"command","func":"seekTo","args": [${newCurrentTime}, ${allowSeekAhead}]}`,
             '*'
           );
         }
