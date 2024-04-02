@@ -23,7 +23,9 @@ import Loader from '@/components/features/Loader';
 import { YouTubeContextProvider } from '@/components/functions/youtube-provider';
 
 export default function Home() {
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<
+    'true' | 'false' | 'pending'
+  >('pending');
   const [localStorageObjects, setLocalStorageObjects] =
     useState<LocalStorageObjects>([]);
   const [selectedFolderIndex, setSelectedFolderIndex] =
@@ -40,12 +42,13 @@ export default function Home() {
 
   useEffect(() => {
     const getLocalStorageData = () => {
+      setLoading('true');
       const storedData =
         getFromLocalStorage(localStorageKey);
       if (storedData) {
         setLocalStorageObjects(storedData);
       }
-      setLoading(false);
+      setLoading('false');
     };
     getLocalStorageData();
   }, []);
@@ -75,7 +78,7 @@ export default function Home() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="playlist">
-            {loading ? (
+            {loading !== 'false' ? (
               <div className="w-full min-h-[620px] h-full flex justify-center items-center">
                 <Loader />
               </div>
