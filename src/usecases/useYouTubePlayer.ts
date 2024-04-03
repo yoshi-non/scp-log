@@ -15,5 +15,16 @@ export const useYouTubePlayer = () => {
     }
   };
 
-  return { playVideo, pauseVideo, playerRef };
+  const seekTo = (time: number) => {
+    if (playerRef.current) {
+      playerRef.current.seekTo(time, true);
+    }
+  };
+
+  return {
+    playVideo,
+    pauseVideo,
+    seekTo,
+    playerRef,
+  };
 };

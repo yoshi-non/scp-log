@@ -34,8 +34,16 @@ const PlayList = ({
     useState<number>(0);
   const [isPlaying, setIsPlaying] =
     useState<PlayingType>(null);
-  const { playVideo, pauseVideo, playerRef } =
+  const { playVideo, pauseVideo, seekTo, playerRef } =
     useYouTubePlayer();
+
+  // ショートカットキーの設定
+  useShortcutToggle(
+    isPlaying,
+    playVideo,
+    pauseVideo,
+    seekTo
+  );
 
   useEffect(() => {
     setIsReady(false);
@@ -84,8 +92,6 @@ const PlayList = ({
       (selectedMovieIndex + 1) % movies.length;
     setSelectedMovieIndex(newIndex);
   };
-
-  useShortcutToggle(isPlaying, playVideo, pauseVideo);
 
   return (
     <div className="flex w-full h-[calc(100vh-120px)] overflow-hidden">
