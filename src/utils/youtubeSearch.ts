@@ -14,9 +14,11 @@ export const youtubeSearch = async (
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
       },
+      // https://developers.google.com/youtube/v3/docs/search/list?hl=ja#parameters
       params: {
         part: 'snippet',
         q: keyword,
+        safeSearch: 'strict',
         maxResults: 50,
         key:
           youtubeApiKey || process.env.YOUTUBE_DATA_API_KEY,
