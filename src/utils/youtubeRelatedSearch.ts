@@ -67,7 +67,7 @@ const findMostFrequentSubstring = async (
 
 export const youtubeRelatedSearch = async (
   movies: Movies,
-  localStorageInputValue: string | false,
+  localStorageInputValue?: string,
   nextPageToken?: string
 ): Promise<{
   result: YouTubeSearchResult[];
