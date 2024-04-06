@@ -15,6 +15,7 @@ import { useYouTubePlayer } from '@/usecases/useYouTubePlayer';
 import { useDragAndDrop } from './hooks/useDragAndDrop';
 import { PlayingType } from '@/types/PlayingType';
 import { useShortcutToggle } from './hooks/useShortcutToggle';
+import { usePlaybackPattern } from './hooks/usePlaybackPattern';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -36,6 +37,11 @@ const PlayList = ({
     useState<PlayingType>(null);
   const { playVideo, pauseVideo, seekTo, playerRef } =
     useYouTubePlayer();
+  const {
+    playbackPattern,
+    setPlaybackPattern,
+    handlePlaybackPattern,
+  } = usePlaybackPattern();
 
   // ショートカットキーの設定
   useShortcutToggle(
@@ -121,6 +127,10 @@ const PlayList = ({
                 pauseVideo={pauseVideo}
                 prevVideo={handlePrevVideo}
                 nextVideo={handleNextVideo}
+                playbackPattern={playbackPattern}
+                handlePlaybackPattern={
+                  handlePlaybackPattern
+                }
               />
               <p className="text-xl p-2">
                 {movies[selectedMovieIndex]?.title}
