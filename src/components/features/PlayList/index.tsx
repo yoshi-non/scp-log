@@ -37,11 +37,8 @@ const PlayList = ({
     useState<PlayingType>(null);
   const { playVideo, pauseVideo, seekTo, playerRef } =
     useYouTubePlayer();
-  const {
-    playbackPattern,
-    setPlaybackPattern,
-    handlePlaybackPattern,
-  } = usePlaybackPattern();
+  const { playbackPattern, handlePlaybackPattern } =
+    usePlaybackPattern();
 
   // ショートカットキーの設定
   useShortcutToggle(
@@ -73,11 +70,19 @@ const PlayList = ({
    * 動画が終了したときに次の動画を再生する
    */
   const onVideoEndHandler = () => {
-    const index = getOnVideoEndIndex(
-      selectedMovieIndex,
-      movies.length
-    );
-    setSelectedMovieIndex(index);
+    if (playbackPattern === 'normal') {
+      const index = getOnVideoEndIndex(
+        selectedMovieIndex,
+        movies.length
+      );
+      setSelectedMovieIndex(index);
+    } else {
+      let index = Math.floor(Math.random() * movies.length);
+      while (index === selectedMovieIndex) {
+        index = Math.floor(Math.random() * movies.length);
+      }
+      setSelectedMovieIndex(index);
+    }
   };
 
   /**
