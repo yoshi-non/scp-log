@@ -5,7 +5,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 
 export const youtubeSearch = async (
   keyword: string,
-  youtubeApiKey: string | false
+  youtubeApiKey?: string
 ): Promise<YouTubeSearchResult[]> => {
   try {
     const config: AxiosRequestConfig = {

@@ -50,32 +50,32 @@ export const updateLocalStorage = (
 
 export const getFromLocalStorage = (
   key: string
-): LocalStorageObjects | false => {
+): LocalStorageObjects | undefined => {
   try {
     const storedData = localStorage.getItem(key);
-    if (!storedData) return false;
+    if (!storedData) return;
     return JSON.parse(storedData) as LocalStorageObjects;
   } catch (error) {
     console.error(
       'Error getting data from localStorage:',
       error
     );
-    return false;
+    return;
   }
 };
 
 export const getFromLocalStorageInputKey = (
   key: string
-): string | false => {
+): string | undefined => {
   try {
     const storedData = localStorage.getItem(key);
-    if (!storedData || storedData === '') return false;
+    if (!storedData || storedData === '') return;
     return JSON.parse(storedData) as string;
   } catch (error) {
     console.error(
       'Error getting data from localStorage:',
       error
     );
-    return false;
+    return;
   }
 };
