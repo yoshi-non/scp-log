@@ -7,11 +7,7 @@ import {
 } from '@radix-ui/react-icons';
 import { TooltipWrapper } from '@/components/ui/tooltip-wrapper';
 import { PlayingType } from '@/types/PlayingType';
-import {
-  Repeat1Icon,
-  RepeatIcon,
-  ShuffleIcon,
-} from 'lucide-react';
+import { RepeatIcon, ShuffleIcon } from 'lucide-react';
 
 type Props = {
   isPlaying: PlayingType;
@@ -19,7 +15,7 @@ type Props = {
   pauseVideo: () => void;
   prevVideo: () => void;
   nextVideo: () => void;
-  playbackPattern: 'normal' | 'loop' | 'shuffle';
+  playbackPattern: 'normal' | 'shuffle';
   handlePlaybackPattern: () => void;
 };
 
@@ -43,18 +39,13 @@ export const VideoMenuBar = ({
   return (
     <div className="w-[200px] mx-auto mt-3">
       <div className="flex justify-between items-center">
-        {/* 通常再生、ループ、ランダム再生ボタン */}
         <Button
           className="rounded-full p-2"
           onClick={() => handlePlaybackPattern()}
         >
-          {playbackPattern === 'normal' && (
+          {playbackPattern === 'normal' ? (
             <RepeatIcon className="w-6 h-6" />
-          )}
-          {playbackPattern === 'loop' && (
-            <Repeat1Icon className="w-6 h-6" />
-          )}
-          {playbackPattern === 'shuffle' && (
+          ) : (
             <ShuffleIcon className="w-6 h-6" />
           )}
         </Button>
