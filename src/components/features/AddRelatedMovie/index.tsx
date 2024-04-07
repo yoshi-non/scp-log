@@ -81,7 +81,8 @@ const AddRelatedMovie = ({
     setLocalStorageObjects(newObjects);
     // 関連動画に追加したIDの動画を削除
     const newRelatedMovies = relatedMovies.filter(
-      (movie) => movie.id.videoId !== movieId
+      (movie) =>
+        typeof movie.id === 'string' && movie.id !== movieId
     );
     setRelatedMovies(newRelatedMovies);
     setItems({
@@ -102,7 +103,11 @@ const AddRelatedMovie = ({
       <div className="mt-2">
         {relatedMovies.map((relatedMovie) => (
           <button
-            key={relatedMovie.id.videoId}
+            key={
+              typeof relatedMovie.id === 'string'
+                ? relatedMovie.id
+                : relatedMovie.id.videoId
+            }
             onClick={() => {}}
             className="h-[112px] w-full p-2 flex items-center overflow-hidden hover:bg-secondary hover:opacity-70 rounded-md"
           >
@@ -124,7 +129,9 @@ const AddRelatedMovie = ({
               <button
                 onClick={() =>
                   preserveToFolderHandler(
-                    relatedMovie.id.videoId,
+                    typeof relatedMovie.id === 'string'
+                      ? relatedMovie.id
+                      : relatedMovie.id.videoId,
                     relatedMovie.snippet.title,
                     relatedMovie.snippet.thumbnails.high.url
                   )

@@ -58,7 +58,6 @@ const findMostFrequentSubstring = async (
     // ,で連結
     concatenatedTitles = mostFrequentWords.join(',');
     return concatenatedTitles;
-
   } catch (error) {
     console.error('kuromoji error:', error);
     return;
@@ -105,7 +104,13 @@ export const youtubeRelatedSearch = async (
     const result = res.data.items as YouTubeSearchResult[];
     // moviesに含まれる動画を除外
     const newResult = result.filter((movie) => {
-      return !movies.some((m) => m.id === movie.id.videoId);
+      return !movies.some(
+        (m) =>
+          m.id ===
+          (typeof movie.id === 'string'
+            ? movie.id
+            : movie.id.videoId)
+      );
     });
     return {
       result: newResult,
