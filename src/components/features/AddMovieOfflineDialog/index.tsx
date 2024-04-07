@@ -47,7 +47,13 @@ const AddMovieOfflineDialog = ({ item }: Props) => {
           <DialogFooter>
             <DialogClose asChild>
               <Button
-                onClick={() => downloadMp4(item.id.videoId)}
+                onClick={() =>
+                  downloadMp4(
+                    typeof item.id === 'string'
+                      ? item.id
+                      : item.id.videoId
+                  )
+                }
               >
                 保存
               </Button>
@@ -67,7 +73,11 @@ const AddMovieOfflineDialog = ({ item }: Props) => {
             <DialogClose asChild>
               <Button
                 onClick={() =>
-                  youtubeDownload(item.id.videoId)
+                  youtubeDownload(
+                    typeof item.id === 'string'
+                      ? item.id
+                      : item.id.videoId
+                  )
                 }
               >
                 保存

@@ -4,13 +4,12 @@ import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
-import { localStorageInputKey } from '@/constants/localStorageKey';
-import { getFromLocalStorageInputKey } from '@/utils/storage';
 import { toast } from 'sonner';
 import AddMovieOnlineDialog from '../AddMovieOnlineDialog';
 import AddMovieOfflineDialog from '../AddMovieOfflineDialog';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { useLSYoutubeApiKey } from '@/usecases/useLSYoutubeApiKey';
 
 type Props = {
   tab: string;
@@ -51,24 +50,16 @@ const AddMovie = ({
   const [value, setValue] = useState<number | null>(null);
   // ID検索モード
   const [isIdSearch, setIsIdSearch] = useState(false);
-
   const inputRef = useRef<HTMLInputElement>(null);
-  /**
-   * ローカルストレージからAPIキーを取得
-   */
-  const youtubeApiKey = getFromLocalStorageInputKey(
-    localStorageInputKey
-  );
+  const { youtubeApiKey } = useLSYoutubeApiKey();
 
   const youtubeSearchHandler = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
     event.stopPropagation();
-
     if (!inputRef.current) return;
     if (inputRef.current.value.trim() === '') return;
-
     const data = await youtubeSearch(
       isIdSearch,
       inputRef.current.value,
