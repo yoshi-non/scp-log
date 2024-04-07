@@ -30,10 +30,11 @@ npm start
 │ │ │ │ ├ tests // テスト専用
 │ │ │ │ ├ index.tsx // エントリーポイント
 │ │ ├ functions // UIとして表示されないコンポーネント
-│ │ ├ ui // UIコンポーネント,shadcn/uiで使用
+│ │ ├ ui // UIコンポーネント, shadcn/uiは全てここに入る
 │ ├ constants // 全体に共通の定数ファイルを配置する
 │ ├ libs // ライブラリのラッパーや使いまわしやすいようにする
 │ ├ types // 全体に共通の型定義ファイルを配置する
+│ ├ usecases // 共通で使い回すhooks
 │ ├ utils // 使い回すロジックなど
 ```
 

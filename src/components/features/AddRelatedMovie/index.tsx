@@ -35,9 +35,8 @@ const AddRelatedMovie = ({
   const [relatedMovies, setRelatedMovies] = useState<
     YouTubeSearchResult[]
   >([]);
-  const [nextPageToken, setNextPageToken] = useState<
-    string | undefined
-  >(undefined);
+  const [nextPageToken, setNextPageToken] =
+    useState<string>();
   const [isloading, setIsLoading] =
     useState<boolean>(false);
   const [isSearchMovies, setIsSearchMovies] =

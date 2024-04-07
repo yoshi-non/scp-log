@@ -3,7 +3,7 @@ import { TriangleRightIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { getOnVideoEndIndex } from './logics/getOnVideoEndIndex';
-import YoutubePlayer from '@/components/ui/youtubePlayer';
+import YoutubePlayer from '@/components/ui/youtube-player';
 import SortableItemWrapper from '../../functions/DndKit/SortableItemWrapper';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import AddRelatedMovie from '../AddRelatedMovie';
