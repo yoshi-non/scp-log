@@ -1,7 +1,12 @@
 import { Input } from '@/components/ui/input';
 import { youtubeSearch } from '@/utils/youtubeSearch';
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import {
+  ChangeEventHandler,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
 import { localStorageInputKey } from '@/constants/localStorageKey';
@@ -9,6 +14,8 @@ import { getFromLocalStorageInputKey } from '@/utils/storage';
 import { toast } from 'sonner';
 import AddMovieOnlineDialog from '../AddMovieOnlineDialog';
 import AddMovieOfflineDialog from '../AddMovieOfflineDialog';
+import { useLSYoutubeSearchHistory } from '@/usecases/useLSYoutubeSearchHistory';
+import { useDebouncedCallback } from 'use-debounce';
 
 type Props = {
   tab: string;
@@ -35,6 +42,16 @@ const AddMovie = ({
   searchResult,
   setSearchResult,
 }: Props) => {
+  /**
+   * 初期ロード
+   * - inputにフォーカスを当てる
+   */
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [tab]);
+
   // 保存先のフォルダーの値
   const [value, setValue] = useState<number | null>(null);
 
@@ -45,6 +62,15 @@ const AddMovie = ({
   const youtubeApiKey = getFromLocalStorageInputKey(
     localStorageInputKey
   );
+
+  const [keyword, setKeyword] = useState<string>('');
+
+  const {
+    searchHistory,
+    addSearchHistory,
+    removeSearchHistory,
+    clearSearchHistory,
+  } = useLSYoutubeSearchHistory();
 
   const youtubeSearchHandler = async (
     event: React.FormEvent<HTMLFormElement>
@@ -86,15 +112,18 @@ const AddMovie = ({
     }
   };
 
-  /**
-   * 初期ロード
-   * - inputにフォーカスを当てる
-   */
+  const handleSearchHistory = (keyword: string) => {};
+
+  // inputが一定時間変更されなかったらkeywordを更新
+  const debounced: ChangeEventHandler<HTMLInputElement> =
+    useDebouncedCallback(({ target: { value } }) => {
+      setTmpKeyword(value);
+      setKeyword(value);
+    }, 200);
+
   useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [tab]);
+    console.log(keyword);
+  }, [keyword]);
 
   return (
     <div>
@@ -105,9 +134,37 @@ const AddMovie = ({
             placeholder="動画を検索"
             defaultValue={tmpKeyword}
             ref={inputRef}
-            onBlur={(e) => setTmpKeyword(e.target.value)}
+            value={keyword}
+            onChange={debounced}
             required
           />
+          {/* 検索履歴 */}
+          <div>
+            {searchHistory.length > 0 && (
+              <div className="mt-2 flex flex-wrap">
+                {searchHistory.map((history, i) => (
+                  <div key={i}>
+                    <button
+                      className="bg-gray-200 px-2 py-1 rounded-md m-1"
+                      onClick={() =>
+                        handleSearchHistory(history)
+                      }
+                    >
+                      {history}
+                    </button>
+                    <button
+                      className="text-xs text-destructive"
+                      onClick={() =>
+                        removeSearchHistory(history)
+                      }
+                    >
+                      削除
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </form>
       </div>
       <div className="w-full flex flex-wrap justify-center">
