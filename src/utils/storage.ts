@@ -63,19 +63,3 @@ export const getFromLocalStorage = (
     return;
   }
 };
-
-export const getFromLocalStorageInputKey = (
-  key: string
-): string | undefined => {
-  try {
-    const storedData = localStorage.getItem(key);
-    if (!storedData || storedData === '') return;
-    return JSON.parse(storedData) as string;
-  } catch (error) {
-    console.error(
-      'Error getting data from localStorage:',
-      error
-    );
-    return;
-  }
-};

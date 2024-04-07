@@ -1,17 +1,16 @@
 import { Button } from '@/components/ui/button';
-import { localStorageInputKey } from '@/constants/localStorageKey';
 import {
   LocalStorageObjects,
   Movies,
 } from '@/types/localstrageObjects';
 import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
-import { getFromLocalStorageInputKey } from '@/utils/storage';
 import { youtubeRelatedSearch } from '@/utils/youtubeRelatedSearch';
 import { PlusIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { preserveToFolder } from '../AddMovie/logics/preserveToFolder';
 import { Loader2 } from 'lucide-react';
+import { useLSYoutubeApiKey } from '@/usecases/useLSYoutubeApiKey';
 
 type Props = {
   localStorageObjects: LocalStorageObjects;
@@ -30,8 +29,7 @@ const AddRelatedMovie = ({
   movies,
   setItems,
 }: Props) => {
-  const localStorageInputValue =
-    getFromLocalStorageInputKey(localStorageInputKey);
+  const { youtubeApiKey } = useLSYoutubeApiKey();
   const [relatedMovies, setRelatedMovies] = useState<
     YouTubeSearchResult[]
   >([]);
@@ -48,7 +46,7 @@ const AddRelatedMovie = ({
       const searchRelatedMovies =
         await youtubeRelatedSearch(
           movies,
-          localStorageInputValue,
+          youtubeApiKey,
           nextPageToken
         );
       setNextPageToken(searchRelatedMovies.nextPageToken);

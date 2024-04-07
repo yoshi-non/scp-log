@@ -1,46 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { preserveInputKey } from './logics/preserveInputKey';
-import { localStorageInputKey } from '@/constants/localStorageKey';
-import {
-  getFromLocalStorageInputKey,
-} from '@/utils/storage';
-import { useEffect, useState } from 'react';
+import { useLSYoutubeApiKey } from '@/usecases/useLSYoutubeApiKey';
+import { useMasked } from './hooks/useMasked';
 
 const InputKey = () => {
-  const [
-    localStorageInputValue,
-    setLocalStorageInputValue,
-  ] = useState<string>('');
-  const [inputValue, setInputValue] = useState<string>('');
-  const [isMasked, setIsMasked] = useState<boolean>(true);
-
-  useEffect(() => {
-    const storedData = getFromLocalStorageInputKey(
-      localStorageInputKey
-    );
-    if (!storedData) return;
-    setLocalStorageInputValue(storedData);
-  }, []);
-
-  const changeMaskHandler = () => {
-    if (!isMasked) {
-      setIsMasked(true);
-    } else {
-      setIsMasked(false);
-    }
-  };
-
-  const changeInputKeyHandler = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setInputValue(e.target.value);
-  };
-
-  const preserveInputKeyHandler = () => {
-    if (localStorageInputValue === inputValue) return;
-    preserveInputKey(inputValue);
-  };
+  const { youtubeApiKey, updateYoutubeApiKey } =
+    useLSYoutubeApiKey();
+  const { isMasked, changeMaskHandler } = useMasked();
 
   return (
     <div className="px-20">
@@ -56,9 +22,10 @@ const InputKey = () => {
           type={isMasked ? 'password' : 'text'}
           name="val_password"
           placeholder="Youtube Data API key"
-          value={inputValue}
-          onChange={changeInputKeyHandler}
-          onBlur={preserveInputKeyHandler}
+          value={youtubeApiKey}
+          onChange={(e) =>
+            updateYoutubeApiKey(e.target.value)
+          }
         />
         <Button
           variant="link"
