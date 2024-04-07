@@ -140,13 +140,15 @@ const AddMovieOnlineDialog = ({
                 value === null &&
                 localStorageObjects.length !== 0
               }
-              onClick={() =>
+              onClick={() => {
                 preserveToFolderHandler(
-                  item.id.videoId,
+                  typeof item.id === 'string'
+                    ? item.id
+                    : item.id.videoId,
                   item.snippet.title,
                   item.snippet.thumbnails.high.url
-                )
-              }
+                );
+              }}
             >
               保存
             </Button>

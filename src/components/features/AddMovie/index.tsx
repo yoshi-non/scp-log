@@ -9,6 +9,8 @@ import { getFromLocalStorageInputKey } from '@/utils/storage';
 import { toast } from 'sonner';
 import AddMovieOnlineDialog from '../AddMovieOnlineDialog';
 import AddMovieOfflineDialog from '../AddMovieOfflineDialog';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 
 type Props = {
   tab: string;
@@ -47,6 +49,8 @@ const AddMovie = ({
 
   // 保存先のフォルダーの値
   const [value, setValue] = useState<number | null>(null);
+  // ID検索モード
+  const [isIdSearch, setIsIdSearch] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   /**
@@ -61,44 +65,43 @@ const AddMovie = ({
   ) => {
     event.preventDefault();
     event.stopPropagation();
+
     if (!inputRef.current) return;
     if (inputRef.current.value.trim() === '') return;
-    if (
-      process.env.NEXT_PUBLIC_IS_MOCK_YOUTUBE_SEARCH ===
-      'true'
-    ) {
-      // 開発環境でのみ使用
-      const fetchMockData = async () => {
-        const data = await fetch(
-          'http://localhost:3000/api/mocks/youtube-search'
-        );
-        return data.json();
-      };
-      const data: YouTubeSearchResult[] =
-        await fetchMockData();
-      const filterData = data.filter((item) => {
-        return item.id.kind === 'youtube#video';
-      });
-      setSearchResult(filterData);
-    } else {
-      const data = await youtubeSearch(
-        inputRef.current.value,
-        youtubeApiKey
+
+    const data = await youtubeSearch(
+      isIdSearch,
+      inputRef.current.value,
+      youtubeApiKey
+    );
+    if (!data) {
+      toast.error(
+        'Youtube Data API keyが間違っているか、APIの呼び出し回数が上限に達しました。'
       );
-      if (!data || data.length === 0) {
-        toast.error(
-          'Youtube Data API keyが間違っているか、APIの呼び出し回数が上限に達しました。'
-        );
-        return;
-      }
-      setSearchResult(data);
-      setTmpKeyword(inputRef.current.value);
+      return;
+    } else if (data.length === 0) {
+      toast.error('検索結果がありません。');
+      return;
     }
+    setSearchResult(data);
+    setTmpKeyword(inputRef.current.value);
   };
 
   return (
     <div>
       <div className="w-[70%] mx-auto mt-5">
+        <div className="w-full flex gap-2 justify-end items-center mb-2">
+          <Label htmlFor="id-search-mode">
+            {isIdSearch ? 'ID検索' : 'キーワード検索'}
+          </Label>
+          <Switch
+            id="id-search-mode"
+            checked={isIdSearch}
+            onCheckedChange={(value) => {
+              setIsIdSearch(value);
+            }}
+          />
+        </div>
         <form onSubmit={youtubeSearchHandler}>
           <Input
             type="search"

@@ -2,7 +2,7 @@
 export interface YouTubeSearchResult {
   kind: string;
   etag: string;
-  id: YouTubeVideoId;
+  id: YouTubeVideoId | string;
   snippet: YouTubeVideoSnippet;
 }
 
