@@ -1,12 +1,7 @@
 import { Input } from '@/components/ui/input';
 import { youtubeSearch } from '@/utils/youtubeSearch';
 import Image from 'next/image';
-import {
-  ChangeEventHandler,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
 import { localStorageInputKey } from '@/constants/localStorageKey';
@@ -14,8 +9,6 @@ import { getFromLocalStorageInputKey } from '@/utils/storage';
 import { toast } from 'sonner';
 import AddMovieOnlineDialog from '../AddMovieOnlineDialog';
 import AddMovieOfflineDialog from '../AddMovieOfflineDialog';
-import { useLSYoutubeSearchHistory } from '@/usecases/useLSYoutubeSearchHistory';
-import { useDebouncedCallback } from 'use-debounce';
 
 type Props = {
   tab: string;
@@ -63,15 +56,6 @@ const AddMovie = ({
     localStorageInputKey
   );
 
-  const [keyword, setKeyword] = useState<string>('');
-
-  const {
-    searchHistory,
-    addSearchHistory,
-    removeSearchHistory,
-    clearSearchHistory,
-  } = useLSYoutubeSearchHistory();
-
   const youtubeSearchHandler = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
@@ -112,19 +96,6 @@ const AddMovie = ({
     }
   };
 
-  const handleSearchHistory = (keyword: string) => {};
-
-  // inputが一定時間変更されなかったらkeywordを更新
-  const debounced: ChangeEventHandler<HTMLInputElement> =
-    useDebouncedCallback(({ target: { value } }) => {
-      setTmpKeyword(value);
-      setKeyword(value);
-    }, 200);
-
-  useEffect(() => {
-    console.log(keyword);
-  }, [keyword]);
-
   return (
     <div>
       <div className="w-[70%] mx-auto mt-5">
@@ -134,37 +105,8 @@ const AddMovie = ({
             placeholder="動画を検索"
             defaultValue={tmpKeyword}
             ref={inputRef}
-            value={keyword}
-            onChange={debounced}
             required
           />
-          {/* 検索履歴 */}
-          <div>
-            {searchHistory.length > 0 && (
-              <div className="mt-2 flex flex-wrap">
-                {searchHistory.map((history, i) => (
-                  <div key={i}>
-                    <button
-                      className="bg-gray-200 px-2 py-1 rounded-md m-1"
-                      onClick={() =>
-                        handleSearchHistory(history)
-                      }
-                    >
-                      {history}
-                    </button>
-                    <button
-                      className="text-xs text-destructive"
-                      onClick={() =>
-                        removeSearchHistory(history)
-                      }
-                    >
-                      削除
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
         </form>
       </div>
       <div className="w-full flex flex-wrap justify-center">
