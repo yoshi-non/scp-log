@@ -41,7 +41,7 @@ const AddMovie = ({
    * - inputにフォーカスを当てる
    */
   useEffect(() => {
-    if (inputRef.current) {
+    if (inputRef.current && inputRef.current.value === '') {
       inputRef.current.focus();
     }
   }, [tab]);
