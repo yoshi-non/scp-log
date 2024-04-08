@@ -1,6 +1,4 @@
-import { localStorageKey } from '@/constants/localStorageKey';
 import { LocalStorageObjects } from '@/types/localstrageObjects';
-import { saveToLocalStorage } from '@/utils/storage';
 import { toast } from 'sonner';
 
 export const deleteFile = (
@@ -21,10 +19,6 @@ export const deleteFile = (
   newLocalStorageObjects[folderIndex].movies.splice(
     movieIndex,
     1
-  );
-  saveToLocalStorage(
-    localStorageKey,
-    newLocalStorageObjects
   );
   return newLocalStorageObjects;
 };

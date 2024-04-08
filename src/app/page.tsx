@@ -1,8 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { LocalStorageObjects } from '@/types/localstrageObjects';
-import { getFromLocalStorage } from '@/utils/storage';
+import { useState } from 'react';
 import {
   Tabs,
   TabsContent,
@@ -17,17 +15,15 @@ import {
 import PlayListSideBar from '@/components/features/PlayListSideBar';
 import AddMovie from '@/components/features/AddMovie';
 import PlayList from '@/components/features/PlayList';
-import { localStorageKey } from '@/constants/localStorageKey';
 import { YouTubeSearchResult } from '@/types/youtubeSearchResult';
 import Loader from '@/components/features/Loader';
 import { YouTubeContextProvider } from '@/components/functions/youtube-provider';
+import { useLSPlaylists } from '@/usecases/useLSPlaylists';
 
 export default function Home() {
-  const [loading, setLoading] = useState<
-    'true' | 'false' | 'pending'
-  >('pending');
-  const [localStorageObjects, setLocalStorageObjects] =
-    useState<LocalStorageObjects>([]);
+  const { loading, lsPlaylists, updateLSPlaylists } =
+    useLSPlaylists();
+
   const [selectedFolderIndex, setSelectedFolderIndex] =
     useState<number>(0);
 
@@ -39,19 +35,6 @@ export default function Home() {
   >([]);
   const [tabName, setTabName] =
     useState<string>('playlist');
-
-  useEffect(() => {
-    const getLocalStorageData = () => {
-      setLoading('true');
-      const storedData =
-        getFromLocalStorage(localStorageKey);
-      if (storedData) {
-        setLocalStorageObjects(storedData);
-      }
-      setLoading('false');
-    };
-    getLocalStorageData();
-  }, []);
 
   return (
     <main>
@@ -89,12 +72,8 @@ export default function Home() {
                   maxSize={50}
                 >
                   <PlayListSideBar
-                    localStorageObjects={
-                      localStorageObjects
-                    }
-                    setLocalStorageObjects={
-                      setLocalStorageObjects
-                    }
+                    lsPlaylists={lsPlaylists}
+                    updateLSPlaylists={updateLSPlaylists}
                     selectedFolderIndex={
                       selectedFolderIndex
                     }
@@ -106,12 +85,8 @@ export default function Home() {
                 <ResizableHandle withHandle />
                 <ResizablePanel defaultSize={80}>
                   <PlayList
-                    localStorageObjects={
-                      localStorageObjects
-                    }
-                    setLocalStorageObjects={
-                      setLocalStorageObjects
-                    }
+                    lsPlaylists={lsPlaylists}
+                    updateLSPlaylists={updateLSPlaylists}
                     selectedFolderIndex={
                       selectedFolderIndex
                     }
@@ -123,10 +98,8 @@ export default function Home() {
           <TabsContent value="addMovie">
             <AddMovie
               tab={tabName}
-              localStorageObjects={localStorageObjects}
-              setLocalStorageObjects={
-                setLocalStorageObjects
-              }
+              lsPlaylists={lsPlaylists}
+              updateLSPlaylists={updateLSPlaylists}
               tmpKeyword={tmpKeyword}
               setTmpKeyword={setTmpKeyword}
               searchResult={searchResult}
@@ -136,10 +109,8 @@ export default function Home() {
           <TabsContent value="download">
             <AddMovie
               tab={tabName}
-              localStorageObjects={localStorageObjects}
-              setLocalStorageObjects={
-                setLocalStorageObjects
-              }
+              lsPlaylists={lsPlaylists}
+              updateLSPlaylists={updateLSPlaylists}
               tmpKeyword={tmpKeyword}
               setTmpKeyword={setTmpKeyword}
               searchResult={searchResult}

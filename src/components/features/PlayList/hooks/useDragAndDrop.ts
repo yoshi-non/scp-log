@@ -9,10 +9,10 @@ import { dndExchangeMovie } from '../logics/dndExchangeMovie';
 
 export const useDragAndDrop = (
   selectedFolderIndex: number,
-  localStorageObjects: LocalStorageObjects,
-  setLocalStorageObjects: React.Dispatch<
-    React.SetStateAction<LocalStorageObjects>
-  >,
+  lsPlaylists: LocalStorageObjects,
+  updateLSPlaylists: (
+    newPlaylist: LocalStorageObjects
+  ) => void,
   setIsReady: React.Dispatch<React.SetStateAction<boolean>>,
   selectedMovieIndex: number,
   setSelectedMovieIndex: React.Dispatch<
@@ -25,11 +25,11 @@ export const useDragAndDrop = (
 
   useEffect(() => {
     setItems({
-      container1: localStorageObjects[
+      container1: lsPlaylists[
         selectedFolderIndex
       ]?.movies.map((_, index) => String(index)),
     });
-  }, [selectedFolderIndex, localStorageObjects]);
+  }, [selectedFolderIndex, lsPlaylists]);
 
   /**
    * 各コンテナ取得関数
@@ -118,9 +118,9 @@ export const useDragAndDrop = (
         activeIndex,
         overIndex,
         selectedFolderIndex,
-        localStorageObjects
+        lsPlaylists
       );
-      setLocalStorageObjects(newObjects);
+      updateLSPlaylists(newObjects);
       if (activeIndex === selectedMovieIndex) {
         setSelectedMovieIndex(overIndex);
       }

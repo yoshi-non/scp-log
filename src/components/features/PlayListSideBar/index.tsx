@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { LocalStorageObjects } from '@/types/localstrageObjects';
-import { saveToLocalStorage } from '@/utils/storage';
 import {
   CardStackPlusIcon,
   DotsVerticalIcon,
@@ -29,13 +28,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { renameFolder } from '../PlaylistTitleDialog/logics/renameFolder';
 import { deleteFolder } from './logics/deleteFolder';
-import { localStorageKey } from '@/constants/localStorageKey';
 
 type Props = {
-  localStorageObjects: LocalStorageObjects;
-  setLocalStorageObjects: React.Dispatch<
-    React.SetStateAction<LocalStorageObjects>
-  >;
+  lsPlaylists: LocalStorageObjects;
+  updateLSPlaylists: (
+    newPlaylist: LocalStorageObjects
+  ) => void;
   selectedFolderIndex: number;
   setSelectedFolderIndex: React.Dispatch<
     React.SetStateAction<number>
@@ -43,8 +41,8 @@ type Props = {
 };
 
 const PlayListSideBar = ({
-  localStorageObjects,
-  setLocalStorageObjects,
+  lsPlaylists,
+  updateLSPlaylists,
   selectedFolderIndex,
   setSelectedFolderIndex,
 }: Props) => {
@@ -55,37 +53,30 @@ const PlayListSideBar = ({
       name: 'New Folder',
       movies: [],
     };
-    const newLocalStorageObjects = localStorageObjects
-      ? [...localStorageObjects, newFolder]
+    const newLocalStorageObjects = lsPlaylists
+      ? [...lsPlaylists, newFolder]
       : [newFolder];
-    saveToLocalStorage(
-      localStorageKey,
-      newLocalStorageObjects
-    );
-    setLocalStorageObjects(newLocalStorageObjects);
+    updateLSPlaylists(newLocalStorageObjects);
   };
 
   const renameFolderHandler = (
     index: number,
     newName: string
   ) => {
-    if (!localStorageObjects) return;
+    if (!lsPlaylists) return;
     if (newName === '') return;
     const newObjects = renameFolder(
       index,
       newName,
-      localStorageObjects
+      lsPlaylists
     );
-    setLocalStorageObjects(newObjects);
+    updateLSPlaylists(newObjects);
   };
 
   const deleteFolderHandler = (index: number) => {
-    if (!localStorageObjects) return;
-    const newObject = deleteFolder(
-      index,
-      localStorageObjects
-    );
-    setLocalStorageObjects(newObject);
+    if (!lsPlaylists) return;
+    const newObject = deleteFolder(index, lsPlaylists);
+    updateLSPlaylists(newObject);
   };
 
   const [open, setOpen] = useState<boolean>(false);
@@ -117,7 +108,7 @@ const PlayListSideBar = ({
       </Button>
       <ScrollArea className="mt-1 h-full w-full">
         <div className="flex flex-col gap-1">
-          {localStorageObjects.map((folder, index) => (
+          {lsPlaylists.map((folder, index) => (
             <div
               key={index}
               className="flex justify-between"
@@ -178,7 +169,7 @@ const PlayListSideBar = ({
                             </Label>
                             <Input
                               id="name"
-                              placeholder='フォルダー名'
+                              placeholder="フォルダー名"
                               defaultValue={folder.name}
                               className="col-span-3"
                               ref={inputRenameRef}
@@ -238,7 +229,7 @@ const PlayListSideBar = ({
               </Menubar>
             </div>
           ))}
-          {localStorageObjects.length === 0 && (
+          {lsPlaylists.length === 0 && (
             <p className="text-center">
               You don&apos;t have any folder yet.
             </p>

@@ -1,12 +1,7 @@
 import { Button } from '@/components/ui/button';
-import { localStorageKey } from '@/constants/localStorageKey';
 import { LocalStorageObjects } from '@/types/localstrageObjects';
 import { localStorageDownload } from '@/components/features/DownloadAndUploadLocalStorage/logics/localStorageDownload';
-import {
-  getFromLocalStorage,
-  saveToLocalStorage,
-} from '@/utils/storage';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useChangeUploadFile } from './hooks/useChangeUploadFile';
 import {
   Dialog,
@@ -19,26 +14,28 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 
-const DownloadAndUploadLocalStorage = () => {
-  const [localStorageObjects, setLocalStorageObjects] =
-    useState<LocalStorageObjects>([]);
+type Props = {
+  lsPlaylists: LocalStorageObjects;
+  updateLSPlaylists: (
+    newPlaylist: LocalStorageObjects
+  ) => void;
+};
+
+const DownloadAndUploadLocalStorage = ({
+  lsPlaylists,
+  updateLSPlaylists,
+}: Props) => {
   const [uploadFileObjects, setUploadFileObjects] =
     useState<LocalStorageObjects>([]);
   const [isCheckFile, setIsCheckFile] =
     useState<boolean>(true);
 
-  useEffect(() => {
-    const storedData = getFromLocalStorage(localStorageKey);
-    if (!storedData) return;
-    setLocalStorageObjects(storedData);
-  }, []);
-
   const downloadHandler = () => {
-    localStorageDownload(localStorageObjects);
+    localStorageDownload(lsPlaylists);
   };
 
   const uploadHandler = () => {
-    saveToLocalStorage(localStorageKey, uploadFileObjects);
+    updateLSPlaylists(uploadFileObjects);
   };
 
   const UploadFileHandler = (
@@ -53,14 +50,10 @@ const DownloadAndUploadLocalStorage = () => {
 
   const addUploadHandler = () => {
     const newLocalStorageObjects = [
-      ...localStorageObjects,
+      ...lsPlaylists,
       ...uploadFileObjects,
     ];
-    saveToLocalStorage(
-      localStorageKey,
-      newLocalStorageObjects
-    );
-    setLocalStorageObjects(newLocalStorageObjects);
+    updateLSPlaylists(newLocalStorageObjects);
   };
 
   return (

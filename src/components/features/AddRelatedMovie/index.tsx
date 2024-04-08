@@ -13,18 +13,18 @@ import { Loader2 } from 'lucide-react';
 import { useLSYoutubeApiKey } from '@/usecases/useLSYoutubeApiKey';
 
 type Props = {
-  localStorageObjects: LocalStorageObjects;
-  setLocalStorageObjects: React.Dispatch<
-    React.SetStateAction<LocalStorageObjects>
-  >;
+  lsPlaylists: LocalStorageObjects;
+  updateLSPlaylists: (
+    newPlaylist: LocalStorageObjects
+  ) => void;
   selectedFolderIndex: number;
   movies: Movies;
   setItems: React.Dispatch<{ [key: string]: string[] }>;
 };
 
 const AddRelatedMovie = ({
-  localStorageObjects,
-  setLocalStorageObjects,
+  lsPlaylists,
+  updateLSPlaylists,
   selectedFolderIndex,
   movies,
   setItems,
@@ -74,9 +74,9 @@ const AddRelatedMovie = ({
       movieId,
       movieTitle,
       thumbnailUrl,
-      localStorageObjects
+      lsPlaylists
     );
-    setLocalStorageObjects(newObjects);
+    updateLSPlaylists(newObjects);
     // 関連動画に追加したIDの動画を削除
     const newRelatedMovies = relatedMovies.filter(
       (movie) =>

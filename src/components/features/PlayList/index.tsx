@@ -18,16 +18,16 @@ import { useShortcutToggle } from './hooks/useShortcutToggle';
 import { usePlaybackPattern } from './hooks/usePlaybackPattern';
 
 type Props = {
-  localStorageObjects: LocalStorageObjects;
-  setLocalStorageObjects: React.Dispatch<
-    React.SetStateAction<LocalStorageObjects>
-  >;
+  lsPlaylists: LocalStorageObjects;
+  updateLSPlaylists: (
+    newPlaylist: LocalStorageObjects
+  ) => void;
   selectedFolderIndex: number;
 };
 
 const PlayList = ({
-  localStorageObjects,
-  setLocalStorageObjects,
+  lsPlaylists,
+  updateLSPlaylists,
   selectedFolderIndex,
 }: Props) => {
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -55,15 +55,14 @@ const PlayList = ({
   const { items, setItems, handleDragOver, handleDragEnd } =
     useDragAndDrop(
       selectedFolderIndex,
-      localStorageObjects,
-      setLocalStorageObjects,
+      lsPlaylists,
+      updateLSPlaylists,
       setIsReady,
       selectedMovieIndex,
       setSelectedMovieIndex
     );
 
-  const selectedFolder =
-    localStorageObjects[selectedFolderIndex];
+  const selectedFolder = lsPlaylists[selectedFolderIndex];
   const movies = selectedFolder?.movies;
 
   /**
@@ -159,12 +158,8 @@ const PlayList = ({
                     selectedFolderIndex={
                       selectedFolderIndex
                     }
-                    localStorageObjects={
-                      localStorageObjects
-                    }
-                    setLocalStorageObjects={
-                      setLocalStorageObjects
-                    }
+                    lsPlaylists={lsPlaylists}
+                    updateLSPlaylists={updateLSPlaylists}
                   />
                   <p className="font-bold">
                     {selectedFolder.name}
@@ -248,22 +243,16 @@ const PlayList = ({
                     selectedFolderIndex={
                       selectedFolderIndex
                     }
-                    localStorageObjects={
-                      localStorageObjects
-                    }
-                    setLocalStorageObjects={
-                      setLocalStorageObjects
-                    }
+                    lsPlaylists={lsPlaylists}
+                    updateLSPlaylists={updateLSPlaylists}
                     setIsReady={setIsReady}
                   />
                 ))}
               </div>
             </div>
             <AddRelatedMovie
-              localStorageObjects={localStorageObjects}
-              setLocalStorageObjects={
-                setLocalStorageObjects
-              }
+              lsPlaylists={lsPlaylists}
+              updateLSPlaylists={updateLSPlaylists}
               selectedFolderIndex={selectedFolderIndex}
               movies={movies}
               setItems={setItems}

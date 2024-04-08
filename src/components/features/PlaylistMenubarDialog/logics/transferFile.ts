@@ -1,6 +1,4 @@
-import { localStorageKey } from '@/constants/localStorageKey';
 import { LocalStorageObjects } from '@/types/localstrageObjects';
-import { saveToLocalStorage } from '@/utils/storage';
 import { toast } from 'sonner';
 
 export const transferFile = (
@@ -21,10 +19,6 @@ export const transferFile = (
   );
   newLocalStorageObjects[newFolderIndex].movies.push(
     crrMovie
-  );
-  saveToLocalStorage(
-    localStorageKey,
-    newLocalStorageObjects
   );
   return newLocalStorageObjects;
 };

@@ -16,32 +16,31 @@ import { useRef, useState } from 'react';
 
 type Props = {
   selectedFolderIndex: number;
-  localStorageObjects: LocalStorageObjects;
-  setLocalStorageObjects: React.Dispatch<
-    React.SetStateAction<LocalStorageObjects>
-  >;
+  lsPlaylists: LocalStorageObjects;
+  updateLSPlaylists: (
+    newPlaylist: LocalStorageObjects
+  ) => void;
 };
 
 const PlaylistTitleDialog = ({
   selectedFolderIndex,
-  localStorageObjects,
-  setLocalStorageObjects,
+  lsPlaylists,
+  updateLSPlaylists,
 }: Props) => {
   const inputRenameRef = useRef<HTMLInputElement>(null);
-  const selectedFolder =
-    localStorageObjects[selectedFolderIndex];
+  const selectedFolder = lsPlaylists[selectedFolderIndex];
   const renameFolderHandler = (
     index: number,
     newName: string
   ) => {
-    if (!localStorageObjects) return;
+    if (!lsPlaylists) return;
     if (newName === '') return;
     const newObjects = renameFolder(
       index,
       newName,
-      localStorageObjects
+      lsPlaylists
     );
-    setLocalStorageObjects(newObjects);
+    updateLSPlaylists(newObjects);
   };
 
   const [open, setOpen] = useState<boolean>(false);
