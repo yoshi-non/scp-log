@@ -45,10 +45,10 @@ type Props = {
   index: number;
   selectedMovieIndex: number;
   selectedFolderIndex: number;
-  localStorageObjects: LocalStorageObjects;
-  setLocalStorageObjects: React.Dispatch<
-    React.SetStateAction<LocalStorageObjects>
-  >;
+  lsPlaylists: LocalStorageObjects;
+  updateLSPlaylists: (
+    newPlaylist: LocalStorageObjects
+  ) => void;
   setIsReady: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -57,8 +57,8 @@ const PlaylistMenubarDialog = ({
   index,
   selectedMovieIndex,
   selectedFolderIndex,
-  localStorageObjects,
-  setLocalStorageObjects,
+  lsPlaylists,
+  updateLSPlaylists,
   setIsReady,
 }: Props) => {
   const [open, setOpen] = useState<boolean>(false);
@@ -68,7 +68,7 @@ const PlaylistMenubarDialog = ({
 
   const transferFileHandler = (movieIndex: number) => {
     if (
-      !localStorageObjects ||
+      !lsPlaylists ||
       selectedFolderIndex === newFolderIndex ||
       newFolderIndex === null
     )
@@ -77,22 +77,22 @@ const PlaylistMenubarDialog = ({
       movieIndex,
       selectedFolderIndex,
       newFolderIndex,
-      localStorageObjects
+      lsPlaylists
     );
     if (movieIndex === selectedMovieIndex) {
       setIsReady(false);
     }
-    setLocalStorageObjects(newObjects);
+    updateLSPlaylists(newObjects);
   };
 
   const deleteFileHandler = (movieIndex: number) => {
-    if (!localStorageObjects) return;
+    if (!lsPlaylists) return;
     const newObject = deleteFile(
       movieIndex,
       selectedFolderIndex,
-      localStorageObjects
+      lsPlaylists
     );
-    setLocalStorageObjects(newObject);
+    updateLSPlaylists(newObject);
   };
 
   return (
@@ -134,9 +134,7 @@ const PlaylistMenubarDialog = ({
                       className="w-full justify-between"
                     >
                       {newFolderIndex !== null
-                        ? localStorageObjects[
-                            newFolderIndex
-                          ].name
+                        ? lsPlaylists[newFolderIndex].name
                         : 'Select folder...'}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -144,11 +142,8 @@ const PlaylistMenubarDialog = ({
                   <PopoverContent className="p-0">
                     <Command>
                       <CommandGroup>
-                        {localStorageObjects.map(
-                          (
-                            localStorageObject,
-                            folderIndex
-                          ) => (
+                        {lsPlaylists.map(
+                          (lsPlaylist, folderIndex) => (
                             <CommandItem
                               key={folderIndex}
                               value={String(folderIndex)}
@@ -168,7 +163,7 @@ const PlaylistMenubarDialog = ({
                                     : 'opacity-0'
                                 )}
                               />
-                              {localStorageObject.name}
+                              {lsPlaylist.name}
                             </CommandItem>
                           )
                         )}

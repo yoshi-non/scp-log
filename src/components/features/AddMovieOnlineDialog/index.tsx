@@ -29,10 +29,10 @@ import { LocalStorageObjects } from '@/types/localstrageObjects';
 
 type Props = {
   item: YouTubeSearchResult;
-  localStorageObjects: LocalStorageObjects;
-  setLocalStorageObjects: React.Dispatch<
-    React.SetStateAction<LocalStorageObjects>
-  >;
+  lsPlaylists: LocalStorageObjects;
+  updateLSPlaylists: (
+    newPlaylist: LocalStorageObjects
+  ) => void;
   value: number | null;
   setValue: React.Dispatch<
     React.SetStateAction<number | null>
@@ -41,8 +41,8 @@ type Props = {
 
 const AddMovieOnlineDialog = ({
   item,
-  localStorageObjects,
-  setLocalStorageObjects,
+  lsPlaylists,
+  updateLSPlaylists,
   value,
   setValue,
 }: Props) => {
@@ -58,10 +58,9 @@ const AddMovieOnlineDialog = ({
       movieId,
       movieTitle,
       thumbnailUrl,
-      localStorageObjects
+      lsPlaylists
     );
-
-    setLocalStorageObjects(newObjects);
+    updateLSPlaylists(newObjects);
   };
   return (
     <Dialog>
@@ -83,7 +82,7 @@ const AddMovieOnlineDialog = ({
             ※フォルダがない場合は新規作成されます。
           </DialogDescription>
         </DialogHeader>
-        {localStorageObjects.length === 0 ? (
+        {lsPlaylists.length === 0 ? (
           <div>フォルダがないため、自動作成されます。</div>
         ) : (
           <div className="py-4">
@@ -96,7 +95,7 @@ const AddMovieOnlineDialog = ({
                   className="w-full justify-between"
                 >
                   {value !== null
-                    ? localStorageObjects[value].name
+                    ? lsPlaylists[value].name
                     : 'Select folder...'}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -104,8 +103,8 @@ const AddMovieOnlineDialog = ({
               <PopoverContent className="p-0">
                 <Command>
                   <CommandGroup>
-                    {localStorageObjects.map(
-                      (localStorageObject, index) => (
+                    {lsPlaylists.map(
+                      (lsPlaylist, index) => (
                         <CommandItem
                           key={index}
                           value={String(index)}
@@ -122,7 +121,7 @@ const AddMovieOnlineDialog = ({
                                 : 'opacity-0'
                             )}
                           />
-                          {localStorageObject.name}
+                          {lsPlaylist.name}
                         </CommandItem>
                       )
                     )}
@@ -137,8 +136,7 @@ const AddMovieOnlineDialog = ({
             <Button
               type="submit"
               disabled={
-                value === null &&
-                localStorageObjects.length !== 0
+                value === null && lsPlaylists.length !== 0
               }
               onClick={() => {
                 preserveToFolderHandler(

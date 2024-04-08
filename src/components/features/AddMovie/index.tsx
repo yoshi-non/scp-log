@@ -13,10 +13,10 @@ import { useLSYoutubeApiKey } from '@/usecases/useLSYoutubeApiKey';
 
 type Props = {
   tab: string;
-  localStorageObjects: LocalStorageObjects;
-  setLocalStorageObjects: React.Dispatch<
-    React.SetStateAction<LocalStorageObjects>
-  >;
+  lsPlaylists: LocalStorageObjects;
+  updateLSPlaylists: (
+    newPlaylist: LocalStorageObjects
+  ) => void;
   tmpKeyword: string;
   setTmpKeyword: React.Dispatch<
     React.SetStateAction<string>
@@ -29,8 +29,8 @@ type Props = {
 
 const AddMovie = ({
   tab,
-  localStorageObjects,
-  setLocalStorageObjects,
+  lsPlaylists,
+  updateLSPlaylists,
   tmpKeyword,
   setTmpKeyword,
   searchResult,
@@ -126,12 +126,8 @@ const AddMovie = ({
                 {tab === 'addMovie' && (
                   <AddMovieOnlineDialog
                     item={item}
-                    localStorageObjects={
-                      localStorageObjects
-                    }
-                    setLocalStorageObjects={
-                      setLocalStorageObjects
-                    }
+                    lsPlaylists={lsPlaylists}
+                    updateLSPlaylists={updateLSPlaylists}
                     value={value}
                     setValue={setValue}
                   />

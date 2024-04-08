@@ -9,12 +9,19 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { localStorageKey } from '@/constants/localStorageKey';
-import { saveToLocalStorage } from '@/utils/storage';
+import { LocalStorageObjects } from '@/types/localstrageObjects';
 
-const DeleteLocalStorage = () => {
+type Props = {
+  updateLSPlaylists: (
+    newPlaylist: LocalStorageObjects
+  ) => void;
+};
+
+const DeleteLocalStorage = ({
+  updateLSPlaylists,
+}: Props) => {
   const deleteAllLocalStorageHandler = () => {
-    saveToLocalStorage(localStorageKey, []);
+    updateLSPlaylists([]);
   };
   return (
     <div className="mx-20">

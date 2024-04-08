@@ -1,15 +1,13 @@
-import { localStorageKey } from '@/constants/localStorageKey';
 import { LocalStorageObjects } from '@/types/localstrageObjects';
-import { saveToLocalStorage } from '@/utils/storage';
 import { arrayMove } from '@dnd-kit/sortable';
 
 export const dndExchangeMovie = (
   activeIndex: number,
   overIndex: number,
   selectedFolderIndex: number,
-  localStorageObjects: LocalStorageObjects
+  lsPlaylists: LocalStorageObjects
 ) => {
-  const newLocalStorageObjects = [...localStorageObjects];
+  const newLocalStorageObjects = [...lsPlaylists];
   const updatedLocalStorageObjects =
     newLocalStorageObjects.map(
       (localStorageObject, folderIndex) => {
@@ -27,9 +25,5 @@ export const dndExchangeMovie = (
         }
       }
     );
-  saveToLocalStorage(
-    localStorageKey,
-    updatedLocalStorageObjects
-  );
   return updatedLocalStorageObjects;
 };
